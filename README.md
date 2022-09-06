@@ -12,7 +12,7 @@ Dependencies:
  - [CMake](https://cmake.org/download/) for cross-platform compiler project generation.
  - C++17 Required, e.g. [Visual Studio](https://visualstudio.microsoft.com/downloads/)
 
-1. git clone https://gitlab.liu.se/tnm094-labs/particlesystem.git
+1. git clone https://github.com/casperlarsson-bit/Raytracing-TNCG15.git
 2. Open CMake, enter the source path and the preferred build directory ("bin" folder) and hit configure. 
 3. Hit Generate and then Open Project to open the project in your IDE.
 4. Build and run the ParticleSystem executable.
