@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Ray.h"
 
 int main() {
 

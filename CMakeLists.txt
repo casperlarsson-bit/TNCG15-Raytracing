@@ -25,10 +25,12 @@ endif ()
 
 set(HEADER_FILES
   include/Ray.h
+  include/ColorRGB.h
 )
 
 set(SOURCE_FILES
   src/Ray.cpp
+  src/ColorRGB.cpp
 )
 
 add_library(Raytracing
