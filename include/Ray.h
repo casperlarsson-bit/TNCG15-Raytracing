@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../include/ColorDBL.h"
 
 class Ray {
 public:
@@ -12,14 +13,16 @@ public:
 	//// Class Member Functions
 
 	// Get the current Color of the ray
+	// ColorDBL getColor();
 
+
+	// Set the Color of the ray
+	//void setColor(ColorDBL rgb);
 
 private:
-	int test = 10;
-
 	Ray* prevRay;
 	Ray* nextRay;
 	// Surface* startingVertex; // Implement Surface?
 
-	// ColorRGB rayColor;
+	// ColorDBL rayColor;
 };
