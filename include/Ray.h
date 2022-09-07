@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ColorRGB.h"
-#include "glm/glm.hpp"
 
 class Ray {
 public:
@@ -12,21 +10,16 @@ public:
 	~Ray();
 
 	//// Class Member Functions
-	
-	// Get the current Color of the ray
-	ColorRGB getColor();
 
-	// Set the Color of the ray
-	void setColor(ColorRGB rgb);
-	
+	// Get the current Color of the ray
+
+
 private:
-	glm::vec4 startingPoint;
-	glm::vec4 endPoint;
-	glm::vec3 direction;
+	int test = 10;
 
 	Ray* prevRay;
 	Ray* nextRay;
 	// Surface* startingVertex; // Implement Surface?
 
-	ColorRGB rayColor;
+	// ColorRGB rayColor;
 };
