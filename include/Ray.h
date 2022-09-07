@@ -16,9 +16,11 @@ public:
 	// Get the current Color of the ray
 	ColorDBL getColor();
 
+	// Set the Color of the ray with ColorDBL
+	void setColor(ColorDBL _rgb);
 
-	// Set the Color of the ray
-	void setColor(ColorDBL rgb);
+	// Set the Color of the ray with doubles
+	void setColor(double _red, double _green, double _blue);
 
 private:
 	glm::vec4 startVertice;

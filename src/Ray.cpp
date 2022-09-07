@@ -2,9 +2,7 @@
 #include <iostream>
 
 // Default constructor
-Ray::Ray() {
-
-}
+Ray::Ray() = default;
 
 // Destructor
 Ray::~Ray() = default;
@@ -17,6 +15,11 @@ ColorDBL Ray::getColor() {
 }
 
 // Set the Color of the ray
-void Ray::setColor(ColorDBL rgb) {
-	rayColor = rgb;
+void Ray::setColor(ColorDBL _rgb) {
+	rayColor = _rgb;
+}
+
+// Set the Color of the ray with doubles
+void Ray::setColor(double _r, double _g, double _b) {
+	rayColor = ColorDBL(_r, _g, _b);
 }
