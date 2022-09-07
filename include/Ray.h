@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../include/ColorDBL.h"
+#include "ColorDBL.h"
+#include "glm/glm.hpp"
 
 class Ray {
 public:
@@ -20,9 +21,13 @@ public:
 	void setColor(ColorDBL rgb);
 
 private:
+	glm::vec4 startVertice;
+	glm::vec4 endVertice;
+	glm::vec3 direction;
+
 	Ray* prevRay;
 	Ray* nextRay;
-	// Surface* startingVertex; // Implement Surface?
+	// Polygon* startingVertex; // Not implemented yet
 
 	ColorDBL rayColor;
 };
