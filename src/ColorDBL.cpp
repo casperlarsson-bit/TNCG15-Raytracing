@@ -9,8 +9,8 @@ ColorDBL::ColorDBL() {
 }
 
 // Constructor to create a colour of values
-ColorDBL::ColorDBL(double r, double g, double b) {
-	red = r;
-	green = g;
-	blue = b;
+ColorDBL::ColorDBL(double _r, double _g, double _b) {
+	red = _r;
+	green = _g;
+	blue = _b;
 }
