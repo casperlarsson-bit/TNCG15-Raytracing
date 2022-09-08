@@ -4,8 +4,11 @@
 
 int main() {
     Camera c{};
+    Ray r{};
+    
     c.saveImage();
 
     std::cout << "Finished!";
+
     return 0;
 }
