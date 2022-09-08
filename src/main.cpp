@@ -6,6 +6,6 @@ int main() {
     Camera c{};
     c.saveImage();
 
-    std::cout << "Hello world";
+    std::cout << "Finished!";
     return 0;
 }

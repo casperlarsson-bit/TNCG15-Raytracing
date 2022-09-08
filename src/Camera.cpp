@@ -17,7 +17,7 @@ void Camera::renderImage() {
 	// Loop through all pixels
 	for (auto &row : image) {
 		for (auto &pix : row) {
-			// Cast ray into scene
+			// @TODO Cast ray into scene
 
 		}
 	}
@@ -25,34 +25,26 @@ void Camera::renderImage() {
 
 // Save the image as file (.jpg?)
 void Camera::saveImage() const {
-	// Save image
-	/*FILE* fp = fopen("Raytracing image.bmp", "wb");
+	// Save image. Code inspired by https://youtu.be/HGHbcRscFsg
+	std::ofstream imageFile;
+	imageFile.open("Raytracing.pmm");
 
+	if (!imageFile.is_open()) {
+		std::cout << "Could not create file!\n";
+		return;
+	}
+
+	imageFile << "P3\n" << image.size() << " " << image.size() << "\n255\n";
+
+	// Access all pixels
 	for (auto& row : image) {
 		for (auto& pix : row) {
-			// Get pixel
-			unsigned char color[3];
-			color[0] = (unsigned char)pix.getColor().red*255;
-			color[1] = (unsigned char)pix.getColor().green*255;
-			color[2] = (unsigned char)pix.getColor().blue*255;
-
-			fwrite(color, 1, 3, fp);
+			// @TODO Scale for highest value in the scene
+			imageFile << pix.getColor().red * 255 << " " <<
+				pix.getColor().green * 255 << " " <<
+				pix.getColor().blue * 255 << "\n";
 		}
 	}
 
-	fclose(fp);*/
-
-	std::ofstream ofs("Raytracing.ppm", std::ios::out | std::ios::binary);
-	ofs << "P6\n" << image.size() << " " << image.size() << "\n255\n";
-
-	for (auto& row : image) {
-		for (auto& pix : row) {
-			// Get pixel
-			ofs << (unsigned char)pix.getColor().red * (float)255 <<
-				(unsigned char)pix.getColor().green * (float)255 <<
-				(unsigned char)pix.getColor().blue * (float)255;
-		}
-	}
-
-	ofs.close();
+	imageFile.close();
 }
