@@ -11,6 +11,6 @@ $<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Wall -Wextra>
 )
 endfunction()
 
-add_executable(Raytracing src/main.cpp src/Ray.cpp include/Ray.h)
+add_executable(Raytracing src/main.cpp src/Ray.cpp src/Polygon.cpp src/Rectangle.cpp src/Triangle.cpp include/Ray.h include/Polygon.h include/Rectangle.h include/Triangle.h)
 
 enable_warnings(Raytracing)
