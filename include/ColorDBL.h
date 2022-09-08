@@ -2,7 +2,6 @@
 
 class ColorDBL {
 public:
-
 	// Default constructor, 0 0 0
 	ColorDBL();
 

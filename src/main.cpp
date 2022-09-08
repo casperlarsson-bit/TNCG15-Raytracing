@@ -1,9 +1,14 @@
 #include <iostream>
 #include "../include/Ray.h"
+#include "../include/Camera.h"
 
 int main() {
+    Camera c{};
     Ray r{};
+    
+    c.saveImage();
 
-    std::cout << "Hello world";
+    std::cout << "Finished!";
+
     return 0;
 }
