@@ -15,6 +15,26 @@ void Rectangle::setVertices(glm::vec4 _v0, glm::vec4 _v1, glm::vec4 _v2, glm::ve
 
 // Calculate the intersection of a ray and the surface
 // Return the vertex where it hits
-glm::vec4 Rectangle::rayIntersection(Ray& ray) {
+glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
+	glm::vec4 rayStart = ray.getStartpoint();
+	glm::vec3 rayDirection = ray.getDirection();
 
+	// Normal of Rectangle, and use vertex v0
+	glm::vec3 rectangleNormal = this->getNormal();
+	glm::vec4 edge1 = v1 - v0; // Edge connected by v0 and v1
+	glm::vec4 edge2 = v3 - v0; // Edge connected by v0 and v3, these two chare same vertex v0
+
+	double t = glm::dot(glm::vec3(v0 - rayStart), rectangleNormal) / glm::dot(rayDirection, rectangleNormal);
+	glm::vec4 x_i = rayStart + glm::vec4(rayDirection, 1) * (float)t;
+
+	double a = glm::dot(x_i - v0, edge1) / glm::dot(edge1, edge1);
+	double b = glm::dot(x_i - v0, edge2) / glm::dot(edge2, edge2);
+
+	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. Should not compare double directly
+	if (a >= 0 && a <= 1 && b >= 0 && b <= 1) {
+		return x_i;
+	}
+
+	// What to return if false? @TODO
+	return glm::vec4(0, 0, 0, 1);
 }

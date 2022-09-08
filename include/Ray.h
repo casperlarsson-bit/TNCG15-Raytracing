@@ -22,6 +22,15 @@ public:
 	// Set the Color of the ray with doubles
 	void setColor(double _red, double _green, double _blue);
 
+	// Get startpoint of Ray
+	glm::vec4 getStartpoint();
+
+	// Get endpoint of Ray
+	glm::vec4 getEndpoint();
+
+	// Get direction of Ray
+	glm::vec3 getDirection();
+
 private:
 	glm::vec4 startVertice;
 	glm::vec4 endVertice;
@@ -29,7 +38,7 @@ private:
 
 	Ray* prevRay;
 	Ray* nextRay;
-	// Polygon* startingVertex; // Not implemented yet
+	// Polygon* startingVertex;
 
 	ColorDBL rayColor;
 };

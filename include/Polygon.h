@@ -21,7 +21,8 @@ public:
 	// Calculate the intersection of a ray and the surface
 	// Return the vertex where it hits
 	// Done in sub classes
-	virtual glm::vec4 rayIntersection(Ray &ray);
+	virtual glm::vec4 rayIntersection(Ray &ray) = 0;
+
 private:
 	ColorDBL color;
 	glm::vec3 normal;

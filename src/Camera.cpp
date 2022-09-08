@@ -27,7 +27,7 @@ void Camera::renderImage() {
 void Camera::saveImage() const {
 	// Save image. Code inspired by https://youtu.be/HGHbcRscFsg
 	std::ofstream imageFile;
-	imageFile.open("Raytracing.pmm");
+	imageFile.open("../Raytracing.pmm");
 
 	if (!imageFile.is_open()) {
 		std::cout << "Could not create file!\n";
