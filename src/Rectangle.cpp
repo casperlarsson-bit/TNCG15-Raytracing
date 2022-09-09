@@ -20,7 +20,7 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 	glm::vec3 rayDirection = ray.getDirection();
 
 	// Normal of Rectangle, and use vertex v0
-	glm::vec3 rectangleNormal = this->getNormal();
+	glm::vec3 rectangleNormal = glm::normalize(this->getNormal());
 	glm::vec4 edge1 = v1 - v0; // Edge connected by v0 and v1
 	glm::vec4 edge2 = v3 - v0; // Edge connected by v0 and v3, these two chare same vertex v0
 
@@ -35,6 +35,6 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 		return x_i;
 	}
 
-	// What to return if false? @TODO
+	// If surface is not hit, return null
 	return glm::vec4(0, 0, 0, 1);
 }
