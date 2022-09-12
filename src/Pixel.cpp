@@ -5,6 +5,11 @@ Pixel::Pixel() {
 
 }
 
+// Create pixel with colour
+Pixel::Pixel(ColorDBL _color) {
+	color = _color;
+}
+
 // Get colour of the pixel
 ColorDBL Pixel::getColor() const {
 	return color;

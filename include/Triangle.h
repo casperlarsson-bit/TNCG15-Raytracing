@@ -7,6 +7,9 @@ public:
 	// Default constructor
 	Triangle();
 
+	// Calculate the normal automatically from the vertices
+	void calculateNormal();
+
 	// Set the vertices of the Triangle
 	void setVertices(glm::vec4 _v0, glm::vec4 _v1, glm::vec4 _v2);
 

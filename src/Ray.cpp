@@ -6,13 +6,19 @@ Ray::Ray() {
 	startVertice = glm::vec4(-1, 0, 0, 1); // Eye position
 }
 
+// Constructor which sets starting position and direction
+Ray::Ray(glm::vec4 _startPosition, glm::vec3 _direction) {
+	startVertice = _startPosition;
+	direction = _direction;
+}
+
 // Destructor
 Ray::~Ray() = default;
 
 //// Class Member Functions
 
 // Get the current Color of the ray
-ColorDBL Ray::getColor() {
+ColorDBL Ray::getColor() const {
 	return this->rayColor;
 }
 
@@ -26,17 +32,27 @@ void Ray::setColor(double _r, double _g, double _b) {
 	rayColor = ColorDBL(_r, _g, _b);
 }
 
+// Set the direction of a Ray
+void Ray::setDirection(glm::vec3 _direction) {
+	direction = _direction;
+}
+
+// Set the end vertex of the ray
+void Ray::setEndVertex(glm::vec4 _endVertex) {
+	endVertice = _endVertex;
+}
+
 // Get startpoint of Ray
-glm::vec4 Ray::getStartpoint() {
+glm::vec4 Ray::getStartpoint() const {
 	return startVertice;
 }
 
 // Get endpoint of Ray
-glm::vec4 Ray::getEndpoint() {
+glm::vec4 Ray::getEndpoint() const {
 	return endVertice;
 }
 
 // Get direction of Ray
-glm::vec3 Ray::getDirection() {
+glm::vec3 Ray::getDirection() const {
 	return direction;
 }

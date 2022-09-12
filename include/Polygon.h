@@ -12,6 +12,9 @@ public:
 	// Compute the normal of the Polygon. Normal points into the room
 	glm::vec3 getNormal() const;
 
+	// Calculate the normal automatically from the vertices
+	virtual void calculateNormal() = 0;
+
 	// Get the colour of the Polygon
 	ColorDBL getColor() const;
 
@@ -21,9 +24,9 @@ public:
 	// Calculate the intersection of a ray and the surface
 	// Return the vertex where it hits
 	// Done in sub classes
-	virtual glm::vec4 rayIntersection(Ray &ray) = 0;
+	virtual glm::vec4 rayIntersection(Ray &ray) const = 0;
 
-private:
 	ColorDBL color;
 	glm::vec3 normal;
+private:
 };

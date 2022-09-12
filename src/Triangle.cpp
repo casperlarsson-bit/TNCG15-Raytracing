@@ -1,8 +1,18 @@
 #include "../include/Triangle.h"
+#include <iostream>
 
 // Default constructor
 Triangle::Triangle() {
 
+}
+
+// Calculate the normal automatically from the vertices
+void Triangle::calculateNormal() {
+	glm::vec3 edge1 = glm::vec3(v2 - v1);
+	glm::vec3 edge2 = glm::vec3(v0 - v1);
+
+	glm::vec3 newNormal = glm::normalize(glm::cross(edge1, edge2));
+	normal = newNormal;
 }
 
 // Set the vertices of the Triangle
@@ -33,11 +43,11 @@ glm::vec4 Triangle::rayIntersection(Ray& ray) const {
 
 	// Check if outside Triangle, u >= 0, v >= 0, u+v <= 1. Should not compare double directly
 	if (!(u >= 0 && v >= 0 && u + v <= 1)) {
-		// What to return if false? @TODO
-		return glm::vec4(0, 0, 0, 1);
+		// If surface is not hit, return null, is ther a better way?
+		return glm::vec4(NULL, NULL, NULL, NULL);
 	}
-
 	// Carry on if inside Triangle, to calculate t and x_i
 	double t = glm::dot(Q, edge2) / glm::dot(P, edge1);
+	ray.setColor(color);
 	return rayStart + glm::vec4(rayDirection, 1) * (float)t;
 }

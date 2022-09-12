@@ -1,8 +1,18 @@
 #include "../include/Rectangle.h"
+#include <iostream>
 
 // Default constructor
 Rectangle::Rectangle() {
 
+}
+
+// Calculate the normal automatically from the vertices
+void Rectangle::calculateNormal() {
+	glm::vec3 edge1 = glm::vec3(v2 - v1);
+	glm::vec3 edge2 = glm::vec3(v0 - v1);
+
+	glm::vec3 newNormal = glm::normalize(glm::cross(edge1, edge2));
+	normal = newNormal;
 }
 
 // Set the vertices of the Rectangle
@@ -32,9 +42,10 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 
 	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. Should not compare double directly
 	if (a >= 0 && a <= 1 && b >= 0 && b <= 1) {
+		ray.setColor(color);
 		return x_i;
 	}
 
-	// If surface is not hit, return null
-	return glm::vec4(0, 0, 0, 1);
+	// If surface is not hit, return null, is ther a better way?
+	return glm::vec4(NULL, NULL, NULL, NULL);
 }

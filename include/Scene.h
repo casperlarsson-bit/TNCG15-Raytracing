@@ -8,7 +8,10 @@ public:
 
 	// Setup everything for the scene (Polygons etc.)
 	void createScene();
+
+
+	Rectangle rectangles[8]; // RectangleTable for the room = 2 + 6 (floor/roof and walls)
+	Triangle triangles[4]; // TriangleTable for the floor and roof
 private:
-	Rectangle rectangles[8]; // Rectangles for the room = 2 + 6 (floor/roof and walls)
-	Triangle triangles[4]; // Triangles for the floor and roof
+	glm::vec4 vertexTable[50]; // Vertex table
 };

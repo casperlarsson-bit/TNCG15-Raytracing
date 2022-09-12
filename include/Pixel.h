@@ -7,6 +7,9 @@ public:
 	// Default constructor
 	Pixel();
 
+	// Create pixel with colour
+	Pixel(ColorDBL _color);
+
 	// Get colour of the pixel
 	ColorDBL getColor() const;
 
