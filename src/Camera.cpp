@@ -23,10 +23,6 @@ void Camera::renderImage(Scene& _scene) {
 			
 			for (auto& rect : _scene.rectangles) {
 				pixelRay.setEndVertex(rect.rayIntersection(pixelRay));
-				std::cout << rect.v0[0] << " " << rect.v0[1] << " " << rect.v0[2] << "\n";
-				std::cout << rect.v1[0] << " " << rect.v1[1] << " " << rect.v1[2] << "\n";
-				std::cout << rect.v2[0] << " " << rect.v2[1] << " " << rect.v2[2] << "\n";
-				std::cout << rect.v3[0] << " " << rect.v3[1] << " " << rect.v3[2] << "\n\n\n";
 				if (pixelRay.getEndpoint()[0] == NULL) {
 					continue;
 				}
@@ -67,7 +63,7 @@ void Camera::saveImage() const {
 		for (std::size_t j = 0; j < image.size(); ++j) {
 			// @TODO Scale for highest value in the scene
 			imageFile << (int)(image[i][j].getColor().red * 255) << " " <<
-				(int)(image[i][j].getColor().green * 255) << " " <<
+				(int)(image[i][j].getColor().green * 255) << " " <<	
 				(int)(image[i][j].getColor().blue * 255) << "\n";
 		}
 

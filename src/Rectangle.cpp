@@ -27,7 +27,7 @@ void Rectangle::setVertices(glm::vec4 _v0, glm::vec4 _v1, glm::vec4 _v2, glm::ve
 // Return the vertex where it hits
 glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 	glm::vec4 rayStart = ray.getStartpoint();
-	glm::vec3 rayDirection = ray.getDirection();
+	glm::vec3 rayDirection = glm::normalize(ray.getDirection());
 
 	// Normal of Rectangle, and use vertex v0
 	glm::vec3 rectangleNormal = glm::normalize(this->getNormal());
