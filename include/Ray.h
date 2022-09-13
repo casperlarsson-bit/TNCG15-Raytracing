@@ -40,13 +40,13 @@ public:
 	// Get direction of Ray
 	glm::vec3 getDirection() const;
 
+	Ray* prevRay;
+	Ray* nextRay;
 private:
 	glm::vec4 startVertice;
 	glm::vec4 endVertice;
 	glm::vec3 direction;
 
-	Ray* prevRay;
-	Ray* nextRay;
 	// Polygon* startingVertex;
 
 	ColorDBL rayColor;

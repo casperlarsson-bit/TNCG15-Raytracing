@@ -8,12 +8,12 @@ Camera::Camera() : image(SIZE, std::vector<Pixel>(SIZE)) {
 }
 
 // Constructor which sets the resolution to res (square)
-Camera::Camera(int res) : image(res, std::vector<Pixel>(res)) {
+Camera::Camera(int _res) : image(_res, std::vector<Pixel>(_res)) {
 
 }
 
 // Render the image by casting rays and changing the pixel value
-void Camera::renderImage(Scene& _scene) {
+void Camera::renderImage(Scene& scene) {
 	// Loop through all pixels
 	std::cout << "Render image...\n";
 	for (std::size_t i = 0; i < image.size(); ++i) {
@@ -21,23 +21,10 @@ void Camera::renderImage(Scene& _scene) {
 			glm::vec4 pixelPosition = glm::vec4(0, 1 - 2 * (double)j / image.size(), 1 - 2 * (double)i / image.size(), 1);
 			Ray pixelRay{eyePosition, glm::vec3(pixelPosition - eyePosition)};
 			
-			for (auto& rect : _scene.rectangles) {
-				pixelRay.setEndVertex(rect.rayIntersection(pixelRay));
-				if (pixelRay.getEndpoint()[0] == NULL) {
-					continue;
-				}
-				image[i][j].setColor(pixelRay.getColor());
-
-			}
-			for (auto& tri : _scene.triangles) {
-				pixelRay.setEndVertex(tri.rayIntersection(pixelRay));
-
-				if (pixelRay.getEndpoint()[0] == NULL) {
-					continue;
-				}
-				
-				image[i][j].setColor(pixelRay.getColor());
-			}
+			// Cast ray and let scene handle it. Set pixel colour to the 
+			// colour of the Polygon it hits
+			scene.castRay(pixelRay);
+			image[i][j].setColor(pixelRay.getColor());
 		}
 
 		std::cout << (int)((double)i / image.size() * 100 + 0.5) << "% Complete\r";

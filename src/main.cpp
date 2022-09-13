@@ -6,7 +6,7 @@
 #include "../include/Scene.h"
 
 int main() {
-    Camera c{800};
+    Camera c{};
     Scene s{};
 
     s.createScene();

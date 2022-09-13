@@ -37,6 +37,11 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 	double t = glm::dot(glm::vec3(v0 - rayStart), rectangleNormal) / glm::dot(rayDirection, rectangleNormal);
 	glm::vec4 x_i = rayStart + glm::vec4(rayDirection, 1) * (float)t;
 
+	// If rectangle is hit from back side
+	if (glm::dot(glm::cross(rayDirection, glm::vec3(edge2)), glm::vec3(edge1)) < compareEllipse) {
+		return glm::vec4(NULL, NULL, NULL, NULL);
+	}
+
 	double a = glm::dot(x_i - v0, edge1) / glm::dot(edge1, edge1);
 	double b = glm::dot(x_i - v0, edge2) / glm::dot(edge2, edge2);
 
@@ -46,6 +51,6 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 		return x_i;
 	}
 
-	// If surface is not hit, return null, is ther a better way?
+	// If surface is not hit, return null
 	return glm::vec4(NULL, NULL, NULL, NULL);
 }

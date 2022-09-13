@@ -37,6 +37,11 @@ glm::vec4 Triangle::rayIntersection(Ray& ray) const {
 	glm::vec3 P = glm::cross(rayDirection, edge2);
 	glm::vec3 Q = glm::cross(rayToVertex, edge1);
 
+	// If triangle is hit from back side
+	if (glm::dot(P, edge1) < compareEllipse) {
+		return glm::vec4(NULL, NULL, NULL, NULL);
+	}
+
 	// Parameters (u,v) to test if Ray is inside Triangle
 	double u = glm::dot(P, rayToVertex) / glm::dot(P, edge1);
 	double v = glm::dot(Q, rayDirection) / glm::dot(P, edge1);
