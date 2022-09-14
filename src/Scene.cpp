@@ -62,8 +62,8 @@ void Scene::createScene() {
 	// Set colours for Polygons
 	rectangles[0].setColor(ColorDBL(0.8, 0.8, 0.8));
 	rectangles[1].setColor(ColorDBL(0.1, 0.1, 0.1));
-	rectangles[2].setColor(ColorDBL(0.2, 0.63, 0.66));
-	// rectangles[3].setColor(ColorDBL(0.2, 0.66, 0.32));
+	rectangles[2].setColor(ColorDBL(0.2, 0.66, 0.32));
+	// rectangles[3].setColor(ColorDBL(0.2, 0.63, 0.66));
 	rectangles[3].setMaterial(Material::MIRROR);
 	rectangles[4].setColor(ColorDBL(0.2, 0.27, 0.66));
 	rectangles[5].setColor(ColorDBL(0.66, 0.2, 0.2));

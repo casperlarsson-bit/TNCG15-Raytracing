@@ -1,3 +1,3 @@
 #pragma once
 
-enum class Material {MIRROR, LAMBERTIAN};
+enum class Material {MIRROR, LAMBERTIAN, TRANSPARENT};
