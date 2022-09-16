@@ -14,3 +14,9 @@ ColorDBL::ColorDBL(double _r, double _g, double _b) {
 	green = _g;
 	blue = _b;
 }
+
+// Overloaded operator*, scales the colour by value
+// To make colour darker/brighter
+ColorDBL ColorDBL::operator*(double value) const {
+	return ColorDBL(red * value, green * value, blue * value);
+}

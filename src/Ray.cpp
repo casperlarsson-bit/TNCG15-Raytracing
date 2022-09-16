@@ -4,12 +4,23 @@
 // Default constructor
 Ray::Ray() {
 	startVertice = glm::vec4(-1, 0, 0, 1); // Eye position
+
+	direction = glm::vec3(1, 0, 0);
+	endVertice = startVertice + glm::vec4(direction, 1);
+	prevRay = nullptr;
+	nextRay = nullptr;
 }
 
 // Constructor which sets starting position and direction
 Ray::Ray(glm::vec4 _startPosition, glm::vec3 _direction) {
 	startVertice = _startPosition;
 	direction = _direction;
+
+	endVertice = _startPosition + glm::vec4(_direction, 1);
+	rayColor = ColorDBL();
+
+	prevRay = nullptr;
+	nextRay = nullptr;
 }
 
 // Destructor

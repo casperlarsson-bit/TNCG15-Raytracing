@@ -10,7 +10,7 @@ public:
 	void createScene();
 
 	// Cast and trace a ray
-	void castRay(Ray& ray);
+	void castRay(Ray& ray, int numReflections = 3);
 
 	Rectangle rectangles[8]; // RectangleTable for the room = 2 + 6 (floor/roof and walls)
 	Triangle triangles[4]; // TriangleTable for the floor and roof

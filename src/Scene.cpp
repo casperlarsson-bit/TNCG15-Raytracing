@@ -2,6 +2,9 @@
 #include "../include/glm/glm.hpp"
 #include <iostream>
 
+const int RANDOM_REFLECTION = 99; // Percentage to continue cast rays in mirror
+const double MIRROR_VALUE = 0.95; // How much darker the light should be when returned from a mirror
+
 Scene::Scene() {
 
 }
@@ -68,6 +71,7 @@ void Scene::createScene() {
 	rectangles[4].setColor(ColorDBL(0.2, 0.27, 0.66));
 	rectangles[5].setColor(ColorDBL(0.66, 0.2, 0.2));
 	rectangles[6].setColor(ColorDBL(0.66, 0.62, 0.2));
+	rectangles[6].setMaterial(Material::MIRROR);
 	rectangles[7].setColor(ColorDBL(0.43, 0.2, 0.66));
 
 	triangles[0].setColor(ColorDBL(0.8, 0.8, 0.8));
@@ -77,7 +81,7 @@ void Scene::createScene() {
 }
 
 // Cast and trace a ray
-void Scene::castRay(Ray& ray) {
+void Scene::castRay(Ray& ray, int numReflections) {
 	for (auto& rect : rectangles) {
 		ray.setEndVertex(rect.rayIntersection(ray));
 		// Test if inside rectangle, if not go to next rectangle
@@ -93,12 +97,23 @@ void Scene::castRay(Ray& ray) {
 			Ray newRay{ ray.getEndpoint(), newDirection };
 
 			// Set up doubly linked list
-			//*ray.nextRay = newRay;
-			//*newRay.prevRay = ray;
+			ray.nextRay = &newRay;
+			newRay.prevRay = &ray;
 
 			// Recursively cast ray into scene again until a non mirror is hit
-			this->castRay(newRay);
-			ray.setColor(newRay.getColor());
+			// Continue to cast ray with 99 % probability, to avoid stack overflow
+			// After numReflections (default=3) do probability, otherwise reflect all rays
+			if (numReflections > 0) {
+				this->castRay(newRay, numReflections-1);
+			} 
+			else {
+				int randomReflection = rand() % 100;
+				if (randomReflection < RANDOM_REFLECTION) {
+					this->castRay(newRay);
+				}
+			}
+
+			newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
 		}
 	}
 

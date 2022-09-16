@@ -6,7 +6,11 @@ public:
 	ColorDBL();
 
 	// Constructor to create a colour of values
-	ColorDBL(double r, double g, double b);
+	ColorDBL(double _r, double _g, double _b);
+
+	// Overloaded operator*, scales the colour by value
+	// To make colour darker/brighter
+	ColorDBL operator*(double value) const;
 
 	double red;
 	double green;
