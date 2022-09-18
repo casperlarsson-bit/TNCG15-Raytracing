@@ -12,8 +12,11 @@ public:
 	// Cast and trace a ray
 	void castRay(Ray& ray, int numReflections = 3);
 
-	Rectangle rectangles[8]; // RectangleTable for the room = 2 + 6 (floor/roof and walls)
-	Triangle triangles[4]; // TriangleTable for the floor and roof
+	// Get the direct light from light source to a specific point
+	ColorDBL directLight(glm::vec4 rayPosition);
+
 private:
 	glm::vec4 vertexTable[50]; // Vertex table
+	Rectangle rectangleTable[8]; // RectangleTable for the room = 2 + 6 (floor/roof and walls)
+	Triangle triangleTable[4]; // TriangleTable for the floor and roof
 };
