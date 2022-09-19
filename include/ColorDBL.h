@@ -12,6 +12,10 @@ public:
 	// To make colour darker/brighter
 	ColorDBL operator*(double value) const;
 
+	// Overloaded operator* to multiply two colours
+	// Multiply each colour channel
+	ColorDBL operator*(ColorDBL color) const;
+
 	double red;
 	double green;
 	double blue;

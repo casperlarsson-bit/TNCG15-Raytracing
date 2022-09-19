@@ -1,9 +1,17 @@
 #include "../include/Scene.h"
 #include "../include/glm/glm.hpp"
 #include <iostream>
+#include <math.h>
+#define M_PI 3.14159265358979323846  // Pi
+
+double randomDistribution(double min, double max) {
+	double random = (double)rand() / (double)RAND_MAX; // Random number distributed between 0 and 1
+	return min + (max - min) * random;
+}
 
 const int RANDOM_REFLECTION = 99; // Percentage to continue cast rays in mirror
 const double MIRROR_VALUE = 0.95; // How much darker the light should be when returned from a mirror
+const int NUMBER_OF_LIGHT_RAYS = 10;
 
 Scene::Scene() {
 
@@ -65,21 +73,21 @@ void Scene::createScene() {
 	}
 
 	// Set colours for Polygons
-	/*rectangles[0].setColor(ColorDBL(0.8, 0.8, 0.8));
-	rectangles[1].setColor(ColorDBL(0.1, 0.1, 0.1));
-	rectangles[2].setColor(ColorDBL(0.2, 0.66, 0.32));
-	// rectangles[3].setColor(ColorDBL(0.2, 0.63, 0.66));
-	rectangles[3].setMaterial(Material::MIRROR);
-	rectangles[4].setColor(ColorDBL(0.2, 0.27, 0.66));
-	rectangles[5].setColor(ColorDBL(0.66, 0.2, 0.2));
-	rectangles[6].setColor(ColorDBL(0.66, 0.62, 0.2));
-	rectangles[6].setMaterial(Material::MIRROR);
-	rectangles[7].setColor(ColorDBL(0.43, 0.2, 0.66));
+	/*rectangleTable[0].setColor(ColorDBL(0.8, 0.8, 0.8));
+	rectangleTable[1].setColor(ColorDBL(0.1, 0.1, 0.1));
+	rectangleTable[2].setColor(ColorDBL(0.2, 0.66, 0.32));
+	//rectangleTable[3].setColor(ColorDBL(0.2, 0.63, 0.66));
+	rectangleTable[3].setMaterial(Material::MIRROR);
+	rectangleTable[4].setColor(ColorDBL(0.2, 0.27, 0.66));
+	rectangleTable[5].setColor(ColorDBL(0.66, 0.2, 0.2));
+	rectangleTable[6].setColor(ColorDBL(0.66, 0.62, 0.2));
+	rectangleTable[6].setMaterial(Material::MIRROR);
+	rectangleTable[7].setColor(ColorDBL(0.43, 0.2, 0.66));
 
-	triangles[0].setColor(ColorDBL(0.8, 0.8, 0.8));
-	triangles[1].setColor(ColorDBL(0.8, 0.8, 0.8));
-	triangles[2].setColor(ColorDBL(0.1, 0.1, 0.1));
-	triangles[3].setColor(ColorDBL(0.1, 0.1, 0.1));*/
+	triangleTable[0].setColor(ColorDBL(0.8, 0.8, 0.8));
+	triangleTable[1].setColor(ColorDBL(0.8, 0.8, 0.8));
+	triangleTable[2].setColor(ColorDBL(0.1, 0.1, 0.1));
+	triangleTable[3].setColor(ColorDBL(0.1, 0.1, 0.1));*/
 }
 
 // Cast and trace a ray
@@ -121,6 +129,8 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		// Lambertian surface, cast ray to the light source to get light on the point
 		else if (rect.getMaterial() == Material::LAMBERTIAN) {
 
+			ColorDBL directLight = this->directLight(ray.getEndpoint(), rect.getNormal());
+			ray.setColor(directLight * rect.getColor());
 		}
 	}
 
@@ -131,25 +141,49 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		if (ray.getEndpoint()[0] == NULL) {
 			continue;
 		}
+
+		ColorDBL directLight = this->directLight(ray.getEndpoint(), tri.getNormal());
+		ray.setColor(directLight * tri.getColor());
 	}
 
 }
 
 // Get the direct light from light source to a specific point
-ColorDBL Scene::directLight(glm::vec4 rayPosition) {
+ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
 	// Define area light
-	glm::vec4 v0 = glm::vec4(-2, -2, 5, 1);
-	glm::vec4 v1 = glm::vec4(2, -2, 5, 1);
-	glm::vec4 v2 = glm::vec4(-2, 2, 5, 1);
-	glm::vec4 v3 = glm::vec4(2, 2, 5, 1);
+	glm::vec4 v0 = glm::vec4(5, -0.1, 5, 1);
+	glm::vec4 v1 = glm::vec4(5.1, -0.1, 5, 1);
+	glm::vec4 v2 = glm::vec4(5.1, 0.1, 5, 1);
+	glm::vec4 v3 = glm::vec4(5, 0.1, 5, 1);
 
 	glm::vec4 e1 = v2 - v1;
 	glm::vec4 e2 = v0 - v1;
 
 	glm::vec3 lightNormal = glm::normalize(glm::cross(glm::vec3(e2), glm::vec3(e1)));
 
-	// glm::vec3 rayLightDistanceVector = glm::vec3(rayPosition - xi); // in loop
+	double lightChannel = 0; // Amount of light at each colour channel
+	for (int i = 0; i < NUMBER_OF_LIGHT_RAYS; ++i) {
+		// Create two random parameter variables
+		double s = randomDistribution(0, 1);
+		double t = randomDistribution(0, 1);
+
+		glm::vec4 lightPoint = v1 + (float)s * e1 + (float)t * e2; // Random point on the light source
+		glm::vec3 rayLightDistanceVector = glm::vec3(rayPosition - lightPoint); // d_i
+
+		double cosX = glm::dot(surfaceNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
+		double cosY = -glm::dot(lightNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
+
+		//if (abs(cosY*cosX) > 0.5) std::cout << cosY << "\n";
 
 
-	return ColorDBL();
+		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 1));
+
+	}
+
+	//if (abs(lightChannel) > 0.06) std::cout << lightChannel << "\n";
+
+
+	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel);
+	lightColor = lightColor * (24 / (M_PI * NUMBER_OF_LIGHT_RAYS));
+	return lightColor;
 }

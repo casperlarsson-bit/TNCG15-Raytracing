@@ -20,3 +20,9 @@ ColorDBL::ColorDBL(double _r, double _g, double _b) {
 ColorDBL ColorDBL::operator*(double value) const {
 	return ColorDBL(red * value, green * value, blue * value);
 }
+
+// Overloaded operator* to multiply two colours
+	// Multiply each colour channel
+ColorDBL ColorDBL::operator*(ColorDBL color) const {
+	return ColorDBL(red * color.red, green * color.green, blue * color.blue);
+}

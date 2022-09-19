@@ -13,7 +13,7 @@ public:
 	void castRay(Ray& ray, int numReflections = 3);
 
 	// Get the direct light from light source to a specific point
-	ColorDBL directLight(glm::vec4 rayPosition);
+	ColorDBL directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal);
 
 private:
 	glm::vec4 vertexTable[50]; // Vertex table

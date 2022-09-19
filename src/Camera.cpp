@@ -1,6 +1,7 @@
 #include "../include/Camera.h"
 #include <iostream>
 #include <fstream>
+#include <time.h>
 
 // Default constructor sets resolution to 600x600
 Camera::Camera() : image(SIZE, std::vector<Pixel>(SIZE)) {
@@ -15,6 +16,7 @@ Camera::Camera(int _res) : image(_res, std::vector<Pixel>(_res)) {
 // Render the image by casting rays and changing the pixel value
 void Camera::renderImage(Scene& scene) {
 	// Loop through all pixels
+	srand(time(NULL));
 	std::cout << "Render image...\n";
 	for (std::size_t i = 0; i < image.size(); ++i) {
 		for (std::size_t j = 0; j < image.size(); ++j) {
