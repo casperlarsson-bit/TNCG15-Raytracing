@@ -76,12 +76,12 @@ void Scene::createScene() {
 	/*rectangleTable[0].setColor(ColorDBL(0.8, 0.8, 0.8));
 	rectangleTable[1].setColor(ColorDBL(0.1, 0.1, 0.1));
 	rectangleTable[2].setColor(ColorDBL(0.2, 0.66, 0.32));
-	//rectangleTable[3].setColor(ColorDBL(0.2, 0.63, 0.66));
-	rectangleTable[3].setMaterial(Material::MIRROR);
+	rectangleTable[3].setColor(ColorDBL(0.2, 0.63, 0.66));
+	//rectangleTable[3].setMaterial(Material::MIRROR);
 	rectangleTable[4].setColor(ColorDBL(0.2, 0.27, 0.66));
 	rectangleTable[5].setColor(ColorDBL(0.66, 0.2, 0.2));
 	rectangleTable[6].setColor(ColorDBL(0.66, 0.62, 0.2));
-	rectangleTable[6].setMaterial(Material::MIRROR);
+	//rectangleTable[6].setMaterial(Material::MIRROR);
 	rectangleTable[7].setColor(ColorDBL(0.43, 0.2, 0.66));
 
 	triangleTable[0].setColor(ColorDBL(0.8, 0.8, 0.8));
@@ -134,7 +134,6 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		}
 	}
 
-	// @TODO Fix above code for triangles as well
 	for (auto& tri : triangleTable) {
 		ray.setEndVertex(tri.rayIntersection(ray));
 
@@ -142,8 +141,39 @@ void Scene::castRay(Ray& ray, int numReflections) {
 			continue;
 		}
 
-		ColorDBL directLight = this->directLight(ray.getEndpoint(), tri.getNormal());
-		ray.setColor(directLight * tri.getColor());
+		// Do different things depending on material of rectangle
+		// Mirror, reflect ray and cast it again
+		if (tri.getMaterial() == Material::MIRROR) {
+			// Reflected direction
+			glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), tri.getNormal()) * tri.getNormal();
+
+			Ray newRay{ ray.getEndpoint(), newDirection };
+
+			// Set up doubly linked list
+			ray.nextRay = &newRay;
+			newRay.prevRay = &ray;
+
+			// Recursively cast ray into scene again until a non mirror is hit
+			// Continue to cast ray with 99 % probability, to avoid stack overflow
+			// After numReflections (default=3) do probability, otherwise reflect all rays
+			if (numReflections > 0) {
+				this->castRay(newRay, numReflections - 1);
+			}
+			else {
+				int randomReflection = rand() % 100;
+				if (randomReflection < RANDOM_REFLECTION) {
+					this->castRay(newRay);
+				}
+			}
+
+			newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
+		}
+		// Lambertian surface, cast ray to the light source to get light on the point
+		else if (tri.getMaterial() == Material::LAMBERTIAN) {
+			ColorDBL directLight = this->directLight(ray.getEndpoint(), tri.getNormal());
+			ray.setColor(directLight * tri.getColor());
+		}
+
 	}
 
 }
@@ -163,27 +193,21 @@ ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
 
 	double lightChannel = 0; // Amount of light at each colour channel
 	for (int i = 0; i < NUMBER_OF_LIGHT_RAYS; ++i) {
-		// Create two random parameter variables
+		// Create two random parameter variables, uniform distribution
 		double s = randomDistribution(0, 1);
 		double t = randomDistribution(0, 1);
 
 		glm::vec4 lightPoint = v1 + (float)s * e1 + (float)t * e2; // Random point on the light source
 		glm::vec3 rayLightDistanceVector = glm::vec3(rayPosition - lightPoint); // d_i
 
-		double cosX = glm::dot(surfaceNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
-		double cosY = -glm::dot(lightNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
+		double cosX = glm::dot(lightNormal, rayLightDistanceVector); // / glm::length(rayLightDistanceVector);
+		double cosY = -glm::dot(surfaceNormal, rayLightDistanceVector); // / glm::length(rayLightDistanceVector);
 
-		//if (abs(cosY*cosX) > 0.5) std::cout << cosY << "\n";
-
-
-		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 1));
-
+		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2));
 	}
 
-	//if (abs(lightChannel) > 0.06) std::cout << lightChannel << "\n";
-
-
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel);
-	lightColor = lightColor * (24 / (M_PI * NUMBER_OF_LIGHT_RAYS));
+	lightColor = lightColor * (3 / (M_PI * NUMBER_OF_LIGHT_RAYS));
+	//std::cout << glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2))) << "\n";
 	return lightColor;
 }
