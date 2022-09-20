@@ -66,22 +66,29 @@ void Scene::createScene() {
 	rectangles[0].setColor(ColorDBL(0.8, 0.8, 0.8));
 	rectangles[1].setColor(ColorDBL(0.1, 0.1, 0.1));
 	rectangles[2].setColor(ColorDBL(0.2, 0.66, 0.32));
-	// rectangles[3].setColor(ColorDBL(0.2, 0.63, 0.66));
-	rectangles[3].setMaterial(Material::MIRROR);
+	rectangles[3].setColor(ColorDBL(0.66, 0.62, 0.2));
+	//rectangles[3].setMaterial(Material::MIRROR);
 	rectangles[4].setColor(ColorDBL(0.2, 0.27, 0.66));
 	rectangles[5].setColor(ColorDBL(0.66, 0.2, 0.2));
-	rectangles[6].setColor(ColorDBL(0.66, 0.62, 0.2));
-	rectangles[6].setMaterial(Material::MIRROR);
+	rectangles[6].setColor(ColorDBL(0.2, 0.63, 0.66));
+	//rectangles[6].setMaterial(Material::MIRROR);
 	rectangles[7].setColor(ColorDBL(0.43, 0.2, 0.66));
 
 	triangles[0].setColor(ColorDBL(0.8, 0.8, 0.8));
 	triangles[1].setColor(ColorDBL(0.8, 0.8, 0.8));
 	triangles[2].setColor(ColorDBL(0.1, 0.1, 0.1));
 	triangles[3].setColor(ColorDBL(0.1, 0.1, 0.1));
+
+	// Spheres in the scene
+	sphereTable[0] = Sphere(1.0, glm::vec4(5, 1, 0, 1), ColorDBL(), Material::MIRROR);
+
+	// Tetrahedron in the scene
+	tetrahedronTable[0] = Tetrahedron(glm::vec4(2, 0, -4, 1), glm::vec4(10, 0, -4, 1), glm::vec4(10, -4, -4, 1), glm::vec4(7, -3, 4, 1), ColorDBL(1, 0, 0), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
 void Scene::castRay(Ray& ray, int numReflections) {
+	// Go through all rectangles
 	for (auto& rect : rectangles) {
 		ray.setEndVertex(rect.rayIntersection(ray));
 		// Test if inside rectangle, if not go to next rectangle
@@ -117,11 +124,59 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		}
 	}
 
+	// Go through all triangles
 	for (auto& tri : triangles) {
 		ray.setEndVertex(tri.rayIntersection(ray));
 
 		if (ray.getEndpoint()[0] == NULL) {
 			continue;
 		}
+	}
+
+	// Go through all spheres
+	for (auto& circle : sphereTable) {
+		ray.setEndVertex(circle.rayIntersection(ray));
+
+		if (ray.getEndpoint()[0] == NULL) {
+			continue;
+		}
+
+		// Do different things depending on material of rectangle
+		if (circle.getMaterial() == Material::MIRROR) {
+			glm::vec3 normal = glm::vec3(ray.getEndpoint() - circle.getCentre()); // "Normal" for the circle
+			// Reflected direction
+			glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
+
+			Ray newRay{ ray.getEndpoint(), newDirection };
+
+			// Set up doubly linked list
+			ray.nextRay = &newRay;
+			newRay.prevRay = &ray;
+
+			// Recursively cast ray into scene again until a non mirror is hit
+			// Continue to cast ray with 99 % probability, to avoid stack overflow
+			// After numReflections (default=3) do probability, otherwise reflect all rays
+			if (numReflections > 0) {
+				this->castRay(newRay, numReflections - 1);
+			}
+			else {
+				int randomReflection = rand() % 100;
+				if (randomReflection < RANDOM_REFLECTION) {
+					this->castRay(newRay);
+				}
+			}
+
+			newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
+		}
+	}
+
+	// Go trhrough all tetrahedrons
+	for (auto& tetra : tetrahedronTable) {
+		ray.setEndVertex(tetra.rayIntersection(ray));
+
+		if (ray.getEndpoint()[0] == NULL) {
+			continue;
+		}
+
 	}
 }
