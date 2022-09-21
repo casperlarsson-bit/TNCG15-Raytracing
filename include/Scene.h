@@ -15,6 +15,9 @@ public:
 	// Get the direct light from light source to a specific point
 	ColorDBL directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal);
 
+	// Get the indirect light from other surfaces
+	ColorDBL indirectLight(glm::vec4 rayPosition);
+
 private:
 	glm::vec4 vertexTable[50]; // Vertex table
 	Rectangle rectangleTable[8]; // RectangleTable for the room = 2 + 6 (floor/roof and walls)

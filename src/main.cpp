@@ -1,7 +1,4 @@
 #include <iostream>
-// #include "../include/Ray.h"
-// #include "../include/Triangle.h"
-// #include "../include/Rectangle.h"
 #include "../include/Camera.h"
 #include "../include/Scene.h"
 
@@ -13,7 +10,7 @@ int main() {
     c.renderImage(s);
     c.saveImage();
 
+    system("cls");
     std::cout << "\nFinished!";
-
     return 0;
 }

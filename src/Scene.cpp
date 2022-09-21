@@ -128,8 +128,11 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		}
 		// Lambertian surface, cast ray to the light source to get light on the point
 		else if (rect.getMaterial() == Material::LAMBERTIAN) {
-
+			// Get the light % for direct light
 			ColorDBL directLight = this->directLight(ray.getEndpoint(), rect.getNormal());
+
+			// Get the indirect light
+			ColorDBL indirectLight = this->indirectLight(ray.getEndpoint());
 			ray.setColor(directLight * rect.getColor());
 		}
 	}
@@ -209,6 +212,11 @@ ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
 	const double BRDF = 1 / M_PI;
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
-	lightColor = lightColor * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2))) * 4 * 6400 * BRDF * 1 / NUMBER_OF_LIGHT_RAYS); // Scale light colour in terms of Area, Watt
+	lightColor = lightColor * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2))) * 3200 * BRDF * 1 / NUMBER_OF_LIGHT_RAYS); // Scale light colour in terms of Area, Watt
 	return lightColor;
+}
+
+// Get the indirect light from other surfaces
+ColorDBL Scene::indirectLight(glm::vec4 rayPosition) {
+	return ColorDBL();
 }
