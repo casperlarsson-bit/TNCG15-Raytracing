@@ -32,6 +32,7 @@ Tetrahedron::Tetrahedron(glm::vec4 v0, glm::vec4 v1, glm::vec4 v2, glm::vec4 v3,
 	triangleTable[3].setVertices(vertexTable[3], vertexTable[0], vertexTable[2]);
 
 	material = _material;
+	// Remove n
 	double n = 1.0;
 	for (auto& triangle : triangleTable) {
 		triangle.setColor(_color * n);
@@ -70,4 +71,7 @@ ColorDBL Tetrahedron::getColor() const {
 // Set the colour of the Tetrahedron
 void Tetrahedron::setColor(ColorDBL _color) {
 	color = _color;
+	for (auto& triangle : triangleTable) {
+		triangle.setColor(_color);
+	}
 }
