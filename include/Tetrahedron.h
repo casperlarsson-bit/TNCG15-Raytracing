@@ -31,9 +31,9 @@ public:
 	void setColor(ColorDBL _color);
 
 	
+	Triangle triangleTable[4]; // Triangles to store the surfaces
 private:
 	ColorDBL color;
 	Material material;
 	glm::vec4 vertexTable[4]; // Vertices to build triangles
-	Triangle triangleTable[4]; // Triangles to store the surfaces
 };

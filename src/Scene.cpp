@@ -83,7 +83,7 @@ void Scene::createScene() {
 	sphereTable[0] = Sphere(1.0, glm::vec4(5, 1, 0, 1), ColorDBL(), Material::MIRROR);
 
 	// Tetrahedron in the scene
-	tetrahedronTable[0] = Tetrahedron(glm::vec4(2, 0, -4, 1), glm::vec4(10, 0, -4, 1), glm::vec4(10, -4, -4, 1), glm::vec4(7, -3, 4, 1), ColorDBL(1, 0, 0), Material::LAMBERTIAN);
+	tetrahedronTable[0] = Tetrahedron(glm::vec4(2, 0, -4, 1), glm::vec4(10, 0, -4, 1), glm::vec4(10, -4, -4, 1), glm::vec4(7, -3, 0, 1), ColorDBL(1, 0, 0), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
@@ -172,10 +172,14 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 	// Go trhrough all tetrahedrons
 	for (auto& tetra : tetrahedronTable) {
-		ray.setEndVertex(tetra.rayIntersection(ray));
+		// Go through the triangles in the tetrahedron
+		for (auto& tri : tetra.triangleTable) {
+			ray.setEndVertex(tri.rayIntersection(ray));
 
-		if (ray.getEndpoint()[0] == NULL) {
-			continue;
+			if (ray.getEndpoint()[0] == NULL) {
+				continue;
+			}
+
 		}
 
 	}

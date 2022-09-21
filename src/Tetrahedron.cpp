@@ -13,8 +13,10 @@ Tetrahedron::Tetrahedron() {
 	triangleTable[2].setVertices(vertexTable[3], vertexTable[2], vertexTable[1]);
 	triangleTable[3].setVertices(vertexTable[3], vertexTable[0], vertexTable[2]);
 
-	color = ColorDBL();
 	material = Material::LAMBERTIAN;
+	for (auto& triangle : triangleTable) {
+		triangle.setColor(ColorDBL());
+	}
 }
 
 // Value constructor
@@ -29,8 +31,12 @@ Tetrahedron::Tetrahedron(glm::vec4 v0, glm::vec4 v1, glm::vec4 v2, glm::vec4 v3,
 	triangleTable[2].setVertices(vertexTable[3], vertexTable[2], vertexTable[1]);
 	triangleTable[3].setVertices(vertexTable[3], vertexTable[0], vertexTable[2]);
 
-	color = _color;
 	material = _material;
+	double n = 1.0;
+	for (auto& triangle : triangleTable) {
+		triangle.setColor(_color * n);
+		n /= 1.5;
+	}
 }
 
 // Calculate the intersection of a ray and the surface
