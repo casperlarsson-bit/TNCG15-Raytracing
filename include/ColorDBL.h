@@ -16,6 +16,9 @@ public:
 	// Multiply each colour channel
 	ColorDBL operator*(ColorDBL color) const;
 
+	// Overloaded operator+ to add two colours channel by channel
+	ColorDBL operator+(ColorDBL color) const;
+
 	double red;
 	double green;
 	double blue;

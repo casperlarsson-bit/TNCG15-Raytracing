@@ -16,7 +16,10 @@ public:
 	ColorDBL directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal);
 
 	// Get the indirect light from other surfaces
-	ColorDBL indirectLight(glm::vec4 rayPosition);
+	ColorDBL indirectLight(Ray ray, glm::vec3 surfaceNormal);
+
+	// Create a local coordinate system with orthogonal axes
+	void createLocalCartesianCoordinateSystem(glm::vec3 e1, glm::vec3& e2, glm::vec3& e3) const;
 
 private:
 	glm::vec4 vertexTable[50]; // Vertex table

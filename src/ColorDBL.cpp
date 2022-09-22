@@ -1,4 +1,5 @@
 #include "../include/ColorDBL.h"
+#include "../include/glm/glm.hpp"
 
 
 // Default constructor, 0 0 0
@@ -25,4 +26,14 @@ ColorDBL ColorDBL::operator*(double value) const {
 	// Multiply each colour channel
 ColorDBL ColorDBL::operator*(ColorDBL color) const {
 	return ColorDBL(red * color.red, green * color.green, blue * color.blue);
+}
+
+// Overloaded operator+ to add two colours channel by channel
+ColorDBL ColorDBL::operator+(ColorDBL color) const {
+	double newRed = glm::min(1.0, red + color.red);
+	double newGreen = glm::min(1.0, green + color.green);
+	double newBlue = glm::min(1.0, blue + color.blue);
+
+
+	return ColorDBL(newRed, newGreen, newBlue);
 }

@@ -2,12 +2,19 @@
 #include "../include/glm/glm.hpp"
 #include <iostream>
 #include <math.h>
+#include <random> // Default random engine
+
 #define M_PI 3.14159265358979323846  // Pi
 
 double randomDistribution(double min, double max) {
 	double random = (double)rand() / (double)RAND_MAX; // Random number distributed between 0 and 1
 	return min + (max - min) * random;
 }
+
+// Should replace above function
+std::default_random_engine seed;
+std::uniform_real_distribution<double> distribution(0.0, 1.0);
+
 
 const int RANDOM_REFLECTION = 99; // Percentage to continue cast rays in mirror
 const double MIRROR_VALUE = 0.95; // How much darker the light should be when returned from a mirror
@@ -132,8 +139,8 @@ void Scene::castRay(Ray& ray, int numReflections) {
 			ColorDBL directLight = this->directLight(ray.getEndpoint(), rect.getNormal());
 
 			// Get the indirect light
-			ColorDBL indirectLight = this->indirectLight(ray.getEndpoint());
-			ray.setColor(directLight * rect.getColor());
+			ColorDBL indirectLight = this->indirectLight(ray, rect.getNormal());
+			ray.setColor((indirectLight + directLight) * rect.getColor());
 		}
 	}
 
@@ -173,8 +180,12 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		}
 		// Lambertian surface, cast ray to the light source to get light on the point
 		else if (tri.getMaterial() == Material::LAMBERTIAN) {
+			// Get the light % for direct light
 			ColorDBL directLight = this->directLight(ray.getEndpoint(), tri.getNormal());
-			ray.setColor(directLight * tri.getColor());
+
+			// Get the indirect light
+			ColorDBL indirectLight = this->indirectLight(ray, tri.getNormal());
+			ray.setColor((indirectLight + directLight) * tri.getColor());
 		}
 
 	}
@@ -197,8 +208,8 @@ ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
 	double lightChannel = 0; // Amount of light at each colour channel
 	for (int i = 0; i < NUMBER_OF_LIGHT_RAYS; ++i) {
 		// Create two random parameter variables, uniform distribution
-		double s = randomDistribution(0, 1);
-		double t = randomDistribution(0, 1);
+		double s = distribution(seed);
+		double t = distribution(seed);
 
 		glm::vec4 lightPoint = v1 + (float)s * e1 + (float)t * e2; // Random point on the light source
 		glm::vec3 rayLightDistanceVector = glm::vec3(rayPosition - lightPoint); // d_i
@@ -217,6 +228,45 @@ ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
 }
 
 // Get the indirect light from other surfaces
-ColorDBL Scene::indirectLight(glm::vec4 rayPosition) {
-	return ColorDBL();
+ColorDBL Scene::indirectLight(Ray ray, glm::vec3 surfaceNormal) {
+
+	// Perform Russian roulette to decide if to continue
+	// @TODO Temporarily
+	double random = distribution(seed);
+	if (random < 0.25) return ColorDBL(); // If not to continue ray path
+
+	// Random direction in local hemisphere with nonuniform distribution
+	double randomPhi = 1 - random;
+	double randomOmega = glm::acos(glm::sqrt(1.0 - random));
+
+	// Set up orthogonal local coordinate system
+	glm::vec3 ey;
+	glm::vec3 ez;
+	createLocalCartesianCoordinateSystem(surfaceNormal, ey, ez);
+
+	// Get intersection with hemisphere in local cartesian coordinates
+	double x0 = glm::cos(randomPhi) * glm::sin(randomOmega);
+	double y0 = glm::sin(randomPhi) * glm::sin(randomOmega);
+	double z0 = glm::cos(randomOmega);
+
+	// Convert to global coordinate system
+	glm::vec4 globalIntersectionPoint = glm::vec4(
+		x0 * surfaceNormal.x + y0 * ey.x + z0 * ez.x,
+		x0 * surfaceNormal.y + y0 * ey.y + z0 * ez.y,
+		x0 * surfaceNormal.z + y0 * ey.z + z0 * ez.z,
+		1.0);
+
+	glm::vec4 rayPosition = ray.getEndpoint();
+	Ray reflectionRay{rayPosition, glm::vec3(globalIntersectionPoint - rayPosition)};
+	castRay(reflectionRay);
+
+
+	return reflectionRay.getColor() * ray.getColor() * 0.6;
+}
+
+// Create a local coordinate system with orthogonal axes
+void Scene::createLocalCartesianCoordinateSystem(glm::vec3 e1, glm::vec3& e2, glm::vec3& e3) const {
+	// Make e2 and e3 orthogonal to e3 and each other, and normalise
+	e2 = glm::vec3(e1.z, 0, -e1.x);
+	e3 = glm::cross(e1, e2);
 }

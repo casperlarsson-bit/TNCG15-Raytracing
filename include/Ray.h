@@ -47,7 +47,7 @@ private:
 	glm::vec4 endVertice;
 	glm::vec3 direction;
 
-	// Polygon* startingVertex;
+	//Polygon* startingVertex;
 
 	ColorDBL rayColor;
 };
