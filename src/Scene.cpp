@@ -20,12 +20,8 @@ const int RANDOM_REFLECTION = 99; // Percentage to continue cast rays in mirror
 const double MIRROR_VALUE = 0.95; // How much darker the light should be when returned from a mirror
 const int NUMBER_OF_LIGHT_RAYS = 10;
 
+// Default constructor to setup everything for the scene (Vertextable, Polygons etc.)
 Scene::Scene() {
-
-}
-
-// Setup everything for the scene (Polygons etc.)
-void Scene::createScene() {
 	// Set up vertex table
 
 	// Floor
@@ -106,6 +102,8 @@ void Scene::castRay(Ray& ray, int numReflections) {
 			continue;
 		}
 
+		ray.rayPolygonIntersection = &rect;
+
 		// Do different things depending on material of rectangle
 		// Mirror, reflect ray and cast it again
 		if (rect.getMaterial() == Material::MIRROR) {
@@ -136,10 +134,10 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		// Lambertian surface, cast ray to the light source to get light on the point
 		else if (rect.getMaterial() == Material::LAMBERTIAN) {
 			// Get the light % for direct light
-			ColorDBL directLight = this->directLight(ray.getEndpoint(), rect.getNormal());
+			ColorDBL directLight = this->directLight(ray);
 
 			// Get the indirect light
-			ColorDBL indirectLight = this->indirectLight(ray, rect.getNormal());
+			ColorDBL indirectLight = this->indirectLight(ray);
 			ray.setColor((indirectLight + directLight) * rect.getColor());
 		}
 	}
@@ -150,6 +148,8 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		if (ray.getEndpoint()[0] == NULL) {
 			continue;
 		}
+
+		ray.rayPolygonIntersection = &tri;
 
 		// Do different things depending on material of rectangle
 		// Mirror, reflect ray and cast it again
@@ -181,10 +181,10 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		// Lambertian surface, cast ray to the light source to get light on the point
 		else if (tri.getMaterial() == Material::LAMBERTIAN) {
 			// Get the light % for direct light
-			ColorDBL directLight = this->directLight(ray.getEndpoint(), tri.getNormal());
+			ColorDBL directLight = this->directLight(ray);
 
 			// Get the indirect light
-			ColorDBL indirectLight = this->indirectLight(ray, tri.getNormal());
+			ColorDBL indirectLight = this->indirectLight(ray);
 			ray.setColor((indirectLight + directLight) * tri.getColor());
 		}
 
@@ -193,7 +193,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 }
 
 // Get the direct light from light source to a specific point
-ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
+ColorDBL Scene::directLight(const Ray& ray) {
 	// Define area light
 	glm::vec4 v0 = glm::vec4(5, 0, 5, 1);
 	glm::vec4 v1 = glm::vec4(5.1, 0, 5, 1);
@@ -205,6 +205,7 @@ ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
 
 	glm::vec3 lightNormal = glm::normalize(glm::cross(glm::vec3(e2), glm::vec3(e1)));
 
+	glm::vec3 surfaceNormal = ray.getPolygon()->getNormal();
 	double lightChannel = 0; // Amount of light at each colour channel
 	for (int i = 0; i < NUMBER_OF_LIGHT_RAYS; ++i) {
 		// Create two random parameter variables, uniform distribution
@@ -212,7 +213,7 @@ ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
 		double t = distribution(seed);
 
 		glm::vec4 lightPoint = v1 + (float)s * e1 + (float)t * e2; // Random point on the light source
-		glm::vec3 rayLightDistanceVector = glm::vec3(rayPosition - lightPoint); // d_i
+		glm::vec3 rayLightDistanceVector = glm::vec3(ray.getEndpoint() - lightPoint); // d_i
 
 		double cosX = glm::dot(lightNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
 		double cosY = -glm::dot(surfaceNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
@@ -228,14 +229,15 @@ ColorDBL Scene::directLight(glm::vec4 rayPosition, glm::vec3 surfaceNormal) {
 }
 
 // Get the indirect light from other surfaces
-ColorDBL Scene::indirectLight(Ray ray, glm::vec3 surfaceNormal) {
+ColorDBL Scene::indirectLight(const Ray& ray) {
 
-	// Perform Russian roulette to decide if to continue
-	// @TODO Temporarily
+	// Perform Russian roulette to decide if to continue, using Rho as probability of surviving
 	double random = distribution(seed);
-	if (random < 0.25) return ColorDBL(); // If not to continue ray path
+	if (random > ray.getPolygon()->getRho()) return ColorDBL(); // If not to continue ray path
 
-	// Random direction in local hemisphere with nonuniform distribution
+	glm::vec3 surfaceNormal = ray.getPolygon()->getNormal();
+
+	// Random direction in local hemisphere with nonuniform distribution, reuse random variable
 	double randomPhi = 1 - random;
 	double randomOmega = glm::acos(glm::sqrt(1.0 - random));
 

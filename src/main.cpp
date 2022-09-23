@@ -9,7 +9,6 @@ int main() {
     Camera c{};
     Scene s{};
 
-    s.createScene();
     c.renderImage(s);
     c.saveImage();
 

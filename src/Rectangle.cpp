@@ -3,7 +3,10 @@
 
 // Default constructor
 Rectangle::Rectangle() {
-
+	v0 = glm::vec4(0, 0, 0, 1);
+	v1 = glm::vec4(1, 0, 0, 1);
+	v2 = glm::vec4(1, 1, 0, 1);
+	v3 = glm::vec4(0, 1, 0, 1);
 }
 
 // Calculate the normal automatically from the vertices
