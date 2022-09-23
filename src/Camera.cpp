@@ -1,6 +1,7 @@
 #include "../include/Camera.h"
 #include <iostream>
 #include <fstream>
+#include <time.h>
 
 // Default constructor sets resolution to 600x600
 Camera::Camera() : image(SIZE, std::vector<Pixel>(SIZE)) {
@@ -15,6 +16,7 @@ Camera::Camera(int _res) : image(_res, std::vector<Pixel>(_res)) {
 // Render the image by casting rays and changing the pixel value
 void Camera::renderImage(Scene& scene) {
 	// Loop through all pixels
+	srand((int)time(NULL));
 	std::cout << "Render image...\n";
 	for (std::size_t i = 0; i < image.size(); ++i) {
 		for (std::size_t j = 0; j < image.size(); ++j) {
@@ -25,9 +27,14 @@ void Camera::renderImage(Scene& scene) {
 			// colour of the Polygon it hits
 			scene.castRay(pixelRay);
 			image[i][j].setColor(pixelRay.getColor());
+
+			// Update the max pixel value if new is found
+			double newMax = glm::max(glm::max(pixelRay.getColor().red, pixelRay.getColor().blue), pixelRay.getColor().green);
+			if (newMax > maxD) maxD = newMax;
 		}
 
-		std::cout << (int)((double)i / image.size() * 100 + 0.5) << "% Complete\r";
+		// Display progress bar
+		progressBar((double)i / image.size());
 	}
 }
 
@@ -45,16 +52,16 @@ void Camera::saveImage() const {
 	imageFile << "P3\n" << image.size() << " " << image.size() << "\n255\n";
 
 	// Access all pixels
-	std::cout << "\nSave image...\n";
+	std::cout << "\nSaving image... \n";
 	for (std::size_t i = 0; i < image.size(); ++i) {
 		for (std::size_t j = 0; j < image.size(); ++j) {
-			// @TODO Scale for highest value in the scene
-			imageFile << (int)(image[i][j].getColor().red * 255) << " " <<
-				(int)(image[i][j].getColor().green * 255) << " " <<	
-				(int)(image[i][j].getColor().blue * 255) << "\n";
+			imageFile << (int)(image[i][j].getColor().red * 255 / maxD) << " " <<
+				(int)(image[i][j].getColor().green * 255 / maxD) << " " <<	
+				(int)(image[i][j].getColor().blue * 255 / maxD) << "\n";
 		}
-
-		std::cout << (int)((double)i / image.size() * 100 + 0.5) << "% Complete\r";
+		
+		// Display progress bar
+		progressBar((double)i / image.size());
 	}
 
 	imageFile.close();

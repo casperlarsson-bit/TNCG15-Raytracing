@@ -3,6 +3,9 @@
 #include "ColorDBL.h"
 #include "glm/glm.hpp"
 
+// Forward declaration https://stackoverflow.com/questions/8526819/c-header-files-including-each-other-mutually
+class Polygon;
+
 class Ray {
 public:
 	// Default constructor
@@ -40,14 +43,17 @@ public:
 	// Get direction of Ray
 	glm::vec3 getDirection() const;
 
+	// Get the Polygon which the Ray intersected with
+	Polygon* getPolygon() const;
+
 	Ray* prevRay;
 	Ray* nextRay;
+	Polygon* rayPolygonIntersection;
 private:
 	glm::vec4 startVertice;
 	glm::vec4 endVertice;
 	glm::vec3 direction;
 
-	// Polygon* startingVertex;
 
 	ColorDBL rayColor;
 };
