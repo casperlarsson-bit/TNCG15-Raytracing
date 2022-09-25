@@ -79,7 +79,7 @@ Scene::Scene() {
 	rectangleTable[4].setColor(ColorDBL(0.2, 0.27, 0.66));
 	rectangleTable[5].setColor(ColorDBL(0.66, 0.2, 0.2));
 	rectangleTable[6].setColor(ColorDBL(0.2, 0.63, 0.66));
-	rectangleTable[6].setMaterial(Material::MIRROR);
+	// rectangleTable[6].setMaterial(Material::MIRROR);
 	rectangleTable[7].setColor(ColorDBL(0.43, 0.2, 0.66));
 
 	triangleTable[0].setColor(ColorDBL(0.8, 0.8, 0.8));
@@ -87,9 +87,9 @@ Scene::Scene() {
 	triangleTable[2].setColor(ColorDBL(0.1, 0.1, 0.1));
 	triangleTable[3].setColor(ColorDBL(0.1, 0.1, 0.1));
   
-  // Spheres in the scene
+	// Spheres in the scene
 	sphereTable[0] = Sphere(1.0, glm::vec4(5, 1, 0, 1), ColorDBL(), Material::MIRROR);
-	sphereTable[1] = Sphere(0.5, glm::vec4(2, -1, -2, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
+	//sphereTable[1] = Sphere(0.5, glm::vec4(2, -1, -2, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
 	tetrahedronTable[0] = Tetrahedron(glm::vec4(2, 0, -4, 1), glm::vec4(10, 0, -4, 1), glm::vec4(10, -4, -4, 1), glm::vec4(7, -3, 0, 1), ColorDBL(1, 0, 0), Material::LAMBERTIAN);
@@ -119,57 +119,6 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
 		handleReflection(ray, tri, numReflections);
-	}
-}
-
-// Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
-void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
-	ray.rayPolygonIntersection = &polygon;
-
-	// Do different things depending on material of rectangle
-	switch (polygon.getMaterial()) {
-		// Mirror, reflect ray and cast it again
-	case Material::MIRROR: {
-		// Reflected direction
-		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), polygon.getNormal()) * polygon.getNormal();
-
-		Ray newRay{ ray.getEndpoint(), newDirection };
-
-		// Set up doubly linked list
-		ray.nextRay = &newRay;
-		newRay.prevRay = &ray;
-
-		// Recursively cast ray into scene again until a non mirror is hit
-		// Continue to cast ray with 99 % probability, to avoid stack overflow when "infinite mirror"
-		// After numReflections (default=3) do probability, otherwise reflect all rays
-		if (numReflections > 0) {
-			this->castRay(newRay, numReflections - 1);
-		}
-		else {
-			int randomReflection = (int)(distribution(seed) * 100);
-			if (randomReflection < RANDOM_REFLECTION) {
-				this->castRay(newRay);
-			}
-		}
-
-		newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
-		break;
-	}
-	// Lambertian surface, cast ray to the light source and indirect light
-	case Material::LAMBERTIAN: {
-		// Get the light % for direct light
-		ColorDBL directLight = this->directLight(ray);
-
-		// Get the indirect light
-		ColorDBL indirectLight = this->indirectLight(ray);
-		ray.setColor((indirectLight + directLight) * polygon.getColor());
-		break;
-	}
-	case Material::TRANSPARENT: {
-		break;
-	}
-	default:
-		break;
 	}
 
 	// Go through all spheres
@@ -221,6 +170,57 @@ void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
 
 		}
 
+	}
+}
+
+// Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
+void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
+	ray.rayPolygonIntersection = &polygon;
+
+	// Do different things depending on material of rectangle
+	switch (polygon.getMaterial()) {
+		// Mirror, reflect ray and cast it again
+	case Material::MIRROR: {
+		// Reflected direction
+		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), polygon.getNormal()) * polygon.getNormal();
+
+		Ray newRay{ ray.getEndpoint(), newDirection };
+
+		// Set up doubly linked list
+		ray.nextRay = &newRay;
+		newRay.prevRay = &ray;
+
+		// Recursively cast ray into scene again until a non mirror is hit
+		// Continue to cast ray with 99 % probability, to avoid stack overflow when "infinite mirror"
+		// After numReflections (default=3) do probability, otherwise reflect all rays
+		if (numReflections > 0) {
+			this->castRay(newRay, numReflections - 1);
+		}
+		else {
+			int randomReflection = (int)(distribution(seed) * 100);
+			if (randomReflection < RANDOM_REFLECTION) {
+				this->castRay(newRay);
+			}
+		}
+
+		newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
+		break;
+	}
+	// Lambertian surface, cast ray to the light source and indirect light
+	case Material::LAMBERTIAN: {
+		// Get the light % for direct light
+		ColorDBL directLight = this->directLight(ray);
+
+		// Get the indirect light
+		ColorDBL indirectLight = this->indirectLight(ray);
+		ray.setColor((indirectLight + directLight) * polygon.getColor());
+		break;
+	}
+	case Material::TRANSPARENT: {
+		break;
+	}
+	default:
+		break;
 	}
 }
 
