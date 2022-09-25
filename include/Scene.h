@@ -1,6 +1,8 @@
 #pragma once
 #include "Rectangle.h"
 #include "Triangle.h"
+#include "Sphere.h"
+#include "Tetrahedron.h"
 
 class Scene {
 public:
@@ -25,4 +27,6 @@ private:
 	glm::vec4 vertexTable[12]; // Vertex table
 	Rectangle rectangleTable[8]; // RectangleTable for the room = 2 + 6 (floor/roof and walls)
 	Triangle triangleTable[4]; // TriangleTable for the floor and roof
+  Sphere sphereTable[2]; // SphereTable with all object spheres in the scene
+	Tetrahedron tetrahedronTable[1];
 };

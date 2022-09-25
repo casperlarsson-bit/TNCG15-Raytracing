@@ -86,6 +86,13 @@ Scene::Scene() {
 	triangleTable[1].setColor(ColorDBL(0.8, 0.8, 0.8));
 	triangleTable[2].setColor(ColorDBL(0.1, 0.1, 0.1));
 	triangleTable[3].setColor(ColorDBL(0.1, 0.1, 0.1));
+  
+  // Spheres in the scene
+	sphereTable[0] = Sphere(1.0, glm::vec4(5, 1, 0, 1), ColorDBL(), Material::MIRROR);
+	sphereTable[1] = Sphere(0.5, glm::vec4(2, -1, -2, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
+
+	// Tetrahedron in the scene
+	tetrahedronTable[0] = Tetrahedron(glm::vec4(2, 0, -4, 1), glm::vec4(10, 0, -4, 1), glm::vec4(10, -4, -4, 1), glm::vec4(7, -3, 0, 1), ColorDBL(1, 0, 0), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
@@ -102,7 +109,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		handleReflection(ray, rect, numReflections);
 	}
 
-	// Triangles
+	// Go through all triangles
 	for (auto& tri : triangleTable) {
 		ray.setEndVertex(tri.rayIntersection(ray));
 
@@ -163,6 +170,57 @@ void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
 	}
 	default:
 		break;
+	}
+
+	// Go through all spheres
+	for (auto& circle : sphereTable) {
+		ray.setEndVertex(circle.rayIntersection(ray));
+
+		if (ray.getEndpoint()[0] == NULL) {
+			continue;
+		}
+
+		// Do different things depending on material of rectangle
+		if (circle.getMaterial() == Material::MIRROR) {
+			glm::vec3 normal = glm::vec3(ray.getEndpoint() - circle.getCentre()); // "Normal" for the circle
+			// Reflected direction
+			glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
+
+			Ray newRay{ ray.getEndpoint(), newDirection };
+
+			// Set up doubly linked list
+			ray.nextRay = &newRay;
+			newRay.prevRay = &ray;
+
+			// Recursively cast ray into scene again until a non mirror is hit
+			// Continue to cast ray with 99 % probability, to avoid stack overflow
+			// After numReflections (default=3) do probability, otherwise reflect all rays
+			if (numReflections > 0) {
+				this->castRay(newRay, numReflections - 1);
+			}
+			else {
+				int randomReflection = rand() % 100;
+				if (randomReflection < RANDOM_REFLECTION) {
+					this->castRay(newRay);
+				}
+			}
+
+			newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
+		}
+	}
+
+	// Go trhrough all tetrahedrons
+	for (auto& tetra : tetrahedronTable) {
+		// Go through the triangles in the tetrahedron
+		for (auto& tri : tetra.triangleTable) {
+			//ray.setEndVertex(tri.rayIntersection(ray));
+
+			if (ray.getEndpoint()[0] == NULL) {
+				continue;
+			}
+
+		}
+
 	}
 }
 
