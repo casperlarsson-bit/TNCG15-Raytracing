@@ -9,6 +9,9 @@ Ray::Ray() {
 	endVertice = startVertice + glm::vec4(direction, 1);
 	prevRay = nullptr;
 	nextRay = nullptr;
+
+	Polygon* newPolygon{};
+	rayPolygonIntersection = newPolygon;
 }
 
 // Constructor which sets starting position and direction
@@ -21,6 +24,9 @@ Ray::Ray(glm::vec4 _startPosition, glm::vec3 _direction) {
 
 	prevRay = nullptr;
 	nextRay = nullptr;
+
+	Polygon* newPolygon{};
+	rayPolygonIntersection = newPolygon;
 }
 
 // Destructor
@@ -66,4 +72,9 @@ glm::vec4 Ray::getEndpoint() const {
 // Get direction of Ray
 glm::vec3 Ray::getDirection() const {
 	return direction;
+}
+
+// Get the Polygon which the Ray intersected with
+Polygon* Ray::getPolygon() const {
+	return rayPolygonIntersection;
 }

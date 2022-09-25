@@ -6,6 +6,7 @@
 #include "Ray.h"
 #include "Scene.h"
 #include "glm/glm.hpp"
+#include "functions.h"
 
 const int SIZE = 600; // Default image resolution (square)
 
@@ -26,4 +27,5 @@ public:
 private:
 	std::vector<std::vector<Pixel>> image;
 	glm::vec4 eyePosition = glm::vec4(-1, 0, 0, 1);
+	double maxD; // Maximum double value in the image, to divide all pixels when saving image
 };

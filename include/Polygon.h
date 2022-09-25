@@ -24,7 +24,7 @@ public:
 	// Get the colour of the Polygon
 	ColorDBL getColor() const;
 
-	// Set the colour of the Polygon
+	// Set the colour of the Polygon, and update rho
 	void setColor(ColorDBL _color);
 
 	// Calculate the intersection of a ray and the surface
@@ -38,8 +38,12 @@ public:
 	// Sets the material of the Polygon
 	void setMaterial(Material _material);
 
+	// Get the Lambertian rho
+	double getRho() const;
+
 	ColorDBL color;
 	glm::vec3 normal;
 private:
 	Material material;
+	double rho;
 };
