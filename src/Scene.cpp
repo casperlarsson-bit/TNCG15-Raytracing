@@ -89,10 +89,10 @@ Scene::Scene() {
   
 	// Spheres in the scene
 	sphereTable[0] = Sphere(1.0, glm::vec4(5, 1, 0, 1), ColorDBL(), Material::MIRROR);
-	//sphereTable[1] = Sphere(0.5, glm::vec4(2, -1, -2, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
+	// sphereTable[1] = Sphere(0.5, glm::vec4(2, -1, -2, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
-	tetrahedronTable[0] = Tetrahedron(glm::vec4(2, 0, -4, 1), glm::vec4(10, 0, -4, 1), glm::vec4(10, -4, -4, 1), glm::vec4(7, -3, 0, 1), ColorDBL(1, 0, 0), Material::LAMBERTIAN);
+	tetrahedronTable[0] = Tetrahedron(glm::vec3(7, -2, -1), ColorDBL(0.16, 0.04, 0.32), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
@@ -107,6 +107,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
 		handleReflection(ray, rect, numReflections);
+		break;
 	}
 
 	// Go through all triangles
@@ -119,6 +120,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
 		handleReflection(ray, tri, numReflections);
+		break;
 	}
 
 	// Go through all spheres
@@ -130,7 +132,9 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		}
 
 		// Do different things depending on material of rectangle
-		if (circle.getMaterial() == Material::MIRROR) {
+		switch (circle.getMaterial()) {
+			// Mirror, reflect ray and cast it again
+		case Material::MIRROR: {
 			glm::vec3 normal = glm::vec3(ray.getEndpoint() - circle.getCentre()); // "Normal" for the circle
 			// Reflected direction
 			glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
@@ -155,21 +159,42 @@ void Scene::castRay(Ray& ray, int numReflections) {
 			}
 
 			newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
+			break;
 		}
+							 // Lambertian surface, cast ray to the light source and indirect light
+		case Material::LAMBERTIAN: {
+			// Get the light % for direct light
+			ColorDBL directLight = this->directLight(ray);
+
+			// Get the indirect light
+			ColorDBL indirectLight = this->indirectLight(ray);
+			ray.setColor((indirectLight + directLight) * circle.getColor());
+			break;
+		}
+		case Material::TRANSPARENT: {
+			break;
+		}
+		default:
+			break;
+		}
+
+		break;
 	}
 
 	// Go trhrough all tetrahedrons
 	for (auto& tetra : tetrahedronTable) {
 		// Go through the triangles in the tetrahedron
 		for (auto& tri : tetra.triangleTable) {
-			//ray.setEndVertex(tri.rayIntersection(ray));
+			ray.setEndVertex(tri.rayIntersection(ray));
 
 			if (ray.getEndpoint()[0] == NULL) {
 				continue;
 			}
 
+			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+			handleReflection(ray, tri, numReflections);
+			break;
 		}
-
 	}
 }
 
@@ -254,9 +279,11 @@ ColorDBL Scene::directLight(const Ray& ray) {
 	}
 
 	const double BRDF = 1 / M_PI;
+	// @TODO Fix function v(..) for shadows
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
 	lightColor = lightColor * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2))) * 3200 * BRDF * 1 / NUMBER_OF_LIGHT_RAYS); // Scale light colour in terms of Area, Watt
+	
 	return lightColor;
 }
 

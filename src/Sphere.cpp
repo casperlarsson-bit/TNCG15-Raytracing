@@ -29,10 +29,10 @@ glm::vec4 Sphere::rayIntersection(Ray& ray) const {
 	double c3 = glm::dot(rayStart - centreVertex, rayStart - centreVertex) - radius * radius;
 
 	// Arg is the value under square root
-	double arg = c2 * c2 - 4 * c1 * c3;
+	double arg = c2 * c2 - 4.0 * c1 * c3;
 
 	// Ray misses Sphere or just about hits it
-	if (arg < 0.01) return glm::vec4(NULL, NULL, NULL, NULL);
+	if (arg < COMPARE_ELLIPSE) return glm::vec4(NULL, NULL, NULL, NULL);
 
 	// Time parameter for ray intersection, store only the lowest one
 	double t = (-c2 - glm::sqrt(arg)) / (2 * c1);

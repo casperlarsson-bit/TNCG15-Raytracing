@@ -4,7 +4,8 @@
 #include "Ray.h"
 #include "Material.h"
 
-const double compareEllipse = 0.00001;
+const double COMPARE_ELLIPSE = 0.00001;
+const double T_MAX = 100;
 
 class Polygon {
 public:

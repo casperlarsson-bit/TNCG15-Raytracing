@@ -41,7 +41,7 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 	glm::vec4 x_i = rayStart + glm::vec4(rayDirection, 1) * (float)t;
 
 	// If rectangle is hit from back side
-	if (glm::dot(glm::cross(rayDirection, glm::vec3(edge2)), glm::vec3(edge1)) < compareEllipse) {
+	if (glm::dot(glm::cross(rayDirection, glm::vec3(edge2)), glm::vec3(edge1)) < COMPARE_ELLIPSE) {
 		return glm::vec4(NULL, NULL, NULL, NULL);
 	}
 

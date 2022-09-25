@@ -3,6 +3,7 @@
 #include "ColorDBL.h"
 #include "Material.h"
 #include "Ray.h"
+#include "Polygon.h"
 
 class Sphere {
 public:

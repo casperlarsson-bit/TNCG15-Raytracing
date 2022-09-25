@@ -11,7 +11,7 @@ public:
 	Tetrahedron();
 
 	// Value constructor
-	Tetrahedron(glm::vec4 v0, glm::vec4 v1, glm::vec4 v2, glm::vec4 v3, ColorDBL _color, Material _material);
+	Tetrahedron(glm::vec3 _midVertex, ColorDBL _color, Material _material);
 
 	// Calculate the intersection of a ray and the surface
 	// Return the vertex where it hits
