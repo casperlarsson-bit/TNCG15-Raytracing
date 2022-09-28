@@ -5,12 +5,12 @@
 
 // Default constructor sets resolution to 600x600
 Camera::Camera() : image(SIZE, std::vector<Pixel>(SIZE)) {
-
+	maxD = 0;
 }
 
 // Constructor which sets the resolution to res (square)
 Camera::Camera(int _res) : image(_res, std::vector<Pixel>(_res)) {
-
+	maxD = 0;
 }
 
 // Render the image by casting rays and changing the pixel value
