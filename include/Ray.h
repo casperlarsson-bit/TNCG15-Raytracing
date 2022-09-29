@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ColorDBL.h"
+#include "Material.h"
 #include "glm/glm.hpp"
 
 // Forward declaration https://stackoverflow.com/questions/8526819/c-header-files-including-each-other-mutually
@@ -12,7 +13,7 @@ public:
 	Ray();
 
 	// Constructor which sets starting position and direction
-	Ray(glm::vec4 _startPosition, glm::vec3 _direction);
+	Ray(glm::vec4 _startPosition, glm::vec3 _direction, RayType _rayType = RayType::PRIMARY);
 
 	// Destructor
 	~Ray();
@@ -46,6 +47,9 @@ public:
 	// Get the Polygon which the Ray intersected with
 	Polygon* getPolygon() const;
 
+	// Get the type of ray (shadow, primary etc.)
+	RayType getRayType() const;
+
 	Ray* prevRay;
 	Ray* nextRay;
 	Polygon* rayPolygonIntersection;
@@ -54,6 +58,6 @@ private:
 	glm::vec4 endVertice;
 	glm::vec3 direction;
 
-
+	RayType rayType;
 	ColorDBL rayColor;
 };

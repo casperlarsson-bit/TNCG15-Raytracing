@@ -13,7 +13,7 @@ std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
 const int RANDOM_REFLECTION = 99; // Percentage to continue cast rays in mirror, remove this
 const double MIRROR_VALUE = 0.95; // How much darker the light should be when returned from a mirror
-const int NUMBER_OF_LIGHT_RAYS = 10;
+const int NUMBER_OF_SHADOW_RAYS = 10;
 
 // Default constructor to setup everything for the scene (Vertextable, Polygons etc.)
 Scene::Scene() {
@@ -75,7 +75,7 @@ Scene::Scene() {
 	rectangleTable[1].setColor(ColorDBL(0.1, 0.1, 0.1));
 	rectangleTable[2].setColor(ColorDBL(0.2, 0.66, 0.32));
 	rectangleTable[3].setColor(ColorDBL(0.66, 0.62, 0.2));
-	rectangleTable[3].setMaterial(Material::MIRROR);
+	// rectangleTable[3].setMaterial(Material::MIRROR);
 	rectangleTable[4].setColor(ColorDBL(0.2, 0.27, 0.66));
 	rectangleTable[5].setColor(ColorDBL(0.66, 0.2, 0.2));
 	rectangleTable[6].setColor(ColorDBL(0.2, 0.63, 0.66));
@@ -86,13 +86,13 @@ Scene::Scene() {
 	triangleTable[1].setColor(ColorDBL(0.8, 0.8, 0.8));
 	triangleTable[2].setColor(ColorDBL(0.1, 0.1, 0.1));
 	triangleTable[3].setColor(ColorDBL(0.1, 0.1, 0.1));
-  
+
 	// Spheres in the scene
-	sphereTable[0] = Sphere(1.0, glm::vec4(5, 1, 0, 1), ColorDBL(), Material::MIRROR);
+	sphereTable[0] = Sphere(1.0, glm::vec4(5, 1, -1, 1), ColorDBL(), Material::MIRROR);
 	// sphereTable[1] = Sphere(0.5, glm::vec4(2, -1, -2, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
-	tetrahedronTable[0] = Tetrahedron(glm::vec3(7, -2, -1), ColorDBL(0.16, 0.04, 0.32), Material::LAMBERTIAN);
+	tetrahedronTable[0] = Tetrahedron(glm::vec3(4, -1, -1), ColorDBL(0.16, 0.04, 0.32), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
@@ -106,7 +106,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		}
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-		handleReflection(ray, rect, numReflections);
+		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, rect, numReflections);
 		break;
 	}
 
@@ -119,7 +119,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		}
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-		handleReflection(ray, tri, numReflections);
+		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
 		break;
 	}
 
@@ -132,7 +132,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		}
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-		handleReflection(ray, circle, numReflections);
+		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, circle, numReflections);
 		break;
 	}
 
@@ -147,7 +147,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 			}
 
 			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			handleReflection(ray, tri, numReflections);
+			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
 			break;
 		}
 	}
@@ -155,6 +155,8 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 // Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
 void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
+	if (ray.getRayType() == RayType::SHADOW) std::cout << "HEJ\n";
+
 	ray.rayPolygonIntersection = &polygon;
 
 	// Do different things depending on material of rectangle
@@ -269,25 +271,37 @@ ColorDBL Scene::directLight(const Ray& ray) {
 
 	glm::vec3 surfaceNormal = ray.getPolygon()->getNormal();
 	double lightChannel = 0; // Amount of light at each colour channel
-	for (int i = 0; i < NUMBER_OF_LIGHT_RAYS; ++i) {
+	for (int i = 0; i < NUMBER_OF_SHADOW_RAYS; ++i) {
 		// Create two random parameter variables, uniform distribution
 		double s = distribution(seed);
 		double t = distribution(seed);
 
 		glm::vec4 lightPoint = v1 + (float)s * e1 + (float)t * e2; // Random point on the light source
-		glm::vec3 rayLightDistanceVector = glm::vec3(ray.getEndpoint() - lightPoint); // d_i
+		glm::vec3 rayLightDistanceVector = glm::vec3(lightPoint - ray.getEndpoint()); // d_i
 
 		double cosX = glm::dot(lightNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
 		double cosY = -glm::dot(surfaceNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
 
-		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2));
+		Ray shadowRay = Ray(ray.getEndpoint(), glm::normalize(rayLightDistanceVector), RayType::SHADOW);
+		castRay(shadowRay);
+		double shadowRayLength = glm::length(shadowRay.getEndpoint() - shadowRay.getStartpoint());
+		double V_xy = 0.0;
+		if (shadowRayLength < glm::length(rayLightDistanceVector)) {
+			V_xy = 0.0;
+		}
+		else {
+			V_xy = 1.0;
+		}
+		// bool V_xy = false;
+
+		lightChannel +=  glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)) * V_xy;
 	}
 
 	const double BRDF = 1 / M_PI;
 	// @TODO Fix function v(..) for shadows
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
-	lightColor = lightColor * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2))) * 3200 * BRDF * 1 / NUMBER_OF_LIGHT_RAYS); // Scale light colour in terms of Area, Watt
+	lightColor = lightColor * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2))) * 3200 * BRDF * 1 / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
 	
 	return lightColor;
 }

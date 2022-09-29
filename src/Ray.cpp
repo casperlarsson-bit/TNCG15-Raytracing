@@ -12,10 +12,11 @@ Ray::Ray() {
 
 	Polygon* newPolygon{};
 	rayPolygonIntersection = newPolygon;
+	rayType = RayType::PRIMARY;
 }
 
 // Constructor which sets starting position and direction
-Ray::Ray(glm::vec4 _startPosition, glm::vec3 _direction) {
+Ray::Ray(glm::vec4 _startPosition, glm::vec3 _direction, RayType _rayType) {
 	startVertice = _startPosition;
 	direction = _direction;
 
@@ -27,6 +28,7 @@ Ray::Ray(glm::vec4 _startPosition, glm::vec3 _direction) {
 
 	Polygon* newPolygon{};
 	rayPolygonIntersection = newPolygon;
+	rayType = _rayType;
 }
 
 // Destructor
@@ -77,4 +79,9 @@ glm::vec3 Ray::getDirection() const {
 // Get the Polygon which the Ray intersected with
 Polygon* Ray::getPolygon() const {
 	return rayPolygonIntersection;
+}
+
+// Get the type of ray (shadow, primary etc.)
+RayType Ray::getRayType() const {
+	return rayType;
 }
