@@ -89,7 +89,7 @@ Scene::Scene() {
 
 	// Spheres in the scene
 	sphereTable[0] = Sphere(1.0, glm::vec4(6, 1, -1, 1), ColorDBL(1, 0, 1), Material::MIRROR);
-	// sphereTable[1] = Sphere(0.5, glm::vec4(2, -1, -2, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
+	sphereTable[1] = Sphere(0.8, glm::vec4(4, -3, -2, 1), ColorDBL(1, 0, 1), Material::TRANSPARENT);
 
 	// Tetrahedron in the scene
 	tetrahedronTable[0] = Tetrahedron(glm::vec3(8, -1, -3), ColorDBL(0.16, 0.04, 0.32), Material::LAMBERTIAN);
@@ -210,7 +210,7 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 	switch (sphere.getMaterial()) {
 		// Mirror, reflect ray and cast it again
 	case Material::MIRROR: {
-		glm::vec3 normal = glm::vec3(ray.getEndpoint() - sphere.getCentre()); // "Normal" for the circle
+		glm::vec3 normal = glm::vec3(ray.getEndpoint() - sphere.getCentre()); // Normal for the sphere
 		// Reflected direction
 		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
 
@@ -236,7 +236,7 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 		newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
 		break;
 	}
-						 // Lambertian surface, cast ray to the light source and indirect light
+	// Lambertian surface, cast ray to the light source and indirect light
 	case Material::LAMBERTIAN: {
 		// Get the light % for direct light
 		ColorDBL directLight = this->directLight(ray);
@@ -246,7 +246,80 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 		ray.setColor((indirectLight + directLight) * sphere.getColor());
 		break;
 	}
+	// Transparent surface
 	case Material::TRANSPARENT: {
+		glm::vec3 sphereNormal = glm::normalize(glm::vec3(ray.getEndpoint() - sphere.getCentre())); // Normal for the sphere
+		glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
+
+		double n1 = 1.0; // Air
+		double n2 = 1.5; // Glass
+
+		// Schlick's law for BRDF
+		double R0 = glm::pow((n1 - n2) / (n1 + n2), 2);
+		double reflectedBRDF = R0 + (1.0 - R0) * glm::pow(1.0 - glm::cos(glm::dot(ingoingRayDirection, sphereNormal)), 5);
+		//double transmittedBRDF = 1.0 - reflectedBRDF; // Unnecessary?
+
+		if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
+			sphereNormal = -sphereNormal; // Invert normal since we are inside the sphere
+
+			// Test if we have total reflection
+			// Total reflection, only calculate reflected ray
+			if (glm::sin(glm::dot(ingoingRayDirection, sphereNormal) * n1 / n2) > 1) {
+				// Reflected direction
+				glm::vec3 reflectedDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), sphereNormal) * sphereNormal;
+
+				Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
+
+				// Set up doubly linked list
+				ray.nextRay = &reflectedRay;
+				reflectedRay.prevRay = &ray;
+
+				// Recursively cast reflected ray into scene
+				castRay(reflectedRay);
+
+				reflectedRay.prevRay->setColor(reflectedRay.getColor());
+
+				break;
+			}
+
+			// Not total reflection, calculate in the same way as if from outside sphere
+			// Normal is inverted already
+		}
+		
+		// Reflect ray, not refract
+		if (distribution(seed) < reflectedBRDF) {
+			// Reflected direction
+			glm::vec3 reflectedDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), sphereNormal) * sphereNormal;
+				
+			Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
+
+			// Set up doubly linked list
+			ray.nextRay = &reflectedRay;
+			reflectedRay.prevRay = &ray;
+
+			// Recursively cast reflected ray into scene
+			castRay(reflectedRay); 
+
+			reflectedRay.prevRay->setColor(reflectedRay.getColor());
+		}
+		// Refract ray, not reflect
+		else {
+			double R = n1 / n2; // SinB / SinOmega, ratio of refractive index
+			// Reflected direction
+			glm::vec3 refractedDirection = (float)R * ingoingRayDirection + sphereNormal * (float)(-R * glm::dot(sphereNormal, ingoingRayDirection) - glm::sqrt(1 - R * R * (1 - glm::pow(glm::dot(sphereNormal, ingoingRayDirection), 2))));
+
+			Ray refractedRay = Ray(ray.getEndpoint(), refractedDirection, RayType::INSIDE_TRANSPARENT);
+
+			// Set up doubly linked list
+			ray.nextRay = &refractedRay;
+			refractedRay.prevRay = &ray;
+
+			// Recursively cast refracted ray into scene
+			castRay(refractedRay);
+
+			refractedRay.prevRay->setColor(refractedRay.getColor());
+		}
+		
 		break;
 	}
 	default:
