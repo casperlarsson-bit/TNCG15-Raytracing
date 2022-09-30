@@ -92,7 +92,7 @@ Scene::Scene() {
 	sphereTable[1] = Sphere(0.8, glm::vec4(4, -3, -2, 1), ColorDBL(1, 0, 1), Material::TRANSPARENT);
 
 	// Tetrahedron in the scene
-	tetrahedronTable[0] = Tetrahedron(glm::vec3(8, -1, -3), ColorDBL(0.16, 0.04, 0.32), Material::LAMBERTIAN);
+	tetrahedronTable[0] = Tetrahedron(glm::vec3(8, -1, -3), ColorDBL(0.96, 0.04, 0.32), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
