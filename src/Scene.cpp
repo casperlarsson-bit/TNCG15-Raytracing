@@ -13,7 +13,7 @@ std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
 const int RANDOM_REFLECTION = 99; // Percentage to continue cast rays in mirror, remove this
 const double MIRROR_VALUE = 0.95; // How much darker the light should be when returned from a mirror
-const int NUMBER_OF_SHADOW_RAYS = 10;
+const int NUMBER_OF_SHADOW_RAYS = 3;
 
 // Default constructor to setup everything for the scene (Vertextable, Polygons etc.)
 Scene::Scene() {
@@ -88,11 +88,11 @@ Scene::Scene() {
 	triangleTable[3].setColor(ColorDBL(0.1, 0.1, 0.1));
 
 	// Spheres in the scene
-	sphereTable[0] = Sphere(1.0, glm::vec4(5, 1, -1, 1), ColorDBL(), Material::MIRROR);
+	sphereTable[0] = Sphere(1.0, glm::vec4(6, 1, -1, 1), ColorDBL(1, 0, 1), Material::MIRROR);
 	// sphereTable[1] = Sphere(0.5, glm::vec4(2, -1, -2, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
-	tetrahedronTable[0] = Tetrahedron(glm::vec3(4, -1, -1), ColorDBL(0.16, 0.04, 0.32), Material::LAMBERTIAN);
+	tetrahedronTable[0] = Tetrahedron(glm::vec3(8, -1, -3), ColorDBL(0.16, 0.04, 0.32), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
@@ -155,8 +155,6 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 // Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
 void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
-	if (ray.getRayType() == RayType::SHADOW) std::cout << "HEJ\n";
-
 	ray.rayPolygonIntersection = &polygon;
 
 	// Do different things depending on material of rectangle
@@ -285,20 +283,13 @@ ColorDBL Scene::directLight(const Ray& ray) {
 		Ray shadowRay = Ray(ray.getEndpoint(), glm::normalize(rayLightDistanceVector), RayType::SHADOW);
 		castRay(shadowRay);
 		double shadowRayLength = glm::length(shadowRay.getEndpoint() - shadowRay.getStartpoint());
-		double V_xy = 0.0;
-		if (shadowRayLength < glm::length(rayLightDistanceVector)) {
-			V_xy = 0.0;
-		}
-		else {
-			V_xy = 1.0;
-		}
-		// bool V_xy = false;
+
+		bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
 
 		lightChannel +=  glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)) * V_xy;
 	}
 
 	const double BRDF = 1 / M_PI;
-	// @TODO Fix function v(..) for shadows
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
 	lightColor = lightColor * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2))) * 3200 * BRDF * 1 / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt

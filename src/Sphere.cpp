@@ -1,4 +1,5 @@
 #include "../include/Sphere.h"
+#include <iostream>
 
 // Default constructor
 Sphere::Sphere() {
