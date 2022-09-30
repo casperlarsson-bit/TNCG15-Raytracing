@@ -30,6 +30,6 @@ private:
 	glm::vec4 vertexTable[12]; // Vertex table
 	Rectangle rectangleTable[8]; // Rectangle Table for the room = 2 + 6 (floor/roof and walls)
 	Triangle triangleTable[4]; // Triangle Table for the floor and roof
-	Sphere sphereTable[1]; // Sphere Table with all object spheres in the scene
+	Sphere sphereTable[2]; // Sphere Table with all object spheres in the scene
 	Tetrahedron tetrahedronTable[1]; // Tetrahedron Table
 };
