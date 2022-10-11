@@ -97,6 +97,23 @@ Scene::Scene() {
 
 // Cast and trace a ray
 void Scene::castRay(Ray& ray, int numReflections) {
+	// @TODO Kolla längd om den träffar flera objekt
+	// Go trhrough all tetrahedrons
+	for (auto& tetra : tetrahedronTable) {
+		// Go through the triangles in the tetrahedron
+		for (auto& tri : tetra.triangleTable) {
+			ray.setEndVertex(tri.rayIntersection(ray));
+
+			if (ray.getEndpoint()[0] == NULL) {
+				continue;
+			}
+
+			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
+			break;
+		}
+	}
+
 	// Rectnagles
 	for (auto& rect : rectangleTable) {
 		ray.setEndVertex(rect.rayIntersection(ray));
@@ -136,21 +153,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		break;
 	}
 
-	// Go trhrough all tetrahedrons
-	for (auto& tetra : tetrahedronTable) {
-		// Go through the triangles in the tetrahedron
-		for (auto& tri : tetra.triangleTable) {
-			ray.setEndVertex(tri.rayIntersection(ray));
-
-			if (ray.getEndpoint()[0] == NULL) {
-				continue;
-			}
-
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-			break;
-		}
-	}
+	
 }
 
 // Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
@@ -359,7 +362,7 @@ ColorDBL Scene::directLight(const Ray& ray) {
 
 		bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
 
-		lightChannel +=  glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)) * V_xy;
+		lightChannel +=  glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2));
 	}
 
 	const double BRDF = 1 / M_PI;
