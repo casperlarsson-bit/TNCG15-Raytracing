@@ -52,6 +52,6 @@ glm::vec4 Triangle::rayIntersection(Ray& ray) const {
 		return glm::vec4(NULL, NULL, NULL, NULL);
 	}
 	// Carry on if inside Triangle, to calculate x_i
-	ray.setColor(color);
+	// ray.setColor(color);
 	return rayStart + glm::vec4(rayDirection, 1) * (float)t;
 }

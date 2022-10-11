@@ -38,7 +38,7 @@ glm::vec4 Sphere::rayIntersection(Ray& ray) const {
 	// Time parameter for ray intersection, store only the lowest one
 	double t = (-c2 - glm::sqrt(arg)) / (2 * c1);
 
-	ray.setColor(color);
+	// ray.setColor(color);
 	return rayStart + (float)t * glm::vec4(rayDirection, 1);
 }
 

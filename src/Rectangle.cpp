@@ -50,7 +50,7 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 
 	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. Should not compare double directly
 	if (a >= 0 && a <= 1 && b >= 0 && b <= 1) {
-		ray.setColor(color);
+		// ray.setColor(color);
 		return x_i;
 	}
 

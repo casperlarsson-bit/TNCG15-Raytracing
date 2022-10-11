@@ -88,7 +88,7 @@ Scene::Scene() {
 	triangleTable[3].setColor(ColorDBL(0.1, 0.1, 0.1));
 
 	// Spheres in the scene
-	sphereTable[0] = Sphere(1.0, glm::vec4(6, 1, -1, 1), ColorDBL(1, 0, 1), Material::MIRROR);
+	sphereTable[0] = Sphere(1.0, glm::vec4(6, 1, -1, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
 	sphereTable[1] = Sphere(0.8, glm::vec4(4, -3, -2, 1), ColorDBL(1, 0, 1), Material::TRANSPARENT);
 
 	// Tetrahedron in the scene
@@ -98,29 +98,29 @@ Scene::Scene() {
 // Cast and trace a ray
 void Scene::castRay(Ray& ray, int numReflections) {
 	// @TODO Kolla längd om den träffar flera objekt
-	// Go trhrough all tetrahedrons
-	for (auto& tetra : tetrahedronTable) {
-		// Go through the triangles in the tetrahedron
-		for (auto& tri : tetra.triangleTable) {
-			ray.setEndVertex(tri.rayIntersection(ray));
-
-			if (ray.getEndpoint()[0] == NULL) {
-				continue;
-			}
-
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-			break;
-		}
-	}
+	
+	glm::vec3 shortestRay = glm::vec3(INT_MAX, INT_MAX, INT_MAX);
 
 	// Rectnagles
 	for (auto& rect : rectangleTable) {
-		ray.setEndVertex(rect.rayIntersection(ray));
+		//ray.setEndVertex(rect.rayIntersection(ray));
 		// Test if inside rectangle, if not go to next rectangle
-		if (ray.getEndpoint()[0] == NULL) {
-			continue;
+
+		glm::vec4 endVertex = rect.rayIntersection(ray);
+
+		if (endVertex[0] == NULL) continue;
+
+		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
+
+		if (glm::length(rayPath) < glm::length(shortestRay)) {
+			shortestRay = rayPath;
+			ray.setEndVertex(endVertex);
+			ray.setColor(rect.getColor());
 		}
+
+		/*if (ray.getEndpoint()[0] == NULL) {
+			continue;
+		}*/
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
 		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, rect, numReflections);
@@ -129,11 +129,23 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 	// Go through all triangles
 	for (auto& tri : triangleTable) {
-		ray.setEndVertex(tri.rayIntersection(ray));
+		//ray.setEndVertex(tri.rayIntersection(ray));
 
-		if (ray.getEndpoint()[0] == NULL) {
-			continue;
+		glm::vec4 endVertex = tri.rayIntersection(ray);
+
+		if (endVertex[0] == NULL) continue;
+
+		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
+
+		if (glm::length(rayPath) < glm::length(shortestRay)) {
+			shortestRay = rayPath;
+			ray.setEndVertex(endVertex);
+			ray.setColor(tri.getColor());
 		}
+
+		/*if (ray.getEndpoint()[0] == NULL) {
+			continue;
+		}*/
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
 		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
@@ -142,10 +154,22 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 	// Go through all spheres
 	for (auto& circle : sphereTable) {
-		ray.setEndVertex(circle.rayIntersection(ray));
+		/*ray.setEndVertex(circle.rayIntersection(ray));
 
 		if (ray.getEndpoint()[0] == NULL) {
 			continue;
+		}*/
+
+		glm::vec4 endVertex = circle.rayIntersection(ray);
+
+		if (endVertex[0] == NULL) continue;
+
+		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
+
+		if (glm::length(rayPath) < glm::length(shortestRay)) {
+			shortestRay = rayPath;
+			ray.setEndVertex(endVertex);
+			ray.setColor(circle.getColor());
 		}
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
@@ -153,7 +177,29 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		break;
 	}
 
-	
+	// Go trhrough all tetrahedrons
+	for (auto& tetra : tetrahedronTable) {
+		// Go through the triangles in the tetrahedron
+		for (auto& tri : tetra.triangleTable) {
+			//ray.setEndVertex(tri.rayIntersection(ray));
+
+			glm::vec4 endVertex = tri.rayIntersection(ray);
+
+			if (endVertex[0] == NULL) continue;
+
+			glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
+
+			if (glm::length(rayPath) < glm::length(shortestRay)) {
+				shortestRay = rayPath;
+				ray.setEndVertex(endVertex);
+				ray.setColor(tri.getColor());
+			}
+
+			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
+			break;
+		}
+	}
 }
 
 // Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
@@ -362,7 +408,7 @@ ColorDBL Scene::directLight(const Ray& ray) {
 
 		bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
 
-		lightChannel +=  glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2));
+		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)); // *V_xy;
 	}
 
 	const double BRDF = 1 / M_PI;
