@@ -27,8 +27,8 @@ void Rectangle::setVertices(glm::vec4 _v0, glm::vec4 _v1, glm::vec4 _v2, glm::ve
 }
 
 // Calculate the intersection of a ray and the surface
-// Return the vertex where it hits
-glm::vec4 Rectangle::rayIntersection(Ray& ray, double& minDistance) const {
+// Return true if hits the surface
+bool Rectangle::rayIntersection(Ray& ray, double& minDistance) const {
 	glm::vec4 rayStart = ray.getStartpoint();
 	glm::vec3 rayDirection = glm::normalize(ray.getDirection());
 
@@ -42,7 +42,7 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray, double& minDistance) const {
 
 	// If rectangle is hit from back side
 	if (glm::dot(glm::cross(rayDirection, glm::vec3(edge2)), glm::vec3(edge1)) < COMPARE_ELLIPSE) {
-		return glm::vec4(NULL, NULL, NULL, NULL);
+		return false;
 	}
 
 	double a = glm::dot(x_i - v0, edge1) / glm::dot(edge1, edge1);
@@ -55,9 +55,9 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray, double& minDistance) const {
 		ray.setObjectNormal(normal);
 		ray.setObjectMaterial(getMaterial());
 		minDistance = glm::length(x_i - ray.getStartpoint());
-		return x_i;
+		return true;
 	}
 
-	// If surface is not hit, return null
-	return glm::vec4(NULL, NULL, NULL, NULL);
+	// If surface is not hit, return false
+	return false;
 }

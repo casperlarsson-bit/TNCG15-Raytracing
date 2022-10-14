@@ -96,7 +96,7 @@ Scene::Scene() {
 	sphereTable[1] = Sphere(1.0f, glm::vec4(6.0f, -3.0f, -2.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT);
 	sphereTable[2] = Sphere(1.0f, glm::vec4(5.0f, -2.0f, -4.0f, 1), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
 	sphereTable[3] = Sphere(1.0f, glm::vec4(10.0f, 0.2f, -1.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT);
-	sphereTable[4] = Sphere(1.2f, glm::vec4(6.0f, 3.0f, -3.0f, 1), ColorDBL(0.8f, 0.2f, 0.2f), Material::MIRROR);
+	sphereTable[4] = Sphere(1.2f, glm::vec4(6.0f, 3.0f, -3.0f, 1), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
 	tetrahedronTable[0] = Tetrahedron(glm::vec3(8, -1, -3), ColorDBL(0.96, 0.04, 0.32), Material::LAMBERTIAN);
@@ -107,112 +107,37 @@ void Scene::castRay(Ray& ray, int numReflections) {
 	double minDistance = 1000; // Store the distance to the closest object a ray hits
 
 	// Rectnagles
-	for (auto& rect : rectangleTable) {
+	for (auto& rectangle : rectangleTable) {
 		// Test if inside rectangle, if not go to next rectangle
-		glm::vec4 endVertex = rect.rayIntersection(ray, minDistance);
-		if (endVertex[0] == NULL) continue;
-
-		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, rect, numReflections);
-		
-		break;
+		if (rectangle.rayIntersection(ray, minDistance)) break;
 	}
 
 	// Go through all triangles
-	for (auto& tri : triangleTable) {
-		glm::vec4 endVertex = tri.rayIntersection(ray, minDistance);
-		if (endVertex[0] == NULL) continue;
-
-		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-		
-		break;
+	for (auto& triangle : triangleTable) {
+		if (triangle.rayIntersection(ray, minDistance)) break;
 	}
 
 	// Go through all spheres
 	for (auto& sphere : sphereTable) {
-		glm::vec4 endVertex = sphere.rayIntersection(ray, minDistance);
-		if (endVertex[0] == NULL) continue;
-
-		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, numReflections);
-	
-		break;
+		if (sphere.rayIntersection(ray, minDistance)) break;
 	}
 
 	// Go trhrough all tetrahedrons
 	for (auto& tetra : tetrahedronTable) {
-		// Go through the triangles in the tetrahedron
-		for (auto& tri : tetra.triangleTable) {
-			glm::vec4 endVertex = tri.rayIntersection(ray, minDistance);
-			if (endVertex[0] == NULL) continue;
-
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-			
-			break;
-		}
+		tetra.rayIntersection(ray, minDistance);
 	}
+
+	// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+	if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, numReflections);
 }
 
 // Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
-void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
-	ray.rayPolygonIntersection = &polygon;
-
-	// Do different things depending on material of rectangle
-	switch (ray.getObjectMaterial()) {
-		// Mirror, reflect ray and cast it again
-	case Material::MIRROR: {
-		// Reflected direction
-		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), ray.getObjectNormal()) * ray.getObjectNormal();
-
-		Ray newRay{ ray.getEndpoint(), newDirection };
-
-		// Set up doubly linked list
-		ray.nextRay = &newRay;
-		newRay.prevRay = &ray;
-
-		// Recursively cast ray into scene again until a non mirror is hit
-		// Continue to cast ray with 99 % probability, to avoid stack overflow with "infinite mirror"
-		// After numReflections (default=3) do probability, otherwise reflect all rays
-		if (numReflections > 0) {
-			this->castRay(newRay, numReflections - 1);
-		}
-		else {
-			int randomReflection = (int)(distribution(seed) * 100);
-			if (randomReflection < RANDOM_REFLECTION) {
-				this->castRay(newRay);
-			}
-		}
-
-		newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
-		break;
-	}
-	// Lambertian surface, cast ray to the light source and indirect light
-	case Material::LAMBERTIAN: {
-		// Get the light % for direct light
-		ColorDBL directLight = this->directLight(ray);
-
-		// Get the indirect light
-		ColorDBL indirectLight = this->indirectLight(ray);
-		ray.setColor(indirectLight + directLight);
-		break;
-	}
-	case Material::TRANSPARENT: {
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-// Overloaded handleReflection to do the same thing but for Spheres, since the normal is computed in a different way
 void Scene::handleReflection(Ray& ray, int numReflections) {
-	// Do different things depending on material of rectangle
+	// Do different things depending on material
 	switch (ray.getObjectMaterial()) {
 		// Mirror, reflect ray and cast it again
 	case Material::MIRROR: {
-		glm::vec3 normal = ray.getObjectNormal(); // Normal for the sphere
+		glm::vec3 normal = ray.getObjectNormal(); // Normal for the polygon
 		// Reflected direction
 		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
 
@@ -223,7 +148,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 		newRay.prevRay = &ray;
 
 		// Recursively cast ray into scene again until a non mirror is hit
-		// Continue to cast ray with 99 % probability, to avoid stack overflow
+		// Continue to cast ray with 99 % probability, to avoid stack overflow with "infinite mirror"
 		// After numReflections (default=3) do probability, otherwise reflect all rays
 		if (numReflections > 0) {
 			this->castRay(newRay, numReflections - 1);
@@ -250,7 +175,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 	}
 	// Transparent surface
 	case Material::TRANSPARENT: {
-		glm::vec3 normal = ray.getObjectNormal(); // Normal for the sphere
+		glm::vec3 normal = ray.getObjectNormal(); // Normal for the polygon
 		glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
 
 		double n1 = 1.0; // Air
@@ -264,7 +189,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 		if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
 			normal = -normal; // Invert normal since we are inside the sphere
 
-			// Test if we have total reflection
+			// Test if we have total internal reflection
 			// Total reflection, only calculate reflected ray
 			if (glm::sin(glm::dot(ingoingRayDirection, normal) * n1 / n2) > 1) {
 				// Reflected direction
@@ -361,7 +286,7 @@ ColorDBL Scene::directLight(const Ray& ray) {
 
 		bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
 
-		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)); // * V_xy;
+		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)) *V_xy;
 	}
 
 	const double BRDF = 1 / M_PI;
@@ -377,7 +302,8 @@ ColorDBL Scene::indirectLight(const Ray& ray) {
 
 	// Perform Russian roulette to decide if to continue, using Rho as probability of surviving
 	double random = distribution(seed);
-	if (random > ray.getPolygon()->getRho()) return ColorDBL(); // If not to continue ray path
+	// if (random > ray.getPolygon()->getRho()) return ColorDBL(); // If not to continue ray path
+	if (random < 0.25) return ColorDBL(); // Temp from above
 
 	glm::vec3 surfaceNormal = ray.getObjectNormal();
 

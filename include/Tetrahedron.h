@@ -29,6 +29,9 @@ public:
 	// Set the colour of the Tetrahedron
 	void setColor(ColorDBL _color);
 
+	// Calculate the intersection of a ray and the surface
+	// D*N < 0 for correct intersection
+	void rayIntersection(Ray& ray, double& minDistance) const;
 	
 	Triangle triangleTable[4]; // Triangles to store the surfaces
 private:

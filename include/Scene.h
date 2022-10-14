@@ -13,9 +13,6 @@ public:
 	void castRay(Ray& ray, int numReflections = 3);
 private:
 	// Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
-	void handleReflection(Ray& ray, Polygon& polygon, int numReflections);
-
-	// Overloaded handleReflection to do the same thing but for Spheres, since the normal is computed in a different way
 	void handleReflection(Ray& ray, int numReflections);
 
 	// Get the direct light from light source to a specific point

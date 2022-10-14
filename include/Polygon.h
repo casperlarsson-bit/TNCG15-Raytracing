@@ -28,9 +28,9 @@ public:
 	void setColor(ColorDBL _color);
 
 	// Calculate the intersection of a ray and the surface
-	// Return the vertex where it hits
+	// Return true if hits the surface
 	// Done in sub classes
-	virtual glm::vec4 rayIntersection(Ray &ray, double& minDistance) const = 0;
+	virtual bool rayIntersection(Ray &ray, double& minDistance) const = 0;
 
 	// Get what material the Polygon is made of
 	Material getMaterial() const;

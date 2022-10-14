@@ -45,17 +45,13 @@ Tetrahedron::Tetrahedron(glm::vec3 _midVertex, ColorDBL _color, Material _materi
 }
 
 // Calculate the intersection of a ray and the surface
-// Return the vertex where it hits
 // D*N < 0 for correct intersection
-/*glm::vec4 Tetrahedron::rayIntersection(Ray& ray) const {
-
-
+void Tetrahedron::rayIntersection(Ray& ray, double& minDistance) const {
 	for (auto& triangle : triangleTable) {
 		if (glm::dot(triangle.getNormal(), ray.getDirection()) > COMPARE_ELLIPSE) continue;
-		return triangle.rayIntersection(ray);
+		triangle.rayIntersection(ray, minDistance);
 	}
-
-}*/
+}
 
 // Get what material the Tetrahedron is made of
 Material Tetrahedron::getMaterial() const {
