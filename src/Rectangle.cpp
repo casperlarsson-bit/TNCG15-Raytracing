@@ -3,7 +3,10 @@
 
 // Default constructor
 Rectangle::Rectangle() {
-
+	v0 = glm::vec4(0, 0, 0, 1);
+	v1 = glm::vec4(1, 0, 0, 1);
+	v2 = glm::vec4(1, 1, 0, 1);
+	v3 = glm::vec4(0, 1, 0, 1);
 }
 
 // Calculate the normal automatically from the vertices
@@ -37,15 +40,20 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 	double t = glm::dot(glm::vec3(v0 - rayStart), rectangleNormal) / glm::dot(rayDirection, rectangleNormal);
 	glm::vec4 x_i = rayStart + glm::vec4(rayDirection, 1) * (float)t;
 
+	// If rectangle is hit from back side
+	if (glm::dot(glm::cross(rayDirection, glm::vec3(edge2)), glm::vec3(edge1)) < COMPARE_ELLIPSE) {
+		return glm::vec4(NULL, NULL, NULL, NULL);
+	}
+
 	double a = glm::dot(x_i - v0, edge1) / glm::dot(edge1, edge1);
 	double b = glm::dot(x_i - v0, edge2) / glm::dot(edge2, edge2);
 
 	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. Should not compare double directly
 	if (a >= 0 && a <= 1 && b >= 0 && b <= 1) {
-		ray.setColor(color);
+		// ray.setColor(color);
 		return x_i;
 	}
 
-	// If surface is not hit, return null, is ther a better way?
+	// If surface is not hit, return null
 	return glm::vec4(NULL, NULL, NULL, NULL);
 }

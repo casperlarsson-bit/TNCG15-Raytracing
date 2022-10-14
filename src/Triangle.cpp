@@ -37,17 +37,21 @@ glm::vec4 Triangle::rayIntersection(Ray& ray) const {
 	glm::vec3 P = glm::cross(rayDirection, edge2);
 	glm::vec3 Q = glm::cross(rayToVertex, edge1);
 
+	// If triangle is hit from back side
+	if (glm::dot(P, edge1) < COMPARE_ELLIPSE) {
+		return glm::vec4(NULL, NULL, NULL, NULL);
+	}
+
 	// Parameters (u,v) to test if Ray is inside Triangle
 	double u = glm::dot(P, rayToVertex) / glm::dot(P, edge1);
 	double v = glm::dot(Q, rayDirection) / glm::dot(P, edge1);
 
-	// Check if outside Triangle, u >= 0, v >= 0, u+v <= 1. Should not compare double directly
-	if (!(u >= 0 && v >= 0 && u + v <= 1)) {
-		// If surface is not hit, return null, is ther a better way?
+	double t = glm::dot(Q, edge2) / glm::dot(P, edge1);
+	// Check if outside Triangle, u >= 0, v >= 0, u+v <= 1. If t is too big return false. Should not compare double directly @TODO
+	if (!(u >= 0 && v >= 0 && u + v <= 1) ||t > T_MAX) {
 		return glm::vec4(NULL, NULL, NULL, NULL);
 	}
-	// Carry on if inside Triangle, to calculate t and x_i
-	double t = glm::dot(Q, edge2) / glm::dot(P, edge1);
-	ray.setColor(color);
+	// Carry on if inside Triangle, to calculate x_i
+	// ray.setColor(color);
 	return rayStart + glm::vec4(rayDirection, 1) * (float)t;
 }
