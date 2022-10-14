@@ -49,10 +49,12 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray, double& minDistance) const {
 	double b = glm::dot(x_i - v0, edge2) / glm::dot(edge2, edge2);
 
 	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. Should not compare double directly
-	if ((a >= 0 && a <= 1 && b >= 0 && b <= 1) && glm::length(x_i) < minDistance) {
+	if ((a >= 0 && a <= 1 && b >= 0 && b <= 1) && glm::length(x_i - ray.getStartpoint()) < minDistance) {
 		ray.setColor(color);
 		ray.setEndVertex(x_i);
-		minDistance = glm::length(x_i);
+		ray.setObjectNormal(normal);
+		ray.setObjectMaterial(getMaterial());
+		minDistance = glm::length(x_i - ray.getStartpoint());
 		return x_i;
 	}
 

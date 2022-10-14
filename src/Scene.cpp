@@ -96,7 +96,7 @@ Scene::Scene() {
 	sphereTable[1] = Sphere(1.0f, glm::vec4(6.0f, -3.0f, -2.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT);
 	sphereTable[2] = Sphere(1.0f, glm::vec4(5.0f, -2.0f, -4.0f, 1), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
 	sphereTable[3] = Sphere(1.0f, glm::vec4(10.0f, 0.2f, -1.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT);
-	sphereTable[4] = Sphere(1.2f, glm::vec4(6.0f, 3.0f, 1.0f, 1), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
+	sphereTable[4] = Sphere(1.2f, glm::vec4(6.0f, 3.0f, -3.0f, 1), ColorDBL(0.8f, 0.2f, 0.2f), Material::MIRROR);
 
 	// Tetrahedron in the scene
 	tetrahedronTable[0] = Tetrahedron(glm::vec3(8, -1, -3), ColorDBL(0.96, 0.04, 0.32), Material::LAMBERTIAN);
@@ -104,17 +104,12 @@ Scene::Scene() {
 
 // Cast and trace a ray
 void Scene::castRay(Ray& ray, int numReflections) {
-	// @TODO Kolla längd om den träffar flera objekt
-	
-	double minDistance = 1000;
+	double minDistance = 1000; // Store the distance to the closest object a ray hits
 
 	// Rectnagles
 	for (auto& rect : rectangleTable) {
-		//ray.setEndVertex(rect.rayIntersection(ray));
 		// Test if inside rectangle, if not go to next rectangle
-
 		glm::vec4 endVertex = rect.rayIntersection(ray, minDistance);
-
 		if (endVertex[0] == NULL) continue;
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
@@ -125,14 +120,8 @@ void Scene::castRay(Ray& ray, int numReflections) {
 
 	// Go through all triangles
 	for (auto& tri : triangleTable) {
-		//ray.setEndVertex(tri.rayIntersection(ray));
-
 		glm::vec4 endVertex = tri.rayIntersection(ray, minDistance);
-
 		if (endVertex[0] == NULL) continue;
-
-		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
-
 
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
 		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
@@ -141,22 +130,13 @@ void Scene::castRay(Ray& ray, int numReflections) {
 	}
 
 	// Go through all spheres
-	for (auto& circle : sphereTable) {
-		/*ray.setEndVertex(circle.rayIntersection(ray));
-
-		if (ray.getEndpoint()[0] == NULL) {
-			continue;
-		}*/
-
-		glm::vec4 endVertex = circle.rayIntersection(ray, minDistance);
-
+	for (auto& sphere : sphereTable) {
+		glm::vec4 endVertex = sphere.rayIntersection(ray, minDistance);
 		if (endVertex[0] == NULL) continue;
 
-
 		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, circle, numReflections);
-
-		
+		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, numReflections);
+	
 		break;
 	}
 
@@ -164,15 +144,11 @@ void Scene::castRay(Ray& ray, int numReflections) {
 	for (auto& tetra : tetrahedronTable) {
 		// Go through the triangles in the tetrahedron
 		for (auto& tri : tetra.triangleTable) {
-			//ray.setEndVertex(tri.rayIntersection(ray));
-
 			glm::vec4 endVertex = tri.rayIntersection(ray, minDistance);
-
 			if (endVertex[0] == NULL) continue;
 
 			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
 			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-			
 			
 			break;
 		}
@@ -184,11 +160,11 @@ void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
 	ray.rayPolygonIntersection = &polygon;
 
 	// Do different things depending on material of rectangle
-	switch (polygon.getMaterial()) {
+	switch (ray.getObjectMaterial()) {
 		// Mirror, reflect ray and cast it again
 	case Material::MIRROR: {
 		// Reflected direction
-		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), polygon.getNormal()) * polygon.getNormal();
+		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), ray.getObjectNormal()) * ray.getObjectNormal();
 
 		Ray newRay{ ray.getEndpoint(), newDirection };
 
@@ -231,12 +207,12 @@ void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
 }
 
 // Overloaded handleReflection to do the same thing but for Spheres, since the normal is computed in a different way
-void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
+void Scene::handleReflection(Ray& ray, int numReflections) {
 	// Do different things depending on material of rectangle
-	switch (sphere.getMaterial()) {
+	switch (ray.getObjectMaterial()) {
 		// Mirror, reflect ray and cast it again
 	case Material::MIRROR: {
-		glm::vec3 normal = glm::vec3(ray.getEndpoint() - sphere.getCentre()); // Normal for the sphere
+		glm::vec3 normal = ray.getObjectNormal(); // Normal for the sphere
 		// Reflected direction
 		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
 
@@ -274,7 +250,7 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 	}
 	// Transparent surface
 	case Material::TRANSPARENT: {
-		glm::vec3 sphereNormal = glm::normalize(glm::vec3(ray.getEndpoint() - sphere.getCentre())); // Normal for the sphere
+		glm::vec3 normal = ray.getObjectNormal(); // Normal for the sphere
 		glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
 
 		double n1 = 1.0; // Air
@@ -282,17 +258,17 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 
 		// Schlick's law for BRDF
 		double R0 = glm::pow((n1 - n2) / (n1 + n2), 2);
-		double reflectedBRDF = R0 + (1.0 - R0) * glm::pow(1.0 - glm::cos(glm::dot(ingoingRayDirection, sphereNormal)), 5);
+		double reflectedBRDF = R0 + (1.0 - R0) * glm::pow(1.0 - glm::cos(glm::dot(ingoingRayDirection, normal)), 5);
 		//double transmittedBRDF = 1.0 - reflectedBRDF; // Unnecessary?
 
 		if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
-			sphereNormal = -sphereNormal; // Invert normal since we are inside the sphere
+			normal = -normal; // Invert normal since we are inside the sphere
 
 			// Test if we have total reflection
 			// Total reflection, only calculate reflected ray
-			if (glm::sin(glm::dot(ingoingRayDirection, sphereNormal) * n1 / n2) > 1) {
+			if (glm::sin(glm::dot(ingoingRayDirection, normal) * n1 / n2) > 1) {
 				// Reflected direction
-				glm::vec3 reflectedDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), sphereNormal) * sphereNormal;
+				glm::vec3 reflectedDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
 
 				Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
 
@@ -315,7 +291,7 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 		// Reflect ray, not refract
 		if (distribution(seed) < reflectedBRDF) {
 			// Reflected direction
-			glm::vec3 reflectedDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), sphereNormal) * sphereNormal;
+			glm::vec3 reflectedDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
 				
 			Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
 
@@ -332,7 +308,7 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 		else {
 			double R = n1 / n2; // SinB / SinOmega, ratio of refractive index
 			// Reflected direction
-			glm::vec3 refractedDirection = (float)R * ingoingRayDirection + sphereNormal * (float)(-R * glm::dot(sphereNormal, ingoingRayDirection) - glm::sqrt(1 - R * R * (1 - glm::pow(glm::dot(sphereNormal, ingoingRayDirection), 2))));
+			glm::vec3 refractedDirection = (float)R * ingoingRayDirection + normal * (float)(-R * glm::dot(normal, ingoingRayDirection) - glm::sqrt(1 - R * R * (1 - glm::pow(glm::dot(normal, ingoingRayDirection), 2))));
 
 			Ray refractedRay = Ray(ray.getEndpoint(), refractedDirection, RayType::INSIDE_TRANSPARENT);
 
@@ -366,7 +342,7 @@ ColorDBL Scene::directLight(const Ray& ray) {
 
 	glm::vec3 lightNormal = glm::normalize(glm::cross(glm::vec3(e2), glm::vec3(e1)));
 
-	glm::vec3 surfaceNormal = ray.getPolygon()->getNormal();
+	glm::vec3 surfaceNormal = ray.getObjectNormal();
 	double lightChannel = 0; // Amount of light at each colour channel
 	for (int i = 0; i < NUMBER_OF_SHADOW_RAYS; ++i) {
 		// Create two random parameter variables, uniform distribution
@@ -385,13 +361,13 @@ ColorDBL Scene::directLight(const Ray& ray) {
 
 		bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
 
-		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)); // *V_xy;
+		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)); // * V_xy;
 	}
 
 	const double BRDF = 1 / M_PI;
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
-	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2)))  * 3200 * BRDF * 1 / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
+	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2)))  * 32 * BRDF * 1 / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
 	
 	return lightColor;
 }
@@ -403,7 +379,7 @@ ColorDBL Scene::indirectLight(const Ray& ray) {
 	double random = distribution(seed);
 	if (random > ray.getPolygon()->getRho()) return ColorDBL(); // If not to continue ray path
 
-	glm::vec3 surfaceNormal = ray.getPolygon()->getNormal();
+	glm::vec3 surfaceNormal = ray.getObjectNormal();
 
 	// Random direction in local hemisphere with nonuniform distribution, reuse random variable
 	double randomPhi = 1 - random;

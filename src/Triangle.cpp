@@ -3,7 +3,9 @@
 
 // Default constructor
 Triangle::Triangle() {
-
+	v0 = glm::vec4(1, 0, 0, 1);
+	v1 = glm::vec4(0, 1, 0, 1);
+	v2 = glm::vec4(0, 0, 1, 1);
 }
 
 // Calculate the normal automatically from the vertices
@@ -50,11 +52,13 @@ glm::vec4 Triangle::rayIntersection(Ray& ray, double& minDistance) const {
 	glm::vec4 x_i = rayStart + glm::vec4(rayDirection, 1) * (float)t;
 
 	// Check if outside Triangle, u >= 0, v >= 0, u+v <= 1. If t is too big return false. Should not compare double directly @TODO
-	if ((u >= 0 && v >= 0 && u + v <= 1) && glm::length(x_i) < minDistance) {
+	if ((u >= 0 && v >= 0 && u + v <= 1) && glm::length(x_i - ray.getStartpoint()) < minDistance) {
 		// Carry on if inside Triangle, to calculate x_i
 		ray.setColor(color);
 		ray.setEndVertex(x_i);
-		minDistance = glm::length(x_i);
+		ray.setObjectNormal(normal);
+		ray.setObjectMaterial(getMaterial());
+		minDistance = glm::length(x_i - ray.getStartpoint());
 		return x_i;
 	}
 	return glm::vec4(NULL, NULL, NULL, NULL);

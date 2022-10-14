@@ -39,10 +39,12 @@ glm::vec4 Sphere::rayIntersection(Ray& ray, double& minDistance) const {
 	double t = (-c2 - glm::sqrt(arg)) / (2 * c1);
 	glm::vec4 x_i = rayStart + glm::vec4(rayDirection, 1) * (float)t;
 
-	if (glm::length(x_i) < minDistance) {
+	if (glm::length(x_i - ray.getStartpoint()) < minDistance) {
 		ray.setColor(color);
 		ray.setEndVertex(x_i);
-		minDistance = glm::length(x_i);
+		ray.setObjectNormal(glm::normalize(glm::vec3(x_i - centreVertex)));
+		ray.setObjectMaterial(getMaterial());
+		minDistance = glm::length(x_i - ray.getStartpoint());
 		return x_i;
 	}
 

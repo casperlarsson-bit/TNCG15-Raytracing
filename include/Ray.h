@@ -35,6 +35,18 @@ public:
 	// Set the end vertex of the ray
 	void setEndVertex(glm::vec4 _endVertex);
 
+	// Set the normal of the object the ray intersected with
+	void setObjectNormal(glm::vec3 _normal);
+
+	// Set the material of the object the ray intersected with
+	void setObjectMaterial(Material _material);
+
+	// Get the normal of the object the ray intersected with
+	glm::vec3 getObjectNormal() const;
+
+	// Get the material of the object the ray intersected with
+	Material getObjectMaterial() const;
+
 	// Get startpoint of Ray
 	glm::vec4 getStartpoint() const;
 
@@ -60,4 +72,6 @@ private:
 
 	RayType rayType;
 	ColorDBL rayColor;
+	glm::vec3 objectNormal;
+	Material objectMaterial;
 };

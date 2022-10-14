@@ -13,6 +13,9 @@ Ray::Ray() {
 	Polygon* newPolygon{};
 	rayPolygonIntersection = newPolygon;
 	rayType = RayType::PRIMARY;
+
+	objectMaterial = Material::LAMBERTIAN;
+	objectNormal = glm::vec3(1, 0, 0);
 }
 
 // Constructor which sets starting position and direction
@@ -29,6 +32,9 @@ Ray::Ray(glm::vec4 _startPosition, glm::vec3 _direction, RayType _rayType) {
 	Polygon* newPolygon{};
 	rayPolygonIntersection = newPolygon;
 	rayType = _rayType;
+
+	objectMaterial = Material::LAMBERTIAN;
+	objectNormal = glm::vec3(1, 0, 0);
 }
 
 // Destructor
@@ -59,6 +65,26 @@ void Ray::setDirection(glm::vec3 _direction) {
 // Set the end vertex of the ray
 void Ray::setEndVertex(glm::vec4 _endVertex) {
 	endVertice = _endVertex;
+}
+
+// Set the normal of the object the ray intersected with
+void Ray::setObjectNormal(glm::vec3 _normal) {
+	objectNormal = _normal;
+}
+
+// Set the material of the object the ray intersected with
+void Ray::setObjectMaterial(Material _material) {
+	objectMaterial = _material;
+}
+
+// Get the normal of the object the ray intersected with
+glm::vec3 Ray::getObjectNormal() const {
+	return objectNormal;
+}
+
+// Get the material of the object the ray intersected with
+Material Ray::getObjectMaterial() const {
+	return objectMaterial;
 }
 
 // Get startpoint of Ray
