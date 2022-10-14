@@ -5,7 +5,6 @@
 #include "Material.h"
 
 const double COMPARE_ELLIPSE = 0.00001;
-const double T_MAX = 100;
 
 class Polygon {
 public:
@@ -31,7 +30,7 @@ public:
 	// Calculate the intersection of a ray and the surface
 	// Return the vertex where it hits
 	// Done in sub classes
-	virtual glm::vec4 rayIntersection(Ray &ray) const = 0;
+	virtual glm::vec4 rayIntersection(Ray &ray, double& minDistance) const = 0;
 
 	// Get what material the Polygon is made of
 	Material getMaterial() const;

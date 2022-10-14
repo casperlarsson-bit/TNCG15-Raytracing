@@ -16,7 +16,7 @@ public:
 	// Calculate the intersection of a ray and the surface
 	// Return the vertex where it hits
 	// Hits circle 0, 1 or 2 times. Want the first hit. Assume 1 hit = 0 hits
-	glm::vec4 rayIntersection(Ray& ray) const;
+	glm::vec4 rayIntersection(Ray& ray, double& minDistance) const;
 
 	// Get what material the Sphere is made of
 	Material getMaterial() const;

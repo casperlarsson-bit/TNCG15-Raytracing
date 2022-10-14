@@ -15,7 +15,7 @@ public:
 
 	// Calculate the intersection of a ray and the surface
 	// Return the vertex where it hits
-	glm::vec4 rayIntersection(Ray& ray) const;
+	glm::vec4 rayIntersection(Ray& ray, double& minDistance) const;
 
 	glm::vec4 v0, v1, v2, v3;
 private:

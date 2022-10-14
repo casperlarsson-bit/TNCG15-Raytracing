@@ -28,7 +28,7 @@ void Rectangle::setVertices(glm::vec4 _v0, glm::vec4 _v1, glm::vec4 _v2, glm::ve
 
 // Calculate the intersection of a ray and the surface
 // Return the vertex where it hits
-glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
+glm::vec4 Rectangle::rayIntersection(Ray& ray, double& minDistance) const {
 	glm::vec4 rayStart = ray.getStartpoint();
 	glm::vec3 rayDirection = glm::normalize(ray.getDirection());
 
@@ -49,8 +49,10 @@ glm::vec4 Rectangle::rayIntersection(Ray& ray) const {
 	double b = glm::dot(x_i - v0, edge2) / glm::dot(edge2, edge2);
 
 	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. Should not compare double directly
-	if (a >= 0 && a <= 1 && b >= 0 && b <= 1) {
-		// ray.setColor(color);
+	if ((a >= 0 && a <= 1 && b >= 0 && b <= 1) && glm::length(x_i) < minDistance) {
+		ray.setColor(color);
+		ray.setEndVertex(x_i);
+		minDistance = glm::length(x_i);
 		return x_i;
 	}
 

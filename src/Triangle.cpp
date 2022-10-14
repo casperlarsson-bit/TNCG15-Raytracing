@@ -24,7 +24,7 @@ void Triangle::setVertices(glm::vec4 _v0, glm::vec4 _v1, glm::vec4 _v2) {
 
 // Calculate the intersection of a ray and the surface
 // Return the vertex where it hits
-glm::vec4 Triangle::rayIntersection(Ray& ray) const {
+glm::vec4 Triangle::rayIntersection(Ray& ray, double& minDistance) const {
 	glm::vec4 rayStart = ray.getStartpoint();
 	glm::vec4 rayEnd = ray.getEndpoint();
 	glm::vec3 rayDirection = glm::normalize(ray.getDirection());
@@ -47,11 +47,16 @@ glm::vec4 Triangle::rayIntersection(Ray& ray) const {
 	double v = glm::dot(Q, rayDirection) / glm::dot(P, edge1);
 
 	double t = glm::dot(Q, edge2) / glm::dot(P, edge1);
+	glm::vec4 x_i = rayStart + glm::vec4(rayDirection, 1) * (float)t;
+
 	// Check if outside Triangle, u >= 0, v >= 0, u+v <= 1. If t is too big return false. Should not compare double directly @TODO
-	if (!(u >= 0 && v >= 0 && u + v <= 1) ||t > T_MAX) {
-		return glm::vec4(NULL, NULL, NULL, NULL);
+	if ((u >= 0 && v >= 0 && u + v <= 1) && glm::length(x_i) < minDistance) {
+		// Carry on if inside Triangle, to calculate x_i
+		ray.setColor(color);
+		ray.setEndVertex(x_i);
+		minDistance = glm::length(x_i);
+		return x_i;
 	}
-	// Carry on if inside Triangle, to calculate x_i
-	// ray.setColor(color);
-	return rayStart + glm::vec4(rayDirection, 1) * (float)t;
+	return glm::vec4(NULL, NULL, NULL, NULL);
+	
 }

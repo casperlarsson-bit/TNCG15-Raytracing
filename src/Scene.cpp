@@ -106,32 +106,19 @@ Scene::Scene() {
 void Scene::castRay(Ray& ray, int numReflections) {
 	// @TODO Kolla längd om den träffar flera objekt
 	
-	glm::vec3 shortestRay = glm::vec3(INT_MAX, INT_MAX, INT_MAX);
+	double minDistance = 1000;
 
 	// Rectnagles
 	for (auto& rect : rectangleTable) {
 		//ray.setEndVertex(rect.rayIntersection(ray));
 		// Test if inside rectangle, if not go to next rectangle
 
-		glm::vec4 endVertex = rect.rayIntersection(ray);
+		glm::vec4 endVertex = rect.rayIntersection(ray, minDistance);
 
 		if (endVertex[0] == NULL) continue;
 
-		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
-
-		if (glm::length(rayPath) < glm::length(shortestRay)) {
-			shortestRay = rayPath;
-			ray.setEndVertex(endVertex);
-			ray.setColor(rect.getColor());
-
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, rect, numReflections);
-		}
-
-		/*if (ray.getEndpoint()[0] == NULL) {
-			continue;
-		}*/
-
+		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, rect, numReflections);
 		
 		break;
 	}
@@ -140,25 +127,15 @@ void Scene::castRay(Ray& ray, int numReflections) {
 	for (auto& tri : triangleTable) {
 		//ray.setEndVertex(tri.rayIntersection(ray));
 
-		glm::vec4 endVertex = tri.rayIntersection(ray);
+		glm::vec4 endVertex = tri.rayIntersection(ray, minDistance);
 
 		if (endVertex[0] == NULL) continue;
 
 		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
 
-		if (glm::length(rayPath) < glm::length(shortestRay)) {
-			shortestRay = rayPath;
-			ray.setEndVertex(endVertex);
-			ray.setColor(tri.getColor());
 
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-		}
-
-		/*if (ray.getEndpoint()[0] == NULL) {
-			continue;
-		}*/
-
+		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
 		
 		break;
 	}
@@ -171,20 +148,13 @@ void Scene::castRay(Ray& ray, int numReflections) {
 			continue;
 		}*/
 
-		glm::vec4 endVertex = circle.rayIntersection(ray);
+		glm::vec4 endVertex = circle.rayIntersection(ray, minDistance);
 
 		if (endVertex[0] == NULL) continue;
 
-		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
 
-		if (glm::length(rayPath) < glm::length(shortestRay)) {
-			shortestRay = rayPath;
-			ray.setEndVertex(endVertex);
-			ray.setColor(circle.getColor());
-
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, circle, numReflections);
-		}
+		// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+		if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, circle, numReflections);
 
 		
 		break;
@@ -196,21 +166,13 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		for (auto& tri : tetra.triangleTable) {
 			//ray.setEndVertex(tri.rayIntersection(ray));
 
-			glm::vec4 endVertex = tri.rayIntersection(ray);
+			glm::vec4 endVertex = tri.rayIntersection(ray, minDistance);
 
 			if (endVertex[0] == NULL) continue;
 
-			glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
-
-			if (glm::length(rayPath) < glm::length(shortestRay)) {
-				shortestRay = rayPath;
-				ray.setEndVertex(endVertex);
-				ray.setColor(tri.getColor());
-
-				// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-				if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-			}
-
+			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
+			
 			
 			break;
 		}

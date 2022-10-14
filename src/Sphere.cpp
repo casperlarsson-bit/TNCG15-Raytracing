@@ -20,7 +20,7 @@ Sphere::Sphere(double _radius, glm::vec4 _centreVertex, ColorDBL _color, Materia
 // Calculate the intersection of a ray and the surface
 // Return the vertex where it hits
 // Hits circle 0, 1 or 2 times. Want the first hit. Assume 1 hit = 0 hits
-glm::vec4 Sphere::rayIntersection(Ray& ray) const {
+glm::vec4 Sphere::rayIntersection(Ray& ray, double& minDistance) const {
 	glm::vec4 rayStart = ray.getStartpoint();
 	glm::vec3 rayDirection = ray.getDirection();
 
@@ -37,9 +37,16 @@ glm::vec4 Sphere::rayIntersection(Ray& ray) const {
 
 	// Time parameter for ray intersection, store only the lowest one
 	double t = (-c2 - glm::sqrt(arg)) / (2 * c1);
+	glm::vec4 x_i = rayStart + glm::vec4(rayDirection, 1) * (float)t;
 
-	// ray.setColor(color);
-	return rayStart + (float)t * glm::vec4(rayDirection, 1);
+	if (glm::length(x_i) < minDistance) {
+		ray.setColor(color);
+		ray.setEndVertex(x_i);
+		minDistance = glm::length(x_i);
+		return x_i;
+	}
+
+	return glm::vec4(NULL, NULL, NULL, NULL);
 }
 
 // Get what material the Sphere is made of
