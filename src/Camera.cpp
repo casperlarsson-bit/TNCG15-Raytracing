@@ -20,8 +20,8 @@ void Camera::renderImage(Scene& scene) {
 	std::cout << "Render image...\n";
 	for (std::size_t i = 0; i < image.size(); ++i) {
 		for (std::size_t j = 0; j < image.size(); ++j) {
-			glm::vec4 pixelPosition = glm::vec4(0, 1 - 2 * (double)j / image.size(), 1 - 2 * (double)i / image.size(), 1);
-			Ray pixelRay{eyePosition, glm::vec3(pixelPosition - eyePosition)};
+			glm::vec3 pixelPosition = glm::vec3(0, 1 - 2 * (double)j / image.size(), 1 - 2 * (double)i / image.size());
+			Ray pixelRay{eyePosition, pixelPosition - eyePosition};
 			
 			// Cast ray and let scene handle it. Set pixel colour to the 
 			// colour of the Polygon it hits

@@ -13,10 +13,6 @@ public:
 	// Value constructor
 	Tetrahedron(glm::vec3 _midVertex, ColorDBL _color, Material _material);
 
-	// Calculate the intersection of a ray and the surface
-	// Return the vertex where it hits
-	//glm::vec4 rayIntersection(Ray& ray) const;
-
 	// Get what material the Tetrahedron is made of
 	Material getMaterial() const;
 
@@ -37,5 +33,5 @@ public:
 private:
 	ColorDBL color;
 	Material material;
-	glm::vec4 vertexTable[4]; // Vertices to build triangles
+	glm::vec3 vertexTable[4]; // Vertices to build triangles
 };

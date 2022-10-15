@@ -24,7 +24,7 @@ private:
 	// Create a local coordinate system with orthogonal axes
 	void createLocalCartesianCoordinateSystem(glm::vec3 e1, glm::vec3& e2, glm::vec3& e3) const;
 
-	glm::vec4 vertexTable[12]; // Vertex table
+	glm::vec3 vertexTable[12]; // Vertex table
 	Rectangle rectangleTable[8]; // Rectangle Table for the room = 2 + 6 (floor/roof and walls)
 	Triangle triangleTable[4]; // Triangle Table for the floor and roof
 	Sphere sphereTable[5]; // Sphere Table with all object spheres in the scene

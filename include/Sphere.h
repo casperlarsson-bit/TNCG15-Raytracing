@@ -11,7 +11,7 @@ public:
 	Sphere();
 
 	// Value constructor
-	Sphere(double _radius, glm::vec4 _centreVertex, ColorDBL _color, Material _material);
+	Sphere(double _radius, glm::vec3 _centreVertex, ColorDBL _color, Material _material);
 
 	// Calculate the intersection of a ray and the surface
 	// Return true if hits the surface
@@ -31,11 +31,11 @@ public:
 	void setColor(ColorDBL _color);
 
 	// Get the centre of the sphere
-	glm::vec4 getCentre() const;
+	glm::vec3 getCentre() const;
 
 private:
 	double radius;
-	glm::vec4 centreVertex;
+	glm::vec3 centreVertex;
 	ColorDBL color;
 	Material material;
 };

@@ -5,10 +5,10 @@
 Tetrahedron::Tetrahedron() {
 	glm::vec3 _midVertex = glm::vec3(5, 0, 1);
 
-	vertexTable[0] = glm::vec4(_midVertex.x, _midVertex.y, 1 + _midVertex.z, 1);
-	vertexTable[1] = glm::vec4(-1 + _midVertex.x, _midVertex.y, -1 + _midVertex.z, 1);
-	vertexTable[2] = glm::vec4(_midVertex.x, -1 + _midVertex.y, -1 + _midVertex.z, 1);
-	vertexTable[3] = glm::vec4(_midVertex.x, 1 + _midVertex.y, -1 + _midVertex.z, 1);
+	vertexTable[0] = glm::vec3(_midVertex.x, _midVertex.y, 1 + _midVertex.z);
+	vertexTable[1] = glm::vec3(-1 + _midVertex.x, _midVertex.y, -1 + _midVertex.z);
+	vertexTable[2] = glm::vec3(_midVertex.x, -1 + _midVertex.y, -1 + _midVertex.z);
+	vertexTable[3] = glm::vec3(_midVertex.x, 1 + _midVertex.y, -1 + _midVertex.z);
 
 	triangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[2]);
 	triangleTable[1].setVertices(vertexTable[3], vertexTable[1], vertexTable[0]);
@@ -24,10 +24,10 @@ Tetrahedron::Tetrahedron() {
 
 // Value constructor
 Tetrahedron::Tetrahedron(glm::vec3 _midVertex, ColorDBL _color, Material _material) {
-	vertexTable[0] = glm::vec4(_midVertex.x, _midVertex.y, 1 + _midVertex.z, 1);
-	vertexTable[1] = glm::vec4(-1 + _midVertex.x, _midVertex.y, -1 + _midVertex.z, 1);
-	vertexTable[2] = glm::vec4(_midVertex.x, -1 + _midVertex.y, -1 + _midVertex.z, 1);
-	vertexTable[3] = glm::vec4(_midVertex.x, 1 + _midVertex.y, -1 + _midVertex.z, 1);
+	vertexTable[0] = glm::vec3(_midVertex.x, _midVertex.y, 1 + _midVertex.z);
+	vertexTable[1] = glm::vec3(-1 + _midVertex.x, _midVertex.y, -1 + _midVertex.z);
+	vertexTable[2] = glm::vec3(_midVertex.x, -1 + _midVertex.y, -1 + _midVertex.z);
+	vertexTable[3] = glm::vec3(_midVertex.x, 1 + _midVertex.y, -1 + _midVertex.z);
 
 	triangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[2]);
 	triangleTable[1].setVertices(vertexTable[3], vertexTable[1], vertexTable[0]);
@@ -65,6 +65,9 @@ Material Tetrahedron::getMaterial() const {
 // Sets the material of the Tetrahedron
 void Tetrahedron::setMaterial(Material _material) {
 	material = _material;
+	for (auto& triangle : triangleTable) {
+		triangle.setMaterial(_material);
+	}
 }
 
 // Get the colour of the Tetrahedron
