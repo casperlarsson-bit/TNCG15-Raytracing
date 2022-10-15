@@ -3,10 +3,10 @@
 
 // Default constructor
 Ray::Ray() {
-	startVertice = glm::vec4(-1, 0, 0, 1); // Eye position
+	startVertice = glm::vec3(-1, 0, 0); // Eye position
 
 	direction = glm::vec3(1, 0, 0);
-	endVertice = startVertice + glm::vec4(direction, 1);
+	endVertice = startVertice + direction;
 	prevRay = nullptr;
 	nextRay = nullptr;
 
@@ -19,11 +19,11 @@ Ray::Ray() {
 }
 
 // Constructor which sets starting position and direction
-Ray::Ray(glm::vec4 _startPosition, glm::vec3 _direction, RayType _rayType) {
+Ray::Ray(glm::vec3 _startPosition, glm::vec3 _direction, RayType _rayType) {
 	startVertice = _startPosition;
 	direction = _direction;
 
-	endVertice = _startPosition + glm::vec4(_direction, 1);
+	endVertice = _startPosition + _direction;
 	rayColor = ColorDBL();
 
 	prevRay = nullptr;
@@ -63,7 +63,7 @@ void Ray::setDirection(glm::vec3 _direction) {
 }
 
 // Set the end vertex of the ray
-void Ray::setEndVertex(glm::vec4 _endVertex) {
+void Ray::setEndVertex(glm::vec3 _endVertex) {
 	endVertice = _endVertex;
 }
 
@@ -88,12 +88,12 @@ Material Ray::getObjectMaterial() const {
 }
 
 // Get startpoint of Ray
-glm::vec4 Ray::getStartpoint() const {
+glm::vec3 Ray::getStartpoint() const {
 	return startVertice;
 }
 
 // Get endpoint of Ray
-glm::vec4 Ray::getEndpoint() const {
+glm::vec3 Ray::getEndpoint() const {
 	return endVertice;
 }
 

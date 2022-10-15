@@ -20,20 +20,20 @@ Scene::Scene() {
 	// Set up vertex table
 
 	// Floor
-	vertexTable[0] = glm::vec4(0, -6, -5, 1);
-	vertexTable[1] = glm::vec4(10, -6, -5, 1);
-	vertexTable[2] = glm::vec4(13, 0, -5, 1);
-	vertexTable[3] = glm::vec4(10, 6, -5, 1);
-	vertexTable[4] = glm::vec4(0, 6, -5, 1);
-	vertexTable[5] = glm::vec4(-3, 0, -5, 1);
+	vertexTable[0] = glm::vec3(0, -6, -5);
+	vertexTable[1] = glm::vec3(10, -6, -5);
+	vertexTable[2] = glm::vec3(13, 0, -5);
+	vertexTable[3] = glm::vec3(10, 6, -5);
+	vertexTable[4] = glm::vec3(0, 6, -5);
+	vertexTable[5] = glm::vec3(-3, 0, -5);
 
 	// Roof
-	vertexTable[6] = glm::vec4(0, -6, 5, 1);
-	vertexTable[7] = glm::vec4(10, -6, 5, 1);
-	vertexTable[8] = glm::vec4(13, 0, 5, 1);
-	vertexTable[9] = glm::vec4(10, 6, 5, 1);
-	vertexTable[10] = glm::vec4(0, 6, 5, 1);
-	vertexTable[11] = glm::vec4(-3, 0, 5, 1);
+	vertexTable[6] = glm::vec3(0, -6, 5);
+	vertexTable[7] = glm::vec3(10, -6, 5);
+	vertexTable[8] = glm::vec3(13, 0, 5);
+	vertexTable[9] = glm::vec3(10, 6, 5);
+	vertexTable[10] = glm::vec3(0, 6, 5);
+	vertexTable[11] = glm::vec3(-3, 0, 5);
 
 	// Floor rectangle vertices
 	rectangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[3], vertexTable[4]);
@@ -60,14 +60,14 @@ Scene::Scene() {
 	rectangleTable[7].setVertices(vertexTable[5], vertexTable[11], vertexTable[6], vertexTable[0]);
 
 	// Calculate all normals
-	for (auto& rec : rectangleTable) {
-		rec.calculateNormal();
-		rec.setColor(ColorDBL(1.0, 1.0, 1.0));
+	for (auto& rectangle : rectangleTable) {
+		rectangle.calculateNormal();
+		rectangle.setColor(ColorDBL(1.0, 1.0, 1.0));
 	}
 
-	for (auto& tri : triangleTable) {
-		tri.calculateNormal();
-		tri.setColor(ColorDBL(1.0, 1.0, 1.0));
+	for (auto& triangle : triangleTable) {
+		triangle.calculateNormal();
+		triangle.setColor(ColorDBL(1.0, 1.0, 1.0));
 	}
 
 	// Set colours for Polygons
@@ -88,18 +88,18 @@ Scene::Scene() {
 	triangleTable[3].setColor(ColorDBL(0.1, 0.1, 0.1));
 
 	// Spheres in the scene
-	// sphereTable[0] = Sphere(1.0, glm::vec4(6, 1, -1, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
-	// sphereTable[1] = Sphere(0.8, glm::vec4(4, -3, -2, 1), ColorDBL(1, 0, 1), Material::TRANSPARENT);
+	// sphereTable[0] = Sphere(1.0, glm::vec3(6, 1, -1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
+	// sphereTable[1] = Sphere(0.8, glm::vec3(4, -3, -2), ColorDBL(1, 0, 1), Material::TRANSPARENT);
 
 	// Temporarily copy
-	sphereTable[0] = Sphere(1.0f, glm::vec4(4.5f, 3.0f, -3.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::MIRROR);
-	sphereTable[1] = Sphere(1.0f, glm::vec4(6.0f, -3.0f, -2.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT);
-	sphereTable[2] = Sphere(1.0f, glm::vec4(5.0f, -2.0f, -4.0f, 1), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
-	sphereTable[3] = Sphere(1.0f, glm::vec4(10.0f, 0.2f, -1.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT);
-	sphereTable[4] = Sphere(1.2f, glm::vec4(6.0f, 3.0f, -3.0f, 1), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
+	sphereTable[0] = Sphere(1.0f, glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::MIRROR); // MIRROR
+	sphereTable[1] = Sphere(1.0f, glm::vec3(6.0f, -3.0f, -2.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
+	sphereTable[2] = Sphere(1.0f, glm::vec3(5.0f, -2.0f, -4.0f), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
+	sphereTable[3] = Sphere(1.0f, glm::vec3(10.0f, 0.2f, -1.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
+	sphereTable[4] = Sphere(1.2f, glm::vec3(6.0f, 3.0f, -3.0f), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
-	tetrahedronTable[0] = Tetrahedron(glm::vec3(8, -1, -3), ColorDBL(0.96, 0.04, 0.32), Material::LAMBERTIAN);
+	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0, 2.0, -1.0), ColorDBL(0.96, 0.04, 0.32), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
@@ -139,7 +139,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 	case Material::MIRROR: {
 		glm::vec3 normal = ray.getObjectNormal(); // Normal for the polygon
 		// Reflected direction
-		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
+		glm::vec3 newDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
 
 		Ray newRay{ ray.getEndpoint(), newDirection };
 
@@ -159,7 +159,6 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 				this->castRay(newRay);
 			}
 		}
-
 		newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
 		break;
 	}
@@ -257,15 +256,15 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 // Get the direct light from light source to a specific point
 ColorDBL Scene::directLight(const Ray& ray) {
 	// Define area light
-	glm::vec4 v0 = glm::vec4(5, 0, 5, 1);
-	glm::vec4 v1 = glm::vec4(5.1, 0, 5, 1);
-	glm::vec4 v2 = glm::vec4(5.1, 0.1, 5, 1);
-	glm::vec4 v3 = glm::vec4(5, 0.1, 5, 1);
+	glm::vec3 v0 = glm::vec3(5, 0, 5);
+	glm::vec3 v1 = glm::vec3(5.1, 0, 5);
+	glm::vec3 v2 = glm::vec3(5.1, 0.1, 5);
+	glm::vec3 v3 = glm::vec3(5, 0.1, 5);
 
-	glm::vec4 e1 = v2 - v1;
-	glm::vec4 e2 = v0 - v1;
+	glm::vec3 e1 = v2 - v1;
+	glm::vec3 e2 = v0 - v1;
 
-	glm::vec3 lightNormal = glm::normalize(glm::cross(glm::vec3(e2), glm::vec3(e1)));
+	glm::vec3 lightNormal = glm::normalize(glm::cross(e2, e1));
 
 	glm::vec3 surfaceNormal = ray.getObjectNormal();
 	double lightChannel = 0; // Amount of light at each colour channel
@@ -274,34 +273,34 @@ ColorDBL Scene::directLight(const Ray& ray) {
 		double s = distribution(seed);
 		double t = distribution(seed);
 
-		glm::vec4 lightPoint = v1 + (float)s * e1 + (float)t * e2; // Random point on the light source
-		glm::vec3 rayLightDistanceVector = glm::vec3(lightPoint - ray.getEndpoint()); // d_i
+		glm::vec3 lightPoint = v1 + (float)s * e1 + (float)t * e2; // Random point on the light source
+		glm::vec3 rayLightDistanceVector = lightPoint - ray.getEndpoint(); // d_i
 
 		double cosX = glm::dot(lightNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
 		double cosY = -glm::dot(surfaceNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
 
 		Ray shadowRay = Ray(ray.getEndpoint(), glm::normalize(rayLightDistanceVector), RayType::SHADOW);
 		castRay(shadowRay);
-		double shadowRayLength = glm::length(glm::vec3(shadowRay.getEndpoint()) - glm::vec3(shadowRay.getStartpoint()));
+		double shadowRayLength = glm::length(shadowRay.getEndpoint() - shadowRay.getStartpoint());
 
 		//bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
 		double V_xy = 0.0;
 
-		if (shadowRayLength == glm::length(rayLightDistanceVector)) {
-			V_xy = 1.0;
+		if (shadowRayLength < glm::length(rayLightDistanceVector)) {
+			V_xy = 0.0;
 			//std::cout << shadowRayLength << " " << glm::length(rayLightDistanceVector) << "\n";
 		}
 		else {
-			V_xy = 0.0;
+			V_xy = 1.0;
 		}
 
-		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2))*V_xy;
+		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)) * V_xy;
 	}
 
 	const double BRDF = 1 / M_PI;
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
-	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2)))  * 32 * BRDF * 1 / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
+	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(e1, e2))  * 32 * BRDF * 1 / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
 	
 	return lightColor;
 }
@@ -331,14 +330,13 @@ ColorDBL Scene::indirectLight(const Ray& ray) {
 	double z0 = glm::cos(randomOmega);
 
 	// Convert to global coordinate system
-	glm::vec4 globalIntersectionPoint = glm::vec4(
+	glm::vec3 globalIntersectionPoint = glm::vec3(
 		x0 * surfaceNormal.x + y0 * ey.x + z0 * ez.x,
 		x0 * surfaceNormal.y + y0 * ey.y + z0 * ez.y,
-		x0 * surfaceNormal.z + y0 * ey.z + z0 * ez.z,
-		1.0);
+		x0 * surfaceNormal.z + y0 * ey.z + z0 * ez.z);
 
-	glm::vec4 rayPosition = ray.getEndpoint();
-	Ray reflectionRay{rayPosition, glm::vec3(globalIntersectionPoint - rayPosition)};
+	glm::vec3 rayPosition = ray.getEndpoint();
+	Ray reflectionRay{rayPosition, globalIntersectionPoint - rayPosition};
 	castRay(reflectionRay);
 
 
