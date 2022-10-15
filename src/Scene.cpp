@@ -282,11 +282,20 @@ ColorDBL Scene::directLight(const Ray& ray) {
 
 		Ray shadowRay = Ray(ray.getEndpoint(), glm::normalize(rayLightDistanceVector), RayType::SHADOW);
 		castRay(shadowRay);
-		double shadowRayLength = glm::length(shadowRay.getEndpoint() - shadowRay.getStartpoint());
+		double shadowRayLength = glm::length(glm::vec3(shadowRay.getEndpoint()) - glm::vec3(shadowRay.getStartpoint()));
 
-		bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
+		//bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
+		double V_xy = 0.0;
 
-		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)) *V_xy;
+		if (shadowRayLength == glm::length(rayLightDistanceVector)) {
+			V_xy = 1.0;
+			//std::cout << shadowRayLength << " " << glm::length(rayLightDistanceVector) << "\n";
+		}
+		else {
+			V_xy = 0.0;
+		}
+
+		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2))*V_xy;
 	}
 
 	const double BRDF = 1 / M_PI;
