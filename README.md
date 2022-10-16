@@ -6,6 +6,7 @@ A Monte Carlo Ray Tracer implemented from scratch in C++ in the course TNCG15 - 
 
 - /include: Header files
 - /src: Cpp files
+- /images: Images from the ray tracer
 
 #### Setup instructions
 Dependencies:
@@ -15,5 +16,7 @@ Dependencies:
 1. git clone https://github.com/casperlarsson-bit/Raytracing-TNCG15.git
 2. Open CMake, enter the source path and the preferred build directory ("bin" folder) and hit configure. 
 3. Hit Generate and then Open Project to open the project in your IDE.
-4. Build and run the ParticleSystem executable.
-5. Update the CMakeLists.txt file when new .cpp or .h files are added.
+4. Update the CMakeLists.txt file when new .cpp or .h files are added.
+
+![Raytracer](\images\Raytracing.png)
+Convert .PMM image to .PNG on [Convertio](https://convertio.co/)
