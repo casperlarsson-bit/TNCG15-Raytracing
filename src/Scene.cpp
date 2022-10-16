@@ -4,15 +4,15 @@
 #include <math.h>
 #include <random> // Default random engine
 
-#define M_PI 3.14159265358979323846  // Pi
+#define M_PI 3.14159265358979323846f  // Pi
 
 // Should replace above function
 std::default_random_engine seed;
-std::uniform_real_distribution<double> distribution(0.0, 1.0);
+std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
 
 
 const int RANDOM_REFLECTION = 99; // Percentage to continue cast rays in mirror, remove this
-const double MIRROR_VALUE = 0.95; // How much darker the light should be when returned from a mirror
+const float MIRROR_VALUE = 0.95f; // How much darker the light should be when returned from a mirror, for realism
 const int NUMBER_OF_SHADOW_RAYS = 3;
 
 // Default constructor to setup everything for the scene (Vertextable, Polygons etc.)
@@ -20,20 +20,20 @@ Scene::Scene() {
 	// Set up vertex table
 
 	// Floor
-	vertexTable[0] = glm::vec4(0, -6, -5, 1);
-	vertexTable[1] = glm::vec4(10, -6, -5, 1);
-	vertexTable[2] = glm::vec4(13, 0, -5, 1);
-	vertexTable[3] = glm::vec4(10, 6, -5, 1);
-	vertexTable[4] = glm::vec4(0, 6, -5, 1);
-	vertexTable[5] = glm::vec4(-3, 0, -5, 1);
+	vertexTable[0] = glm::vec3(0.0f, -6.0f, -5.0f);
+	vertexTable[1] = glm::vec3(10.0f, -6.0f, -5.0f);
+	vertexTable[2] = glm::vec3(13.0f, 0.0f, -5.0f);
+	vertexTable[3] = glm::vec3(10.0f, 6.0f, -5.0f);
+	vertexTable[4] = glm::vec3(0.0f, 6.0f, -5.0f);
+	vertexTable[5] = glm::vec3(-3.0f, 0.0f, -5.0f);
 
 	// Roof
-	vertexTable[6] = glm::vec4(0, -6, 5, 1);
-	vertexTable[7] = glm::vec4(10, -6, 5, 1);
-	vertexTable[8] = glm::vec4(13, 0, 5, 1);
-	vertexTable[9] = glm::vec4(10, 6, 5, 1);
-	vertexTable[10] = glm::vec4(0, 6, 5, 1);
-	vertexTable[11] = glm::vec4(-3, 0, 5, 1);
+	vertexTable[6] = glm::vec3(0.0f, -6.0f, 5.0f);
+	vertexTable[7] = glm::vec3(10.0f, -6.0f, 5.0f);
+	vertexTable[8] = glm::vec3(13.0f, 0.0f, 5.0f);
+	vertexTable[9] = glm::vec3(10.0f, 6.0f, 5.0f);
+	vertexTable[10] = glm::vec3(0.0f, 6.0f, 5.0f);
+	vertexTable[11] = glm::vec3(-3.0f, 0.0f, 5.0f);
 
 	// Floor rectangle vertices
 	rectangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[3], vertexTable[4]);
@@ -60,173 +60,86 @@ Scene::Scene() {
 	rectangleTable[7].setVertices(vertexTable[5], vertexTable[11], vertexTable[6], vertexTable[0]);
 
 	// Calculate all normals
-	for (auto& rec : rectangleTable) {
-		rec.calculateNormal();
-		rec.setColor(ColorDBL(1.0, 1.0, 1.0));
+	for (auto& rectangle : rectangleTable) {
+		rectangle.calculateNormal();
+		rectangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 	}
 
-	for (auto& tri : triangleTable) {
-		tri.calculateNormal();
-		tri.setColor(ColorDBL(1.0, 1.0, 1.0));
+	for (auto& triangle : triangleTable) {
+		triangle.calculateNormal();
+		triangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 	}
 
 	// Set colours for Polygons
-	rectangleTable[0].setColor(ColorDBL(0.8, 0.8, 0.8));
-	rectangleTable[1].setColor(ColorDBL(0.1, 0.1, 0.1));
-	rectangleTable[2].setColor(ColorDBL(0.2, 0.66, 0.32));
-	rectangleTable[3].setColor(ColorDBL(0.66, 0.62, 0.2));
+	rectangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
+	rectangleTable[1].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
+	rectangleTable[2].setColor(ColorDBL(0.2f, 0.66f, 0.32f));
+	rectangleTable[3].setColor(ColorDBL(0.66f, 0.62f, 0.2f));
 	// rectangleTable[3].setMaterial(Material::MIRROR);
-	rectangleTable[4].setColor(ColorDBL(0.2, 0.27, 0.66));
-	rectangleTable[5].setColor(ColorDBL(0.66, 0.2, 0.2));
-	rectangleTable[6].setColor(ColorDBL(0.2, 0.63, 0.66));
+	rectangleTable[4].setColor(ColorDBL(0.2f, 0.27f, 0.66f));
+	rectangleTable[5].setColor(ColorDBL(0.66f, 0.2f, 0.2f));
+	rectangleTable[6].setColor(ColorDBL(0.2f, 0.63f, 0.66f));
 	// rectangleTable[6].setMaterial(Material::MIRROR);
-	rectangleTable[7].setColor(ColorDBL(0.43, 0.2, 0.66));
+	rectangleTable[7].setColor(ColorDBL(0.43f, 0.2f, 0.66f));
 
-	triangleTable[0].setColor(ColorDBL(0.8, 0.8, 0.8));
-	triangleTable[1].setColor(ColorDBL(0.8, 0.8, 0.8));
-	triangleTable[2].setColor(ColorDBL(0.1, 0.1, 0.1));
-	triangleTable[3].setColor(ColorDBL(0.1, 0.1, 0.1));
+	triangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
+	triangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
+	triangleTable[2].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
+	triangleTable[3].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
 
 	// Spheres in the scene
-	// sphereTable[0] = Sphere(1.0, glm::vec4(6, 1, -1, 1), ColorDBL(1, 0, 1), Material::LAMBERTIAN);
-	// sphereTable[1] = Sphere(0.8, glm::vec4(4, -3, -2, 1), ColorDBL(1, 0, 1), Material::TRANSPARENT);
+	// sphereTable[0] = Sphere(1.0f, glm::vec3(6.0f, 1.0f, -1.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::LAMBERTIAN);
+	// sphereTable[1] = Sphere(0.8f, glm::vec3(4.0f, -3.0f, -2.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::TRANSPARENT);
 
 	// Temporarily copy
-	sphereTable[0] = Sphere(1.0f, glm::vec4(4.5f, 3.0f, -3.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::MIRROR);
-	sphereTable[1] = Sphere(1.0f, glm::vec4(6.0f, -3.0f, -2.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT);
-	sphereTable[2] = Sphere(1.0f, glm::vec4(5.0f, -2.0f, -4.0f, 1), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
-	sphereTable[3] = Sphere(1.0f, glm::vec4(10.0f, 0.2f, -1.0f, 1), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT);
-	sphereTable[4] = Sphere(1.2f, glm::vec4(6.0f, 3.0f, 1.0f, 1), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
+	sphereTable[0] = Sphere(1.0f, glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::MIRROR); // MIRROR
+	sphereTable[1] = Sphere(1.0f, glm::vec3(6.0f, -3.0f, -2.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
+	sphereTable[2] = Sphere(1.0f, glm::vec3(5.0f, -2.0f, -4.0f), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
+	sphereTable[3] = Sphere(1.0f, glm::vec3(10.0f, 0.2f, -1.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
+	sphereTable[4] = Sphere(1.2f, glm::vec3(6.0f, 3.0f, -3.0f), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
-	tetrahedronTable[0] = Tetrahedron(glm::vec3(8, -1, -3), ColorDBL(0.96, 0.04, 0.32), Material::LAMBERTIAN);
+	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0f, 2.0f, -1.0f), ColorDBL(0.96f, 0.04f, 0.32f), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
 void Scene::castRay(Ray& ray, int numReflections) {
-	// @TODO Kolla längd om den träffar flera objekt
-	
-	glm::vec3 shortestRay = glm::vec3(INT_MAX, INT_MAX, INT_MAX);
+	float minDistance = 1000.0f; // Store the distance to the closest object a ray hits
 
 	// Rectnagles
-	for (auto& rect : rectangleTable) {
-		//ray.setEndVertex(rect.rayIntersection(ray));
+	for (auto& rectangle : rectangleTable) {
 		// Test if inside rectangle, if not go to next rectangle
-
-		glm::vec4 endVertex = rect.rayIntersection(ray);
-
-		if (endVertex[0] == NULL) continue;
-
-		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
-
-		if (glm::length(rayPath) < glm::length(shortestRay)) {
-			shortestRay = rayPath;
-			ray.setEndVertex(endVertex);
-			ray.setColor(rect.getColor());
-
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, rect, numReflections);
-		}
-
-		/*if (ray.getEndpoint()[0] == NULL) {
-			continue;
-		}*/
-
-		
-		break;
+		if (rectangle.rayIntersection(ray, minDistance)) break;
 	}
 
 	// Go through all triangles
-	for (auto& tri : triangleTable) {
-		//ray.setEndVertex(tri.rayIntersection(ray));
-
-		glm::vec4 endVertex = tri.rayIntersection(ray);
-
-		if (endVertex[0] == NULL) continue;
-
-		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
-
-		if (glm::length(rayPath) < glm::length(shortestRay)) {
-			shortestRay = rayPath;
-			ray.setEndVertex(endVertex);
-			ray.setColor(tri.getColor());
-
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-		}
-
-		/*if (ray.getEndpoint()[0] == NULL) {
-			continue;
-		}*/
-
-		
-		break;
+	for (auto& triangle : triangleTable) {
+		if (triangle.rayIntersection(ray, minDistance)) break;
 	}
 
 	// Go through all spheres
-	for (auto& circle : sphereTable) {
-		/*ray.setEndVertex(circle.rayIntersection(ray));
-
-		if (ray.getEndpoint()[0] == NULL) {
-			continue;
-		}*/
-
-		glm::vec4 endVertex = circle.rayIntersection(ray);
-
-		if (endVertex[0] == NULL) continue;
-
-		glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
-
-		if (glm::length(rayPath) < glm::length(shortestRay)) {
-			shortestRay = rayPath;
-			ray.setEndVertex(endVertex);
-			ray.setColor(circle.getColor());
-
-			// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-			if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, circle, numReflections);
-		}
-
-		
-		break;
+	for (auto& sphere : sphereTable) {
+		if (sphere.rayIntersection(ray, minDistance)) break;
 	}
 
 	// Go trhrough all tetrahedrons
 	for (auto& tetra : tetrahedronTable) {
-		// Go through the triangles in the tetrahedron
-		for (auto& tri : tetra.triangleTable) {
-			//ray.setEndVertex(tri.rayIntersection(ray));
-
-			glm::vec4 endVertex = tri.rayIntersection(ray);
-
-			if (endVertex[0] == NULL) continue;
-
-			glm::vec3 rayPath = glm::vec3(endVertex - ray.getStartpoint());
-
-			if (glm::length(rayPath) < glm::length(shortestRay)) {
-				shortestRay = rayPath;
-				ray.setEndVertex(endVertex);
-				ray.setColor(tri.getColor());
-
-				// Handle the different kind of reflections, Lambertian, Mirror, Transparent
-				if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, tri, numReflections);
-			}
-
-			
-			break;
-		}
+		tetra.rayIntersection(ray, minDistance);
 	}
+
+	// Handle the different kind of reflections, Lambertian, Mirror, Transparent
+	if (ray.getRayType() != RayType::SHADOW) handleReflection(ray, numReflections);
 }
 
 // Handle different kind of reflections (Lambertian, Mirror, Transparent) on dirrefent Polygons
-void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
-	ray.rayPolygonIntersection = &polygon;
-
-	// Do different things depending on material of rectangle
-	switch (polygon.getMaterial()) {
+void Scene::handleReflection(Ray& ray, int numReflections) {
+	// Do different things depending on material
+	switch (ray.getObjectMaterial()) {
 		// Mirror, reflect ray and cast it again
 	case Material::MIRROR: {
+		glm::vec3 normal = ray.getObjectNormal(); // Normal for the polygon
 		// Reflected direction
-		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), polygon.getNormal()) * polygon.getNormal();
+		glm::vec3 newDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
 
 		Ray newRay{ ray.getEndpoint(), newDirection };
 
@@ -241,62 +154,11 @@ void Scene::handleReflection(Ray& ray, Polygon& polygon, int numReflections) {
 			this->castRay(newRay, numReflections - 1);
 		}
 		else {
-			int randomReflection = (int)(distribution(seed) * 100);
-			if (randomReflection < RANDOM_REFLECTION) {
-				this->castRay(newRay);
-			}
-		}
-
-		newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
-		break;
-	}
-	// Lambertian surface, cast ray to the light source and indirect light
-	case Material::LAMBERTIAN: {
-		// Get the light % for direct light
-		ColorDBL directLight = this->directLight(ray);
-
-		// Get the indirect light
-		ColorDBL indirectLight = this->indirectLight(ray);
-		ray.setColor(indirectLight + directLight);
-		break;
-	}
-	case Material::TRANSPARENT: {
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-// Overloaded handleReflection to do the same thing but for Spheres, since the normal is computed in a different way
-void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
-	// Do different things depending on material of rectangle
-	switch (sphere.getMaterial()) {
-		// Mirror, reflect ray and cast it again
-	case Material::MIRROR: {
-		glm::vec3 normal = glm::vec3(ray.getEndpoint() - sphere.getCentre()); // Normal for the sphere
-		// Reflected direction
-		glm::vec3 newDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), normal) * normal;
-
-		Ray newRay{ ray.getEndpoint(), newDirection };
-
-		// Set up doubly linked list
-		ray.nextRay = &newRay;
-		newRay.prevRay = &ray;
-
-		// Recursively cast ray into scene again until a non mirror is hit
-		// Continue to cast ray with 99 % probability, to avoid stack overflow
-		// After numReflections (default=3) do probability, otherwise reflect all rays
-		if (numReflections > 0) {
-			this->castRay(newRay, numReflections - 1);
-		}
-		else {
 			int randomReflection = rand() % 100;
 			if (randomReflection < RANDOM_REFLECTION) {
 				this->castRay(newRay);
 			}
 		}
-
 		newRay.prevRay->setColor(newRay.getColor() * MIRROR_VALUE);
 		break;
 	}
@@ -312,25 +174,25 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 	}
 	// Transparent surface
 	case Material::TRANSPARENT: {
-		glm::vec3 sphereNormal = glm::normalize(glm::vec3(ray.getEndpoint() - sphere.getCentre())); // Normal for the sphere
+		glm::vec3 normal = ray.getObjectNormal(); // Normal for the polygon
 		glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
 
-		double n1 = 1.0; // Air
-		double n2 = 1.5; // Glass
+		float n1 = 1.0f; // Air
+		float n2 = 1.5f; // Glass
 
 		// Schlick's law for BRDF
-		double R0 = glm::pow((n1 - n2) / (n1 + n2), 2);
-		double reflectedBRDF = R0 + (1.0 - R0) * glm::pow(1.0 - glm::cos(glm::dot(ingoingRayDirection, sphereNormal)), 5);
-		//double transmittedBRDF = 1.0 - reflectedBRDF; // Unnecessary?
+		float R0 = (float)glm::pow((n1 - n2) / (n1 + n2), 2);
+		float reflectedBRDF = R0 + (1.0f - R0) * (float)glm::pow(1.0f - glm::cos(glm::dot(ingoingRayDirection, normal)), 5);
+		// float transmittedBRDF = 1.0 - reflectedBRDF; // Unnecessary?
 
 		if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
-			sphereNormal = -sphereNormal; // Invert normal since we are inside the sphere
+			normal = -normal; // Invert normal since we are inside the sphere
 
-			// Test if we have total reflection
+			// Test if we have total internal reflection
 			// Total reflection, only calculate reflected ray
-			if (glm::sin(glm::dot(ingoingRayDirection, sphereNormal) * n1 / n2) > 1) {
+			if (glm::sin(glm::dot(ingoingRayDirection, normal) * n1 / n2) > 1.0f) {
 				// Reflected direction
-				glm::vec3 reflectedDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), sphereNormal) * sphereNormal;
+				glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
 
 				Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
 
@@ -353,7 +215,7 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 		// Reflect ray, not refract
 		if (distribution(seed) < reflectedBRDF) {
 			// Reflected direction
-			glm::vec3 reflectedDirection = ray.getDirection() - (float)2 * glm::dot(ray.getDirection(), sphereNormal) * sphereNormal;
+			glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
 				
 			Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
 
@@ -368,9 +230,9 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 		}
 		// Refract ray, not reflect
 		else {
-			double R = n1 / n2; // SinB / SinOmega, ratio of refractive index
+			float R = n1 / n2; // SinB / SinOmega, ratio of refractive index
 			// Reflected direction
-			glm::vec3 refractedDirection = (float)R * ingoingRayDirection + sphereNormal * (float)(-R * glm::dot(sphereNormal, ingoingRayDirection) - glm::sqrt(1 - R * R * (1 - glm::pow(glm::dot(sphereNormal, ingoingRayDirection), 2))));
+			glm::vec3 refractedDirection = R * ingoingRayDirection + normal * (float)(-R * glm::dot(normal, ingoingRayDirection) - glm::sqrt(1.0f - R * R * (1.0f - glm::pow(glm::dot(normal, ingoingRayDirection), 2))));
 
 			Ray refractedRay = Ray(ray.getEndpoint(), refractedDirection, RayType::INSIDE_TRANSPARENT);
 
@@ -394,42 +256,51 @@ void Scene::handleReflection(Ray& ray, Sphere& sphere, int numReflections) {
 // Get the direct light from light source to a specific point
 ColorDBL Scene::directLight(const Ray& ray) {
 	// Define area light
-	glm::vec4 v0 = glm::vec4(5, 0, 5, 1);
-	glm::vec4 v1 = glm::vec4(5.1, 0, 5, 1);
-	glm::vec4 v2 = glm::vec4(5.1, 0.1, 5, 1);
-	glm::vec4 v3 = glm::vec4(5, 0.1, 5, 1);
+	glm::vec3 v0 = glm::vec3(5.0f, 0.0f, 5.0f);
+	glm::vec3 v1 = glm::vec3(5.1f, 0.0f, 5.0f);
+	glm::vec3 v2 = glm::vec3(5.1f, 0.1f, 5.0f);
+	glm::vec3 v3 = glm::vec3(5.0f, 0.1f, 5.0f);
 
-	glm::vec4 e1 = v2 - v1;
-	glm::vec4 e2 = v0 - v1;
+	glm::vec3 e1 = v2 - v1;
+	glm::vec3 e2 = v0 - v1;
 
-	glm::vec3 lightNormal = glm::normalize(glm::cross(glm::vec3(e2), glm::vec3(e1)));
+	glm::vec3 lightNormal = glm::normalize(glm::cross(e2, e1));
 
-	glm::vec3 surfaceNormal = ray.getPolygon()->getNormal();
-	double lightChannel = 0; // Amount of light at each colour channel
+	glm::vec3 surfaceNormal = ray.getObjectNormal();
+	float lightChannel = 0.0f; // Amount of light at each colour channel
 	for (int i = 0; i < NUMBER_OF_SHADOW_RAYS; ++i) {
 		// Create two random parameter variables, uniform distribution
-		double s = distribution(seed);
-		double t = distribution(seed);
+		float s = distribution(seed);
+		float t = distribution(seed);
 
-		glm::vec4 lightPoint = v1 + (float)s * e1 + (float)t * e2; // Random point on the light source
-		glm::vec3 rayLightDistanceVector = glm::vec3(lightPoint - ray.getEndpoint()); // d_i
+		glm::vec3 lightPoint = v1 + s * e1 + t * e2; // Random point on the light source
+		glm::vec3 rayLightDistanceVector = lightPoint - ray.getEndpoint(); // d_i
 
-		double cosX = glm::dot(lightNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
-		double cosY = -glm::dot(surfaceNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
+		float cosX = glm::dot(lightNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
+		float cosY = -glm::dot(surfaceNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
 
 		Ray shadowRay = Ray(ray.getEndpoint(), glm::normalize(rayLightDistanceVector), RayType::SHADOW);
 		castRay(shadowRay);
-		double shadowRayLength = glm::length(shadowRay.getEndpoint() - shadowRay.getStartpoint());
+		float shadowRayLength = glm::length(shadowRay.getEndpoint() - shadowRay.getStartpoint());
 
-		bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
+		//bool V_xy = !(abs(shadowRayLength - glm::length(rayLightDistanceVector) < COMPARE_ELLIPSE));
+		float V_xy = 0.0;
 
-		lightChannel += glm::max((double)0, cosX * cosY / std::pow(glm::length(rayLightDistanceVector), 2)); // *V_xy;
+		if (shadowRayLength < glm::length(rayLightDistanceVector)) {
+			V_xy = 0.0;
+			//std::cout << shadowRayLength << " " << glm::length(rayLightDistanceVector) << "\n";
+		}
+		else {
+			V_xy = 1.0;
+		}
+
+		lightChannel += glm::max(0.0f, cosX * cosY / (float)glm::pow(glm::length(rayLightDistanceVector), 2)) * V_xy;
 	}
 
-	const double BRDF = 1 / M_PI;
+	const float BRDF = 1 / M_PI;
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
-	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(glm::vec3(e1), glm::vec3(e2)))  * 3200 * BRDF * 1 / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
+	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(e1, e2))  * 32.0f * BRDF * 1.0f / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
 	
 	return lightColor;
 }
@@ -438,14 +309,15 @@ ColorDBL Scene::directLight(const Ray& ray) {
 ColorDBL Scene::indirectLight(const Ray& ray) {
 
 	// Perform Russian roulette to decide if to continue, using Rho as probability of surviving
-	double random = distribution(seed);
-	if (random > ray.getPolygon()->getRho()) return ColorDBL(); // If not to continue ray path
+	float random = distribution(seed);
+	// if (random > ray.getPolygon()->getRho()) return ColorDBL(); // If not to continue ray path
+	if (random < 0.25f) return ColorDBL(); // Temp from above
 
-	glm::vec3 surfaceNormal = ray.getPolygon()->getNormal();
+	glm::vec3 surfaceNormal = ray.getObjectNormal();
 
 	// Random direction in local hemisphere with nonuniform distribution, reuse random variable
-	double randomPhi = 1 - random;
-	double randomOmega = glm::acos(glm::sqrt(1.0 - random));
+	float randomPhi = 1.0f - random;
+	float randomOmega = glm::acos(glm::sqrt(1.0f - random));
 
 	// Set up orthogonal local coordinate system
 	glm::vec3 ey;
@@ -453,28 +325,27 @@ ColorDBL Scene::indirectLight(const Ray& ray) {
 	createLocalCartesianCoordinateSystem(surfaceNormal, ey, ez);
 
 	// Get intersection with hemisphere in local cartesian coordinates
-	double x0 = glm::cos(randomPhi) * glm::sin(randomOmega);
-	double y0 = glm::sin(randomPhi) * glm::sin(randomOmega);
-	double z0 = glm::cos(randomOmega);
+	float x0 = glm::cos(randomPhi) * glm::sin(randomOmega);
+	float y0 = glm::sin(randomPhi) * glm::sin(randomOmega);
+	float z0 = glm::cos(randomOmega);
 
 	// Convert to global coordinate system
-	glm::vec4 globalIntersectionPoint = glm::vec4(
+	glm::vec3 globalIntersectionPoint = glm::vec3(
 		x0 * surfaceNormal.x + y0 * ey.x + z0 * ez.x,
 		x0 * surfaceNormal.y + y0 * ey.y + z0 * ez.y,
-		x0 * surfaceNormal.z + y0 * ey.z + z0 * ez.z,
-		1.0);
+		x0 * surfaceNormal.z + y0 * ey.z + z0 * ez.z);
 
-	glm::vec4 rayPosition = ray.getEndpoint();
-	Ray reflectionRay{rayPosition, glm::vec3(globalIntersectionPoint - rayPosition)};
+	glm::vec3 rayPosition = ray.getEndpoint();
+	Ray reflectionRay{rayPosition, globalIntersectionPoint - rayPosition};
 	castRay(reflectionRay);
 
 
-	return reflectionRay.getColor() * ray.getColor() * 0.6;
+	return reflectionRay.getColor() * ray.getColor() * 0.6f;
 }
 
 // Create a local coordinate system with orthogonal axes
 void Scene::createLocalCartesianCoordinateSystem(glm::vec3 e1, glm::vec3& e2, glm::vec3& e3) const {
 	// Make e2 and e3 orthogonal to e3 and each other, and normalise
-	e2 = glm::vec3(e1.z, 0, -e1.x);
+	e2 = glm::vec3(e1.z, 0.0f, -e1.x);
 	e3 = glm::cross(e1, e2);
 }

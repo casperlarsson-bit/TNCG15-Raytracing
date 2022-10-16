@@ -13,7 +13,7 @@ public:
 	Ray();
 
 	// Constructor which sets starting position and direction
-	Ray(glm::vec4 _startPosition, glm::vec3 _direction, RayType _rayType = RayType::PRIMARY);
+	Ray(glm::vec3 _startPosition, glm::vec3 _direction, RayType _rayType = RayType::PRIMARY);
 
 	// Destructor
 	~Ray();
@@ -26,20 +26,32 @@ public:
 	// Set the Color of the ray with ColorDBL
 	void setColor(ColorDBL _rgb);
 
-	// Set the Color of the ray with doubles
-	void setColor(double _red, double _green, double _blue);
+	// Set the Color of the ray with floats
+	void setColor(float _red, float _green, float _blue);
 
 	// Set the direction of a Ray
 	void setDirection(glm::vec3 _direction);
 
 	// Set the end vertex of the ray
-	void setEndVertex(glm::vec4 _endVertex);
+	void setEndVertex(glm::vec3 _endVertex);
+
+	// Set the normal of the object the ray intersected with
+	void setObjectNormal(glm::vec3 _normal);
+
+	// Set the material of the object the ray intersected with
+	void setObjectMaterial(Material _material);
+
+	// Get the normal of the object the ray intersected with
+	glm::vec3 getObjectNormal() const;
+
+	// Get the material of the object the ray intersected with
+	Material getObjectMaterial() const;
 
 	// Get startpoint of Ray
-	glm::vec4 getStartpoint() const;
+	glm::vec3 getStartpoint() const;
 
 	// Get endpoint of Ray
-	glm::vec4 getEndpoint() const;
+	glm::vec3 getEndpoint() const;
 
 	// Get direction of Ray
 	glm::vec3 getDirection() const;
@@ -54,10 +66,12 @@ public:
 	Ray* nextRay;
 	Polygon* rayPolygonIntersection;
 private:
-	glm::vec4 startVertice;
-	glm::vec4 endVertice;
+	glm::vec3 startVertice;
+	glm::vec3 endVertice;
 	glm::vec3 direction;
 
 	RayType rayType;
 	ColorDBL rayColor;
+	glm::vec3 objectNormal;
+	Material objectMaterial;
 };

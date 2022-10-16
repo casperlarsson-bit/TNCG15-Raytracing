@@ -11,11 +11,11 @@ public:
 	void calculateNormal();
 
 	// Set the vertices of the Triangle
-	void setVertices(glm::vec4 _v0, glm::vec4 _v1, glm::vec4 _v2);
+	void setVertices(glm::vec3 _v0, glm::vec3 _v1, glm::vec3 _v2);
 
 	// Calculate the intersection of a ray and the surface
-	// Return the vertex where it hits
-	glm::vec4 rayIntersection(Ray& ray) const;
+	// Return true if hits the surface
+	bool rayIntersection(Ray& ray, float& minDistance) const;
 private:
-	glm::vec4 v0, v1, v2;
+	glm::vec3 v0, v1, v2;
 };

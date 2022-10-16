@@ -13,11 +13,6 @@ public:
 	// Value constructor
 	Tetrahedron(glm::vec3 _midVertex, ColorDBL _color, Material _material);
 
-	// Calculate the intersection of a ray and the surface
-	// Return the vertex where it hits
-	// Hits circle 0, 1 or 2 times. Want the first hit. Assume 1 hit = 0 hits
-	glm::vec4 rayIntersection(Ray& ray) const;
-
 	// Get what material the Tetrahedron is made of
 	Material getMaterial() const;
 
@@ -30,10 +25,13 @@ public:
 	// Set the colour of the Tetrahedron
 	void setColor(ColorDBL _color);
 
+	// Calculate the intersection of a ray and the surface
+	// D*N < 0 for correct intersection
+	void rayIntersection(Ray& ray, float& minDistance) const;
 	
 	Triangle triangleTable[4]; // Triangles to store the surfaces
 private:
 	ColorDBL color;
 	Material material;
-	glm::vec4 vertexTable[4]; // Vertices to build triangles
+	glm::vec3 vertexTable[4]; // Vertices to build triangles
 };

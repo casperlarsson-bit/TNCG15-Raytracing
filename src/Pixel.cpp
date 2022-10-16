@@ -15,8 +15,8 @@ ColorDBL Pixel::getColor() const {
 	return color;
 }
 
-// Set the colour of the pixel, with double values
-void Pixel::setColor(double _r, double _g, double _b) {
+// Set the colour of the pixel, with float values
+void Pixel::setColor(float _r, float _g, float _b) {
 	color = ColorDBL(_r, _g, _b);
 }
 

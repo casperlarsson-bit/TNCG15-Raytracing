@@ -26,6 +26,6 @@ public:
 	
 private:
 	std::vector<std::vector<Pixel>> image;
-	glm::vec4 eyePosition = glm::vec4(-1, 0, 0, 1);
-	double maxD; // Maximum double value in the image, to divide all pixels when saving image
+	glm::vec3 eyePosition = glm::vec3(-1, 0, 0);
+	float maxD; // Maximum value in the image, to divide all pixels when saving image
 };

@@ -11,12 +11,12 @@ public:
 	Sphere();
 
 	// Value constructor
-	Sphere(double _radius, glm::vec4 _centreVertex, ColorDBL _color, Material _material);
+	Sphere(float _radius, glm::vec3 _centreVertex, ColorDBL _color, Material _material);
 
 	// Calculate the intersection of a ray and the surface
-	// Return the vertex where it hits
+	// Return true if hits the surface
 	// Hits circle 0, 1 or 2 times. Want the first hit. Assume 1 hit = 0 hits
-	glm::vec4 rayIntersection(Ray& ray) const;
+	bool rayIntersection(Ray& ray, float& minDistance) const;
 
 	// Get what material the Sphere is made of
 	Material getMaterial() const;
@@ -31,11 +31,11 @@ public:
 	void setColor(ColorDBL _color);
 
 	// Get the centre of the sphere
-	glm::vec4 getCentre() const;
+	glm::vec3 getCentre() const;
 
 private:
-	double radius;
-	glm::vec4 centreVertex;
+	float radius;
+	glm::vec3 centreVertex;
 	ColorDBL color;
 	Material material;
 };
