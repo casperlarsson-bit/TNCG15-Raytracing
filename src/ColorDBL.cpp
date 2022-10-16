@@ -37,3 +37,12 @@ ColorDBL ColorDBL::operator+(ColorDBL color) const {
 
 	return ColorDBL(newRed, newGreen, newBlue);
 }
+
+// Add color
+ColorDBL& ColorDBL::operator+=(const ColorDBL& color) {
+	red += color.red;
+	green += color.green;
+	blue += color.blue;
+
+	return *this;
+}

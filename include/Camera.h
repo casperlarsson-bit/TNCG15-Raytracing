@@ -9,6 +9,7 @@
 #include "functions.h"
 
 const int SIZE = 600; // Default image resolution (square)
+const int NUMBER_OF_SUBPIXELS = 16; // numbers of rays to cast through each pixel (squared)
 
 class Camera {
 public:
@@ -26,6 +27,6 @@ public:
 	
 private:
 	std::vector<std::vector<Pixel>> image;
-	glm::vec3 eyePosition = glm::vec3(-1, 0, 0);
+	glm::vec3 eyePosition = glm::vec3(-0.5f, 0.0f, 0.0f);
 	float maxD; // Maximum value in the image, to divide all pixels when saving image
 };
