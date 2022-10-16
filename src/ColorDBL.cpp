@@ -4,13 +4,13 @@
 
 // Default constructor, 0 0 0
 ColorDBL::ColorDBL() {
-	red = 0;
-	green = 0;
-	blue = 0;
+	red = 0.0f;
+	green = 0.0f;
+	blue = 0.0f;
 }
 
 // Constructor to create a colour of values
-ColorDBL::ColorDBL(double _r, double _g, double _b) {
+ColorDBL::ColorDBL(float _r, float _g, float _b) {
 	red = _r;
 	green = _g;
 	blue = _b;
@@ -18,7 +18,7 @@ ColorDBL::ColorDBL(double _r, double _g, double _b) {
 
 // Overloaded operator*, scales the colour by value
 // To make colour darker/brighter
-ColorDBL ColorDBL::operator*(double value) const {
+ColorDBL ColorDBL::operator*(float value) const {
 	return ColorDBL(red * value, green * value, blue * value);
 }
 
@@ -30,9 +30,9 @@ ColorDBL ColorDBL::operator*(ColorDBL color) const {
 
 // Overloaded operator+ to add two colours channel by channel
 ColorDBL ColorDBL::operator+(ColorDBL color) const {
-	double newRed = glm::min(1.0, red + color.red);
-	double newGreen = glm::min(1.0, green + color.green);
-	double newBlue = glm::min(1.0, blue + color.blue);
+	float newRed = glm::min(1.0f, red + color.red);
+	float newGreen = glm::min(1.0f, green + color.green);
+	float newBlue = glm::min(1.0f, blue + color.blue);
 
 
 	return ColorDBL(newRed, newGreen, newBlue);

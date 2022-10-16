@@ -3,9 +3,9 @@
 
 // Default constructor
 Triangle::Triangle() {
-	v0 = glm::vec3(1, 0, 0);
-	v1 = glm::vec3(0, 1, 0);
-	v2 = glm::vec3(0, 0, 1);
+	v0 = glm::vec3(1.0f, 0.0f, 0.0f);
+	v1 = glm::vec3(0.0f, 1.0f, 0.0f);
+	v2 = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	calculateNormal();
 }
@@ -30,7 +30,7 @@ void Triangle::setVertices(glm::vec3 _v0, glm::vec3 _v1, glm::vec3 _v2) {
 
 // Calculate the intersection of a ray and the surface
 // Return true if hits the surface
-bool Triangle::rayIntersection(Ray& ray, double& minDistance) const {
+bool Triangle::rayIntersection(Ray& ray, float& minDistance) const {
 	/*glm::vec3 rayStart = ray.getStartpoint();
 	glm::vec3 rayEnd = ray.getEndpoint();
 	glm::vec3 rayDirection = glm::normalize(ray.getDirection());
@@ -53,13 +53,13 @@ bool Triangle::rayIntersection(Ray& ray, double& minDistance) const {
 	}
 
 	// Parameters (u,v) to test if Ray is inside Triangle
-	double u = glm::dot(P, rayToVertex) / glm::dot(P, edge1);
-	double v = glm::dot(Q, rayDirection) / glm::dot(P, edge1);
+	float u = glm::dot(P, rayToVertex) / glm::dot(P, edge1);
+	float v = glm::dot(Q, rayDirection) / glm::dot(P, edge1);
 
-	double t = glm::dot(Q, edge2) / glm::dot(P, edge1);
-	glm::vec3 x_i = rayStart + rayDirection * (float)t;
+	float t = glm::dot(Q, edge2) / glm::dot(P, edge1);
+	glm::vec3 x_i = rayStart + rayDirection * t;
 
-	// Check if outside Triangle, u >= 0, v >= 0, u+v <= 1. If t is too big return false. Should not compare double directly @TODO
+	// Check if outside Triangle, u >= 0, v >= 0, u+v <= 1. If t is too big return false. Should not compare float directly @TODO
 	if ((u >= 0 && v >= 0 && u + v <= 1) && glm::length(x_i - ray.getStartpoint()) < minDistance) {
 		// Carry on if inside Triangle, to calculate x_i
 		ray.setColor(color);
@@ -79,7 +79,7 @@ bool Triangle::rayIntersection(Ray& ray, double& minDistance) const {
 	glm::vec3 qvec = glm::cross(ray.getStartpoint() - v0, edge1);
 	glm::vec3 tvec = ray.getStartpoint() - v0;
 
-	const float kEpsilon = 0.00001;
+	const float kEpsilon = 0.00001f;
 
 	float det = glm::dot(edge1, pvec);
 

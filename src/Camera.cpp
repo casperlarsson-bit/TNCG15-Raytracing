@@ -5,12 +5,12 @@
 
 // Default constructor sets resolution to 600x600
 Camera::Camera() : image(SIZE, std::vector<Pixel>(SIZE)) {
-	maxD = 0;
+	maxD = 0.0f;
 }
 
 // Constructor which sets the resolution to res (square)
 Camera::Camera(int _res) : image(_res, std::vector<Pixel>(_res)) {
-	maxD = 0;
+	maxD = 0.0f;
 }
 
 // Render the image by casting rays and changing the pixel value
@@ -20,7 +20,7 @@ void Camera::renderImage(Scene& scene) {
 	std::cout << "Render image...\n";
 	for (std::size_t i = 0; i < image.size(); ++i) {
 		for (std::size_t j = 0; j < image.size(); ++j) {
-			glm::vec3 pixelPosition = glm::vec3(0, 1 - 2 * (double)j / image.size(), 1 - 2 * (double)i / image.size());
+			glm::vec3 pixelPosition = glm::vec3(0.0f, 1.0f - 2.0f * (float)j / image.size(), 1.0f - 2.0f * (float)i / image.size());
 			Ray pixelRay{eyePosition, pixelPosition - eyePosition};
 			
 			// Cast ray and let scene handle it. Set pixel colour to the 
@@ -29,12 +29,12 @@ void Camera::renderImage(Scene& scene) {
 			image[i][j].setColor(pixelRay.getColor());
 
 			// Update the max pixel value if new is found
-			double newMax = glm::max(glm::max(pixelRay.getColor().red, pixelRay.getColor().blue), pixelRay.getColor().green);
+			float newMax = glm::max(glm::max(pixelRay.getColor().red, pixelRay.getColor().blue), pixelRay.getColor().green);
 			if (newMax > maxD) maxD = newMax;
 		}
 
 		// Display progress bar
-		progressBar((double)i / image.size());
+		progressBar((float)i / image.size());
 	}
 }
 
@@ -61,7 +61,7 @@ void Camera::saveImage() const {
 		}
 		
 		// Display progress bar
-		progressBar((double)i / image.size());
+		progressBar((float)i / image.size());
 	}
 
 	imageFile.close();

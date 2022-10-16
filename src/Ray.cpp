@@ -3,9 +3,9 @@
 
 // Default constructor
 Ray::Ray() {
-	startVertice = glm::vec3(-1, 0, 0); // Eye position
+	startVertice = glm::vec3(-1.0f, 0.0f, 0.0f); // Eye position
 
-	direction = glm::vec3(1, 0, 0);
+	direction = glm::vec3(1.0f, 0.0f, 0.0f);
 	endVertice = startVertice + direction;
 	prevRay = nullptr;
 	nextRay = nullptr;
@@ -15,7 +15,7 @@ Ray::Ray() {
 	rayType = RayType::PRIMARY;
 
 	objectMaterial = Material::LAMBERTIAN;
-	objectNormal = glm::vec3(1, 0, 0);
+	objectNormal = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
 // Constructor which sets starting position and direction
@@ -34,7 +34,7 @@ Ray::Ray(glm::vec3 _startPosition, glm::vec3 _direction, RayType _rayType) {
 	rayType = _rayType;
 
 	objectMaterial = Material::LAMBERTIAN;
-	objectNormal = glm::vec3(1, 0, 0);
+	objectNormal = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
 // Destructor
@@ -52,8 +52,8 @@ void Ray::setColor(ColorDBL _rgb) {
 	rayColor = _rgb;
 }
 
-// Set the Color of the ray with doubles
-void Ray::setColor(double _r, double _g, double _b) {
+// Set the Color of the ray with floats
+void Ray::setColor(float _r, float _g, float _b) {
 	rayColor = ColorDBL(_r, _g, _b);
 }
 

@@ -6,11 +6,11 @@ public:
 	ColorDBL();
 
 	// Constructor to create a colour of values
-	ColorDBL(double _r, double _g, double _b);
+	ColorDBL(float _r, float _g, float _b);
 
 	// Overloaded operator*, scales the colour by value
 	// To make colour darker/brighter
-	ColorDBL operator*(double value) const;
+	ColorDBL operator*(float value) const;
 
 	// Overloaded operator* to multiply two colours
 	// Multiply each colour channel
@@ -19,8 +19,8 @@ public:
 	// Overloaded operator+ to add two colours channel by channel
 	ColorDBL operator+(ColorDBL color) const;
 
-	double red;
-	double green;
-	double blue;
+	float red;
+	float green;
+	float blue;
 private:
 };

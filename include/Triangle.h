@@ -15,7 +15,7 @@ public:
 
 	// Calculate the intersection of a ray and the surface
 	// Return true if hits the surface
-	bool rayIntersection(Ray& ray, double& minDistance) const;
+	bool rayIntersection(Ray& ray, float& minDistance) const;
 private:
 	glm::vec3 v0, v1, v2;
 };

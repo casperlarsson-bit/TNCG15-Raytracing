@@ -3,10 +3,10 @@
 
 // Default constructor
 Rectangle::Rectangle() {
-	v0 = glm::vec3(0, 0, 0);
-	v1 = glm::vec3(1, 0, 0);
-	v2 = glm::vec3(1, 1, 0);
-	v3 = glm::vec3(0, 1, 0);
+	v0 = glm::vec3(0.0f, 0.0f, 0.0f);
+	v1 = glm::vec3(1.0f, 0.0f, 0.0f);
+	v2 = glm::vec3(1.0f, 1.0f, 0.0f);
+	v3 = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	calculateNormal();
 }
@@ -32,7 +32,7 @@ void Rectangle::setVertices(glm::vec3 _v0, glm::vec3 _v1, glm::vec3 _v2, glm::ve
 
 // Calculate the intersection of a ray and the surface
 // Return true if hits the surface
-bool Rectangle::rayIntersection(Ray& ray, double& minDistance) const {
+bool Rectangle::rayIntersection(Ray& ray, float& minDistance) const {
 	glm::vec3 rayStart = ray.getStartpoint();
 	glm::vec3 rayDirection = glm::normalize(ray.getDirection());
 
@@ -41,18 +41,18 @@ bool Rectangle::rayIntersection(Ray& ray, double& minDistance) const {
 	glm::vec3 edge1 = v1 - v0; // Edge connected by v0 and v1
 	glm::vec3 edge2 = v3 - v0; // Edge connected by v0 and v3, these two chare same vertex v0
 
-	double t = glm::dot(v0 - rayStart, rectangleNormal) / glm::dot(rayDirection, rectangleNormal);
-	glm::vec3 x_i = rayStart + rayDirection * (float)t;
+	float t = glm::dot(v0 - rayStart, rectangleNormal) / glm::dot(rayDirection, rectangleNormal);
+	glm::vec3 x_i = rayStart + rayDirection * t;
 
 	// If rectangle is hit from back side
 	if (glm::dot(glm::cross(rayDirection, edge2), edge1) < COMPARE_ELLIPSE) {
 		return false;
 	}
 
-	double a = glm::dot(x_i - v0, edge1) / glm::dot(edge1, edge1);
-	double b = glm::dot(x_i - v0, edge2) / glm::dot(edge2, edge2);
+	float a = glm::dot(x_i - v0, edge1) / glm::dot(edge1, edge1);
+	float b = glm::dot(x_i - v0, edge2) / glm::dot(edge2, edge2);
 
-	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. Should not compare double directly
+	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. @TODO Should not compare float directly
 	if ((a >= 0 && a <= 1 && b >= 0 && b <= 1) && glm::length(x_i - ray.getStartpoint()) < minDistance) {
 		ray.setColor(color);
 		ray.setEndVertex(x_i);

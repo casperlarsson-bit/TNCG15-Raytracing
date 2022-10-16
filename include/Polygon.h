@@ -4,7 +4,7 @@
 #include "Ray.h"
 #include "Material.h"
 
-const double COMPARE_ELLIPSE = 0.00001;
+const float COMPARE_ELLIPSE = 0.00001f;
 
 class Polygon {
 public:
@@ -30,7 +30,7 @@ public:
 	// Calculate the intersection of a ray and the surface
 	// Return true if hits the surface
 	// Done in sub classes
-	virtual bool rayIntersection(Ray &ray, double& minDistance) const = 0;
+	virtual bool rayIntersection(Ray &ray, float& minDistance) const = 0;
 
 	// Get what material the Polygon is made of
 	Material getMaterial() const;
@@ -39,11 +39,11 @@ public:
 	void setMaterial(Material _material);
 
 	// Get the Lambertian rho
-	double getRho() const;
+	float getRho() const;
 
 	ColorDBL color;
 	glm::vec3 normal;
 private:
 	Material material;
-	double rho;
+	float rho;
 };

@@ -16,6 +16,6 @@ int main() {
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
     system("cls");
-    std::cout << "\nFinished rendering in " << (double)(duration.count()) / 1000 << " seconds!\n";
+    std::cout << "\nFinished rendering in " << (float)(duration.count()) / 1000 << " seconds!\n";
     return 0;
 }

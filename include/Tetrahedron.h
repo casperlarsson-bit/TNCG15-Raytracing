@@ -27,7 +27,7 @@ public:
 
 	// Calculate the intersection of a ray and the surface
 	// D*N < 0 for correct intersection
-	void rayIntersection(Ray& ray, double& minDistance) const;
+	void rayIntersection(Ray& ray, float& minDistance) const;
 	
 	Triangle triangleTable[4]; // Triangles to store the surfaces
 private:

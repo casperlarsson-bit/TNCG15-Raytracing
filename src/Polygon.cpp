@@ -3,9 +3,9 @@
 // Default constructor
 Polygon::Polygon() {
 	color = ColorDBL();
-	normal = glm::vec3(1, 0, 0);
+	normal = glm::vec3(1.0f, 0.0f, 0.0f);
 	material = Material::LAMBERTIAN;
-	rho = (color.red + color.green + color.blue) / 3;
+	rho = (color.red + color.green + color.blue) / 3.0f;
 }
 
 // Value constructor
@@ -19,7 +19,7 @@ Polygon::Polygon(ColorDBL _color, glm::vec3 _normal, Material _material) {
 
 	normal = _normal;
 	material = _material;
-	rho = (color.red + color.green + color.blue) / 3;
+	rho = (color.red + color.green + color.blue) / 3.0f;
 }
 
 // Compute the normal of the Polygon. Normal points into the room
@@ -35,7 +35,7 @@ ColorDBL Polygon::getColor() const {
 // Set the colour of the Polygon, and update rho
 void Polygon::setColor(ColorDBL _color) {
 	color = _color;
-	rho = (color.red + color.green + color.blue) / 3;
+	rho = (color.red + color.green + color.blue) / 3.0f;
 }
 
 // Get what material the Polygon is made of
@@ -53,6 +53,6 @@ void Polygon::setMaterial(Material _material) {
 }
 
 // Get the Lambertian 
-double Polygon::getRho() const {
+float Polygon::getRho() const {
 	return rho;
 }

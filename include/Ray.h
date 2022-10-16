@@ -26,8 +26,8 @@ public:
 	// Set the Color of the ray with ColorDBL
 	void setColor(ColorDBL _rgb);
 
-	// Set the Color of the ray with doubles
-	void setColor(double _red, double _green, double _blue);
+	// Set the Color of the ray with floats
+	void setColor(float _red, float _green, float _blue);
 
 	// Set the direction of a Ray
 	void setDirection(glm::vec3 _direction);

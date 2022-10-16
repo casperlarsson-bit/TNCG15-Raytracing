@@ -3,12 +3,12 @@
 
 // Default constructor
 Tetrahedron::Tetrahedron() {
-	glm::vec3 _midVertex = glm::vec3(5, 0, 1);
+	glm::vec3 _midVertex = glm::vec3(5.0f, 0.0f, 1.0f);
 
-	vertexTable[0] = glm::vec3(_midVertex.x, _midVertex.y, 1 + _midVertex.z);
-	vertexTable[1] = glm::vec3(-1 + _midVertex.x, _midVertex.y, -1 + _midVertex.z);
-	vertexTable[2] = glm::vec3(_midVertex.x, -1 + _midVertex.y, -1 + _midVertex.z);
-	vertexTable[3] = glm::vec3(_midVertex.x, 1 + _midVertex.y, -1 + _midVertex.z);
+	vertexTable[0] = glm::vec3(_midVertex.x, _midVertex.y, 1.0f + _midVertex.z);
+	vertexTable[1] = glm::vec3(-1.0f + _midVertex.x, _midVertex.y, -1.0f + _midVertex.z);
+	vertexTable[2] = glm::vec3(_midVertex.x, -1.0f + _midVertex.y, -1.0f + _midVertex.z);
+	vertexTable[3] = glm::vec3(_midVertex.x, 1.0f + _midVertex.y, -1.0f + _midVertex.z);
 
 	triangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[2]);
 	triangleTable[1].setVertices(vertexTable[3], vertexTable[1], vertexTable[0]);
@@ -24,10 +24,10 @@ Tetrahedron::Tetrahedron() {
 
 // Value constructor
 Tetrahedron::Tetrahedron(glm::vec3 _midVertex, ColorDBL _color, Material _material) {
-	vertexTable[0] = glm::vec3(_midVertex.x, _midVertex.y, 1 + _midVertex.z);
-	vertexTable[1] = glm::vec3(-1 + _midVertex.x, _midVertex.y, -1 + _midVertex.z);
-	vertexTable[2] = glm::vec3(_midVertex.x, -1 + _midVertex.y, -1 + _midVertex.z);
-	vertexTable[3] = glm::vec3(_midVertex.x, 1 + _midVertex.y, -1 + _midVertex.z);
+	vertexTable[0] = glm::vec3(_midVertex.x, _midVertex.y, 1.0f + _midVertex.z);
+	vertexTable[1] = glm::vec3(-1.0f + _midVertex.x, _midVertex.y, -1.0f + _midVertex.z);
+	vertexTable[2] = glm::vec3(_midVertex.x, -1.0f + _midVertex.y, -1.0f + _midVertex.z);
+	vertexTable[3] = glm::vec3(_midVertex.x, 1.0f + _midVertex.y, -1.0f + _midVertex.z);
 
 	triangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[2]);
 	triangleTable[1].setVertices(vertexTable[3], vertexTable[1], vertexTable[0]);
@@ -46,7 +46,7 @@ Tetrahedron::Tetrahedron(glm::vec3 _midVertex, ColorDBL _color, Material _materi
 
 // Calculate the intersection of a ray and the surface
 // D*N < 0 for correct intersection
-void Tetrahedron::rayIntersection(Ray& ray, double& minDistance) const {
+void Tetrahedron::rayIntersection(Ray& ray, float& minDistance) const {
 	for (auto& triangle : triangleTable) {
 		if (glm::dot(triangle.getNormal(), ray.getDirection()) > COMPARE_ELLIPSE) continue;
 		if (triangle.rayIntersection(ray, minDistance)) break;
