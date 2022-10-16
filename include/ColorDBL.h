@@ -19,6 +19,9 @@ public:
 	// Overloaded operator+ to add two colours channel by channel
 	ColorDBL operator+(ColorDBL color) const;
 
+	// Add color
+	ColorDBL& operator+=(const ColorDBL& color);
+
 	float red;
 	float green;
 	float blue;
