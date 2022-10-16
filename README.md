@@ -18,5 +18,8 @@ Dependencies:
 3. Hit Generate and then Open Project to open the project in your IDE.
 4. Update the CMakeLists.txt file when new .cpp or .h files are added.
 
-![Raytracer](/images/Raytracing.png)
+<p align="center">¨
+    <img src="/images/Raytracing.png", alt="Raytracer" />
+</p>
+
 Convert .PMM image to .PNG on [Convertio](https://convertio.co/)
