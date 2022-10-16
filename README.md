@@ -19,7 +19,7 @@ Dependencies:
 4. Update the CMakeLists.txt file when new .cpp or .h files are added.
 
 <p align="center">¨
-    <img src="/images/Raytracing.png", alt="Raytracer" />
+    <img src="/images/Raytracing.png" alt="Raytracer" />
 </p>
 
 Convert .PMM image to .PNG on [Convertio](https://convertio.co/)
