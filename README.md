@@ -18,7 +18,7 @@ Dependencies:
 3. Hit Generate and then Open Project to open the project in your IDE.
 4. Update the CMakeLists.txt file when new .cpp or .h files are added.
 
-<p align="center">¨
+<p align="center">
     <img src="/images/Raytracing.png" alt="Raytracer" />
 </p>
 
