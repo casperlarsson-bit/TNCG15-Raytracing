@@ -88,8 +88,8 @@ Scene::Scene() {
 	triangleTable[3].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
 
 	// Spheres in the scene
-	// sphereTable[0] = Sphere(1.0f, glm::vec3(6.0f, 1.0f, -1.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::LAMBERTIAN);
-	// sphereTable[1] = Sphere(0.8f, glm::vec3(4.0f, -3.0f, -2.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::TRANSPARENT);
+	// sphereTable[0] = Sphere(1.0f, glm::vec3(6.0f, 1.0f, -1.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::MIRROR);
+	//sphereTable[0] = Sphere(0.8f, glm::vec3(4.0f, -2.0f, -2.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::TRANSPARENT);
 
 	// Temporarily copy
 	sphereTable[0] = Sphere(1.0f, glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::MIRROR); // MIRROR
@@ -217,7 +217,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 			// Reflected direction
 			glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
 				
-			Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
+			Ray reflectedRay = Ray(ray.getEndpoint() - normal * 0.002f, reflectedDirection);
 
 			// Set up doubly linked list
 			ray.nextRay = &reflectedRay;
@@ -234,7 +234,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 			// Reflected direction
 			glm::vec3 refractedDirection = R * ingoingRayDirection + normal * (float)(-R * glm::dot(normal, ingoingRayDirection) - glm::sqrt(1.0f - R * R * (1.0f - glm::pow(glm::dot(normal, ingoingRayDirection), 2))));
 
-			Ray refractedRay = Ray(ray.getEndpoint(), refractedDirection, RayType::INSIDE_TRANSPARENT);
+			Ray refractedRay = Ray(ray.getEndpoint() - normal * 0.002f, refractedDirection, RayType::INSIDE_TRANSPARENT);
 
 			// Set up doubly linked list
 			ray.nextRay = &refractedRay;
