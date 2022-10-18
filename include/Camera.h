@@ -9,7 +9,7 @@
 #include "functions.h"
 
 const int SIZE = 600; // Default image resolution (square)
-const int NUMBER_OF_SUBPIXELS = 1; // numbers of rays to cast through each pixel (squared)
+const int NUMBER_OF_SUBPIXELS = 16; // numbers of rays to cast through each pixel (squared)
 
 class Camera {
 public:

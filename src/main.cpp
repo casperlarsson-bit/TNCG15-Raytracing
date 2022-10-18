@@ -6,7 +6,7 @@
 int main() {
     auto start = std::chrono::high_resolution_clock::now();
 
-    Camera c{};
+    Camera c{1000};
     Scene s{};
 
     c.renderImage(s);
@@ -16,6 +16,8 @@ int main() {
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
     system("cls");
-    std::cout << "\nFinished rendering in " << (float)(duration.count()) / 1000 << " seconds!\n";
+    std::cout << "\nFinished rendering in ";
+    displayTime((int)duration.count());
+    std::cout << "\n";
     return 0;
 }

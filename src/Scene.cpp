@@ -96,7 +96,7 @@ Scene::Scene() {
 	sphereTable[1] = Sphere(1.0f, glm::vec3(6.0f, -3.0f, -2.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
 	sphereTable[2] = Sphere(1.0f, glm::vec3(5.0f, -2.0f, -4.0f), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
 	sphereTable[3] = Sphere(1.0f, glm::vec3(10.0f, 0.2f, -1.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
-	sphereTable[4] = Sphere(1.2f, glm::vec3(6.0f, 3.0f, -3.0f), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
+	sphereTable[4] = Sphere(0.5f, glm::vec3(6.0f, 3.0f, -1.0f), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
 	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0f, 2.0f, -1.0f), ColorDBL(0.96f, 0.04f, 0.32f), Material::LAMBERTIAN);
@@ -174,15 +174,15 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 	}
 	// Transparent surface
 	case Material::TRANSPARENT: {
-		glm::vec3 normal = ray.getObjectNormal(); // Normal for the polygon
+		glm::vec3 normal = glm::normalize(ray.getObjectNormal()); // Normal for the polygon
 		glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
 
 		float n1 = 1.0f; // Air
 		float n2 = 1.5f; // Glass
 
 		// Schlick's law for BRDF
-		float R0 = (float)glm::pow((n1 - n2) / (n1 + n2), 2);
-		float reflectedBRDF = R0 + (1.0f - R0) * (float)glm::pow(1.0f - glm::cos(glm::dot(ingoingRayDirection, normal)), 5);
+		float R0 = (float)glm::pow((n2 - n1) / (n1 + n2), 2);
+		float reflectedBRDF = R0 + (1.0f - R0) * (float)glm::pow(1.0f - glm::cos(glm::dot(-ingoingRayDirection, normal)), 5);
 		// float transmittedBRDF = 1.0 - reflectedBRDF; // Unnecessary?
 
 		if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
@@ -194,7 +194,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 				// Reflected direction
 				glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
 
-				Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
+				Ray reflectedRay = Ray(ray.getEndpoint() - normal * 0.002f, reflectedDirection);
 
 				// Set up doubly linked list
 				ray.nextRay = &reflectedRay;
@@ -208,15 +208,56 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 				break;
 			}
 
+			// Reflect ray, not refract
+			if (distribution(seed) < reflectedBRDF) {
+				// Reflected direction
+				glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
+
+				// Create reflected ray, with margin to not get stuck
+				Ray reflectedRay = Ray(ray.getEndpoint() - normal * 0.002f, reflectedDirection);
+
+				// Set up doubly linked list
+				ray.nextRay = &reflectedRay;
+				reflectedRay.prevRay = &ray;
+
+				// Recursively cast reflected ray into scene
+				castRay(reflectedRay);
+
+				reflectedRay.prevRay->setColor(reflectedRay.getColor());
+			}
+			// Refract ray, not reflect
+			else {
+				float R = n2 / n1; // SinB / SinOmega, ratio of refractive index
+				// Reflected direction
+				glm::vec3 refractedDirection = R * ingoingRayDirection + normal * (float)(-R * glm::dot(normal, ingoingRayDirection) - glm::sqrt(1.0f - R * R * (1.0f - glm::pow(glm::dot(normal, ingoingRayDirection), 2))));
+
+				// Create refracted ray, with margin to not get stuck
+				Ray refractedRay = Ray(ray.getEndpoint(), refractedDirection, RayType::INSIDE_TRANSPARENT);
+
+				// Set up doubly linked list
+				ray.nextRay = &refractedRay;
+				refractedRay.prevRay = &ray;
+
+				// Recursively cast refracted ray into scene
+				castRay(refractedRay);
+
+				refractedRay.prevRay->setColor(refractedRay.getColor());
+			}
+			break;
 			// Not total reflection, calculate in the same way as if from outside sphere
 			// Normal is inverted already
 		}
-		
+
+
+		R0 = (float)glm::pow((n1 - n2) / (n1 + n2), 2);
+		reflectedBRDF = R0 + (1.0f - R0) * (float)glm::pow(1.0f - glm::cos(glm::dot(-ingoingRayDirection, normal)), 5);
+
 		// Reflect ray, not refract
 		if (distribution(seed) < reflectedBRDF) {
 			// Reflected direction
 			glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
-				
+			
+			// Create reflected ray, with margin to not get stuck
 			Ray reflectedRay = Ray(ray.getEndpoint() - normal * 0.002f, reflectedDirection);
 
 			// Set up doubly linked list
@@ -234,6 +275,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 			// Reflected direction
 			glm::vec3 refractedDirection = R * ingoingRayDirection + normal * (float)(-R * glm::dot(normal, ingoingRayDirection) - glm::sqrt(1.0f - R * R * (1.0f - glm::pow(glm::dot(normal, ingoingRayDirection), 2))));
 
+			// Create refracted ray, with margin to not get stuck
 			Ray refractedRay = Ray(ray.getEndpoint() - normal * 0.002f, refractedDirection, RayType::INSIDE_TRANSPARENT);
 
 			// Set up doubly linked list
