@@ -35,6 +35,13 @@ Scene::Scene() {
 	vertexTable[10] = glm::vec3(0.0f, 6.0f, 5.0f);
 	vertexTable[11] = glm::vec3(-3.0f, 0.0f, 5.0f);
 
+	// Lamp
+	vertexTable[12] = glm::vec3(5.0f, 1.0f, 4.8f);
+	vertexTable[13] = glm::vec3(6.0f, 1.0f, 4.8f);
+	vertexTable[14] = glm::vec3(6.0f, 0.0f, 4.8f);
+	vertexTable[15] = glm::vec3(5.0f, 0.0f, 4.8f);
+
+
 	// Floor rectangle vertices
 	rectangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[3], vertexTable[4]);
 
@@ -60,7 +67,7 @@ Scene::Scene() {
 	rectangleTable[7].setVertices(vertexTable[5], vertexTable[11], vertexTable[6], vertexTable[0]);
 
 	// Light source
-	rectangleTable[8].setVertices(glm::vec3(5.0f, 1.0f, 4.8f), glm::vec3(10.0f, 1.0f, 4.8f), glm::vec3(10.0f, 0.0f, 4.8f), glm::vec3(5.0f, 0.0f, 4.8f));
+	rectangleTable[8].setVertices(vertexTable[12], vertexTable[13], vertexTable[14], vertexTable[15]);
 	rectangleTable[8].setMaterial(Material::LIGHT);
 
 
@@ -229,7 +236,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 	}
 	// Light source
 	case Material::LIGHT: {
-		ray.setColor(ColorDBL(0.0f, 0.0f, 0.0f));
+		ray.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 		break;
 	}
 	default:
@@ -240,15 +247,15 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 // Get the direct light from light source to a specific point
 ColorDBL Scene::directLight(const Ray& ray) {
 	// Define area light
-	glm::vec3 v0 = glm::vec3(5.0f, 0.0f, 5.0f);
-	glm::vec3 v1 = glm::vec3(6.0f, 0.0f, 5.0f);
-	glm::vec3 v2 = glm::vec3(6.0f, 0.1f, 5.0f);
-	glm::vec3 v3 = glm::vec3(5.0f, 0.1f, 5.0f);
+	glm::vec3 v0 = vertexTable[12]; // glm::vec3(5.0f, 0.0f, 5.0f);
+	glm::vec3 v1 = vertexTable[13]; // glm::vec3(6.0f, 0.0f, 5.0f);
+	glm::vec3 v2 = vertexTable[14]; // glm::vec3(6.0f, 0.1f, 5.0f);
+	glm::vec3 v3 = vertexTable[15]; // glm::vec3(5.0f, 0.1f, 5.0f);
 
 	glm::vec3 e1 = v2 - v1;
 	glm::vec3 e2 = v0 - v1;
 
-	glm::vec3 lightNormal = glm::normalize(glm::cross(e2, e1));
+	glm::vec3 lightNormal = glm::normalize(glm::cross(e1, e2));
 
 	glm::vec3 surfaceNormal = ray.getObjectNormal();
 	float lightChannel = 0.0f; // Amount of light at each colour channel

@@ -30,7 +30,7 @@ private:
 	// Calculate the refracted ray, cast it and set its colour
 	void refractRay(Ray& ray, float R);
 
-	glm::vec3 vertexTable[12]; // Vertex table
+	glm::vec3 vertexTable[16]; // Vertex table
 	Rectangle rectangleTable[9]; // Rectangle Table for the room = 2 + 6 (floor/roof and walls)
 	Triangle triangleTable[4]; // Triangle Table for the floor and roof
 	Sphere sphereTable[5]; // Sphere Table with all object spheres in the scene

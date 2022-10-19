@@ -78,9 +78,9 @@ void Camera::saveImage() const {
 	std::cout << "\nSaving image... \n";
 	for (std::size_t i = 0; i < image.size(); ++i) {
 		for (std::size_t j = 0; j < image.size(); ++j) {
-			imageFile << (int)(image[i][j].getColor().red * 255 / maxD) << " " <<
-				(int)(image[i][j].getColor().green * 255 / maxD) << " " <<	
-				(int)(image[i][j].getColor().blue * 255 / maxD) << "\n";
+			imageFile << (int)(image[i][j].getColor().red * (float)255 / maxD) << " " <<
+				(int)(image[i][j].getColor().green * (float)255 / maxD) << " " <<	
+				(int)(image[i][j].getColor().blue * (float)255 / maxD) << "\n";
 		}
 		
 		// Display progress bar
