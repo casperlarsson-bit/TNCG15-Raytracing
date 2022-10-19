@@ -35,8 +35,19 @@ Scene::Scene() {
 	vertexTable[10] = glm::vec3(0.0f, 6.0f, 5.0f);
 	vertexTable[11] = glm::vec3(-3.0f, 0.0f, 5.0f);
 
+	// Lamp
+	vertexTable[12] = glm::vec3(4.5f, 0.5f, 4.9f);
+	vertexTable[13] = glm::vec3(5.5f, 0.5f, 4.9f);
+	vertexTable[14] = glm::vec3(5.5f, -0.5f, 4.9f);
+	vertexTable[15] = glm::vec3(4.5f, -0.5f, 4.9f);
+
+	// Light source
+	rectangleTable[0].setVertices(vertexTable[12], vertexTable[13], vertexTable[14], vertexTable[15]);
+	rectangleTable[0].setMaterial(Material::LIGHT);
+
+
 	// Floor rectangle vertices
-	rectangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[3], vertexTable[4]);
+	rectangleTable[1].setVertices(vertexTable[0], vertexTable[1], vertexTable[3], vertexTable[4]);
 
 	// Floor triangles vertices
 	triangleTable[0].setVertices(vertexTable[1], vertexTable[2], vertexTable[3]);
@@ -44,7 +55,7 @@ Scene::Scene() {
 
 
 	// Roof rectangle vertices
-	rectangleTable[1].setVertices(vertexTable[6], vertexTable[10], vertexTable[9], vertexTable[7]);
+	rectangleTable[2].setVertices(vertexTable[6], vertexTable[10], vertexTable[9], vertexTable[7]);
 
 	// Roof triangles vertices
 	triangleTable[2].setVertices(vertexTable[7], vertexTable[9], vertexTable[8]);
@@ -52,35 +63,38 @@ Scene::Scene() {
 
 
 	// Wall rectangles vertices
-	rectangleTable[2].setVertices(vertexTable[0], vertexTable[6], vertexTable[7], vertexTable[1]);
-	rectangleTable[3].setVertices(vertexTable[1], vertexTable[7], vertexTable[8], vertexTable[2]);
-	rectangleTable[4].setVertices(vertexTable[2], vertexTable[8], vertexTable[9], vertexTable[3]);
-	rectangleTable[5].setVertices(vertexTable[3], vertexTable[9], vertexTable[10], vertexTable[4]);
-	rectangleTable[6].setVertices(vertexTable[4], vertexTable[10], vertexTable[11], vertexTable[5]);
-	rectangleTable[7].setVertices(vertexTable[5], vertexTable[11], vertexTable[6], vertexTable[0]);
+	rectangleTable[3].setVertices(vertexTable[0], vertexTable[6], vertexTable[7], vertexTable[1]);
+	rectangleTable[4].setVertices(vertexTable[1], vertexTable[7], vertexTable[8], vertexTable[2]);
+	rectangleTable[5].setVertices(vertexTable[2], vertexTable[8], vertexTable[9], vertexTable[3]);
+	rectangleTable[6].setVertices(vertexTable[3], vertexTable[9], vertexTable[10], vertexTable[4]);
+	rectangleTable[7].setVertices(vertexTable[4], vertexTable[10], vertexTable[11], vertexTable[5]);
+	rectangleTable[8].setVertices(vertexTable[5], vertexTable[11], vertexTable[6], vertexTable[0]);
+
+	
+
 
 	// Calculate all normals
 	for (auto& rectangle : rectangleTable) {
 		rectangle.calculateNormal();
-		rectangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
+		//rectangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 	}
 
 	for (auto& triangle : triangleTable) {
 		triangle.calculateNormal();
-		triangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
+		//triangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 	}
 
 	// Set colours for Polygons
-	rectangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
-	rectangleTable[1].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
-	rectangleTable[2].setColor(ColorDBL(0.2f, 0.66f, 0.32f));
-	rectangleTable[3].setColor(ColorDBL(0.66f, 0.62f, 0.2f));
-	// rectangleTable[3].setMaterial(Material::MIRROR);
-	rectangleTable[4].setColor(ColorDBL(0.2f, 0.27f, 0.66f));
-	rectangleTable[5].setColor(ColorDBL(0.66f, 0.2f, 0.2f));
-	rectangleTable[6].setColor(ColorDBL(0.2f, 0.63f, 0.66f));
-	// rectangleTable[6].setMaterial(Material::MIRROR);
-	rectangleTable[7].setColor(ColorDBL(0.43f, 0.2f, 0.66f));
+	rectangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
+	rectangleTable[2].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
+	rectangleTable[3].setColor(ColorDBL(0.2f, 0.66f, 0.32f));
+	rectangleTable[4].setColor(ColorDBL(0.66f, 0.62f, 0.2f));
+	// rectangleTable[4].setMaterial(Material::MIRROR);
+	rectangleTable[5].setColor(ColorDBL(0.2f, 0.27f, 0.66f));
+	rectangleTable[6].setColor(ColorDBL(0.66f, 0.2f, 0.2f));
+	rectangleTable[7].setColor(ColorDBL(0.2f, 0.63f, 0.66f));
+	// rectangleTable[7].setMaterial(Material::MIRROR);
+	rectangleTable[8].setColor(ColorDBL(0.43f, 0.2f, 0.66f));
 
 	triangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
 	triangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
@@ -88,15 +102,15 @@ Scene::Scene() {
 	triangleTable[3].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
 
 	// Spheres in the scene
-	// sphereTable[0] = Sphere(1.0f, glm::vec3(6.0f, 1.0f, -1.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::LAMBERTIAN);
-	// sphereTable[1] = Sphere(0.8f, glm::vec3(4.0f, -3.0f, -2.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::TRANSPARENT);
+	// sphereTable[0] = Sphere(1.0f, glm::vec3(6.0f, 1.0f, -1.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::MIRROR);
+	//sphereTable[0] = Sphere(0.8f, glm::vec3(4.0f, -2.0f, -2.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::TRANSPARENT);
 
 	// Temporarily copy
 	sphereTable[0] = Sphere(1.0f, glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::MIRROR); // MIRROR
 	sphereTable[1] = Sphere(1.0f, glm::vec3(6.0f, -3.0f, -2.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
 	sphereTable[2] = Sphere(1.0f, glm::vec3(5.0f, -2.0f, -4.0f), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
 	sphereTable[3] = Sphere(1.0f, glm::vec3(10.0f, 0.2f, -1.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
-	sphereTable[4] = Sphere(1.2f, glm::vec3(6.0f, 3.0f, -3.0f), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
+	sphereTable[4] = Sphere(0.5f, glm::vec3(6.0f, 3.0f, -1.0f), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
 	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0f, 2.0f, -1.0f), ColorDBL(0.96f, 0.04f, 0.32f), Material::LAMBERTIAN);
@@ -174,16 +188,15 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 	}
 	// Transparent surface
 	case Material::TRANSPARENT: {
-		glm::vec3 normal = ray.getObjectNormal(); // Normal for the polygon
+		glm::vec3 normal = glm::normalize(ray.getObjectNormal()); // Normal for the polygon
 		glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
 
 		float n1 = 1.0f; // Air
 		float n2 = 1.5f; // Glass
 
 		// Schlick's law for BRDF
-		float R0 = (float)glm::pow((n1 - n2) / (n1 + n2), 2);
-		float reflectedBRDF = R0 + (1.0f - R0) * (float)glm::pow(1.0f - glm::cos(glm::dot(ingoingRayDirection, normal)), 5);
-		// float transmittedBRDF = 1.0 - reflectedBRDF; // Unnecessary?
+		float R0 = (float)glm::pow((n2 - n1) / (n1 + n2), 2);
+		float reflectedBRDF = R0 + (1.0f - R0) * (float)glm::pow(1.0f - glm::cos(glm::dot(-ingoingRayDirection, normal)), 5);
 
 		if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
 			normal = -normal; // Invert normal since we are inside the sphere
@@ -191,61 +204,41 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 			// Test if we have total internal reflection
 			// Total reflection, only calculate reflected ray
 			if (glm::sin(glm::dot(ingoingRayDirection, normal) * n1 / n2) > 1.0f) {
-				// Reflected direction
-				glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
-
-				Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
-
-				// Set up doubly linked list
-				ray.nextRay = &reflectedRay;
-				reflectedRay.prevRay = &ray;
-
-				// Recursively cast reflected ray into scene
-				castRay(reflectedRay);
-
-				reflectedRay.prevRay->setColor(reflectedRay.getColor());
-
+				reflectRay(ray);
 				break;
 			}
 
-			// Not total reflection, calculate in the same way as if from outside sphere
-			// Normal is inverted already
+			// Reflect ray, not refract
+			if (distribution(seed) < reflectedBRDF) {
+				reflectRay(ray);
+			}
+			// Refract ray, not reflect
+			else {
+				float R = n2 / n1; // SinB / SinOmega, ratio of refractive index
+				refractRay(ray, R);
+			}
+			break;
 		}
-		
+
+
+		R0 = (float)glm::pow((n1 - n2) / (n1 + n2), 2);
+		reflectedBRDF = R0 + (1.0f - R0) * (float)glm::pow(1.0f - glm::cos(glm::dot(-ingoingRayDirection, normal)), 5);
+
 		// Reflect ray, not refract
 		if (distribution(seed) < reflectedBRDF) {
-			// Reflected direction
-			glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
-				
-			Ray reflectedRay = Ray(ray.getEndpoint(), reflectedDirection);
-
-			// Set up doubly linked list
-			ray.nextRay = &reflectedRay;
-			reflectedRay.prevRay = &ray;
-
-			// Recursively cast reflected ray into scene
-			castRay(reflectedRay); 
-
-			reflectedRay.prevRay->setColor(reflectedRay.getColor());
+			reflectRay(ray);
 		}
 		// Refract ray, not reflect
 		else {
 			float R = n1 / n2; // SinB / SinOmega, ratio of refractive index
-			// Reflected direction
-			glm::vec3 refractedDirection = R * ingoingRayDirection + normal * (float)(-R * glm::dot(normal, ingoingRayDirection) - glm::sqrt(1.0f - R * R * (1.0f - glm::pow(glm::dot(normal, ingoingRayDirection), 2))));
-
-			Ray refractedRay = Ray(ray.getEndpoint(), refractedDirection, RayType::INSIDE_TRANSPARENT);
-
-			// Set up doubly linked list
-			ray.nextRay = &refractedRay;
-			refractedRay.prevRay = &ray;
-
-			// Recursively cast refracted ray into scene
-			castRay(refractedRay);
-
-			refractedRay.prevRay->setColor(refractedRay.getColor());
+			refractRay(ray, R);
 		}
 		
+		break;
+	}
+	// Light source
+	case Material::LIGHT: {
+		ray.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 		break;
 	}
 	default:
@@ -256,15 +249,15 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 // Get the direct light from light source to a specific point
 ColorDBL Scene::directLight(const Ray& ray) {
 	// Define area light
-	glm::vec3 v0 = glm::vec3(5.0f, 0.0f, 5.0f);
-	glm::vec3 v1 = glm::vec3(5.1f, 0.0f, 5.0f);
-	glm::vec3 v2 = glm::vec3(5.1f, 0.1f, 5.0f);
-	glm::vec3 v3 = glm::vec3(5.0f, 0.1f, 5.0f);
+	glm::vec3 v0 = vertexTable[12]; // glm::vec3(5.0f, 0.0f, 5.0f);
+	glm::vec3 v1 = vertexTable[13]; // glm::vec3(6.0f, 0.0f, 5.0f);
+	glm::vec3 v2 = vertexTable[14]; // glm::vec3(6.0f, 0.1f, 5.0f);
+	glm::vec3 v3 = vertexTable[15]; // glm::vec3(5.0f, 0.1f, 5.0f);
 
 	glm::vec3 e1 = v2 - v1;
 	glm::vec3 e2 = v0 - v1;
 
-	glm::vec3 lightNormal = glm::normalize(glm::cross(e2, e1));
+	glm::vec3 lightNormal = glm::normalize(glm::cross(e1, e2));
 
 	glm::vec3 surfaceNormal = ray.getObjectNormal();
 	float lightChannel = 0.0f; // Amount of light at each colour channel
@@ -279,6 +272,7 @@ ColorDBL Scene::directLight(const Ray& ray) {
 		float cosX = glm::dot(lightNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
 		float cosY = -glm::dot(surfaceNormal, rayLightDistanceVector) / glm::length(rayLightDistanceVector);
 
+		// Create a shadow ray to cast towards the light source to see if there is something in between
 		Ray shadowRay = Ray(ray.getEndpoint(), glm::normalize(rayLightDistanceVector), RayType::SHADOW);
 		castRay(shadowRay);
 		float shadowRayLength = glm::length(shadowRay.getEndpoint() - shadowRay.getStartpoint());
@@ -289,17 +283,14 @@ ColorDBL Scene::directLight(const Ray& ray) {
 		if (shadowRayLength < glm::length(rayLightDistanceVector)) {
 			V_xy = 0.0;
 		}
-		/*else {
-			V_xy = 1.0;
-		}*/
 
 		lightChannel += glm::max(0.0f, cosX * cosY / (float)glm::pow(glm::length(rayLightDistanceVector), 2)) * V_xy;
 	}
 
-	const float BRDF = 1 / M_PI;
+	const float BRDF = 1.0f / M_PI;
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
-	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(e1, e2))  * 32.0f * BRDF * 1.0f / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
+	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(e1, e2))  * 150.0f * BRDF * 1.0f / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
 	
 	return lightColor;
 }
@@ -347,4 +338,60 @@ void Scene::createLocalCartesianCoordinateSystem(glm::vec3 e1, glm::vec3& e2, gl
 	// Make e2 and e3 orthogonal to e3 and each other, and normalise
 	e2 = glm::vec3(e1.z, 0.0f, -e1.x);
 	e3 = glm::cross(e1, e2);
+}
+
+// Calculate the reflected ray, cast it and set its colour
+void Scene::reflectRay(Ray& ray) {
+	glm::vec3 normal = glm::normalize(ray.getObjectNormal()); // Normal for the polygon
+	glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
+	RayType reflectedRayType = RayType::INSIDE_TRANSPARENT;
+
+	if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
+		// Ray is inside object, need to reverse the normal and the reflected ray will not be inside
+		normal = -normal;
+		reflectedRayType = RayType::PRIMARY;
+	}
+
+	// Reflected direction
+	glm::vec3 reflectedDirection = ray.getDirection() - 2.0f * glm::dot(ray.getDirection(), normal) * normal;
+
+	// Create reflected ray, with margin to not get stuck
+	Ray reflectedRay = Ray(ray.getEndpoint() - normal * 0.002f, reflectedDirection, reflectedRayType);
+
+	// Set up doubly linked list
+	ray.nextRay = &reflectedRay;
+	reflectedRay.prevRay = &ray;
+
+	// Recursively cast reflected ray into scene
+	castRay(reflectedRay);
+
+	reflectedRay.prevRay->setColor(reflectedRay.getColor());
+}
+
+// Calculate the refracted ray, cast it and set its colour
+void Scene::refractRay(Ray& ray, float R) {
+	glm::vec3 normal = glm::normalize(ray.getObjectNormal()); // Normal for the polygon
+	glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
+	RayType refractedRayType = RayType::INSIDE_TRANSPARENT;
+
+	if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
+		// Ray is inside object, need to reverse the normal and the refracted ray will not be inside
+		normal = -normal;
+		refractedRayType = RayType::PRIMARY;
+	}
+
+	// Reflected direction
+	glm::vec3 refractedDirection = R * ingoingRayDirection + normal * (float)(-R * glm::dot(normal, ingoingRayDirection) - glm::sqrt(1.0f - R * R * (1.0f - glm::pow(glm::dot(normal, ingoingRayDirection), 2))));
+
+	// Create refracted ray, with margin to not get stuck
+	Ray refractedRay = Ray(ray.getEndpoint() - normal * 0.002f, refractedDirection, refractedRayType);
+
+	// Set up doubly linked list
+	ray.nextRay = &refractedRay;
+	refractedRay.prevRay = &ray;
+
+	// Recursively cast refracted ray into scene
+	castRay(refractedRay);
+
+	refractedRay.prevRay->setColor(refractedRay.getColor());
 }
