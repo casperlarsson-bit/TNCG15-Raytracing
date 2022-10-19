@@ -36,14 +36,18 @@ Scene::Scene() {
 	vertexTable[11] = glm::vec3(-3.0f, 0.0f, 5.0f);
 
 	// Lamp
-	vertexTable[12] = glm::vec3(5.0f, 1.0f, 4.8f);
-	vertexTable[13] = glm::vec3(6.0f, 1.0f, 4.8f);
-	vertexTable[14] = glm::vec3(6.0f, 0.0f, 4.8f);
-	vertexTable[15] = glm::vec3(5.0f, 0.0f, 4.8f);
+	vertexTable[12] = glm::vec3(4.5f, 0.5f, 4.9f);
+	vertexTable[13] = glm::vec3(5.5f, 0.5f, 4.9f);
+	vertexTable[14] = glm::vec3(5.5f, -0.5f, 4.9f);
+	vertexTable[15] = glm::vec3(4.5f, -0.5f, 4.9f);
+
+	// Light source
+	rectangleTable[0].setVertices(vertexTable[12], vertexTable[13], vertexTable[14], vertexTable[15]);
+	rectangleTable[0].setMaterial(Material::LIGHT);
 
 
 	// Floor rectangle vertices
-	rectangleTable[0].setVertices(vertexTable[0], vertexTable[1], vertexTable[3], vertexTable[4]);
+	rectangleTable[1].setVertices(vertexTable[0], vertexTable[1], vertexTable[3], vertexTable[4]);
 
 	// Floor triangles vertices
 	triangleTable[0].setVertices(vertexTable[1], vertexTable[2], vertexTable[3]);
@@ -51,7 +55,7 @@ Scene::Scene() {
 
 
 	// Roof rectangle vertices
-	rectangleTable[1].setVertices(vertexTable[6], vertexTable[10], vertexTable[9], vertexTable[7]);
+	rectangleTable[2].setVertices(vertexTable[6], vertexTable[10], vertexTable[9], vertexTable[7]);
 
 	// Roof triangles vertices
 	triangleTable[2].setVertices(vertexTable[7], vertexTable[9], vertexTable[8]);
@@ -59,40 +63,38 @@ Scene::Scene() {
 
 
 	// Wall rectangles vertices
-	rectangleTable[2].setVertices(vertexTable[0], vertexTable[6], vertexTable[7], vertexTable[1]);
-	rectangleTable[3].setVertices(vertexTable[1], vertexTable[7], vertexTable[8], vertexTable[2]);
-	rectangleTable[4].setVertices(vertexTable[2], vertexTable[8], vertexTable[9], vertexTable[3]);
-	rectangleTable[5].setVertices(vertexTable[3], vertexTable[9], vertexTable[10], vertexTable[4]);
-	rectangleTable[6].setVertices(vertexTable[4], vertexTable[10], vertexTable[11], vertexTable[5]);
-	rectangleTable[7].setVertices(vertexTable[5], vertexTable[11], vertexTable[6], vertexTable[0]);
+	rectangleTable[3].setVertices(vertexTable[0], vertexTable[6], vertexTable[7], vertexTable[1]);
+	rectangleTable[4].setVertices(vertexTable[1], vertexTable[7], vertexTable[8], vertexTable[2]);
+	rectangleTable[5].setVertices(vertexTable[2], vertexTable[8], vertexTable[9], vertexTable[3]);
+	rectangleTable[6].setVertices(vertexTable[3], vertexTable[9], vertexTable[10], vertexTable[4]);
+	rectangleTable[7].setVertices(vertexTable[4], vertexTable[10], vertexTable[11], vertexTable[5]);
+	rectangleTable[8].setVertices(vertexTable[5], vertexTable[11], vertexTable[6], vertexTable[0]);
 
-	// Light source
-	rectangleTable[8].setVertices(vertexTable[12], vertexTable[13], vertexTable[14], vertexTable[15]);
-	rectangleTable[8].setMaterial(Material::LIGHT);
+	
 
 
 	// Calculate all normals
 	for (auto& rectangle : rectangleTable) {
 		rectangle.calculateNormal();
-		rectangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
+		//rectangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 	}
 
 	for (auto& triangle : triangleTable) {
 		triangle.calculateNormal();
-		triangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
+		//triangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 	}
 
 	// Set colours for Polygons
-	rectangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
-	rectangleTable[1].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
-	rectangleTable[2].setColor(ColorDBL(0.2f, 0.66f, 0.32f));
-	rectangleTable[3].setColor(ColorDBL(0.66f, 0.62f, 0.2f));
-	// rectangleTable[3].setMaterial(Material::MIRROR);
-	rectangleTable[4].setColor(ColorDBL(0.2f, 0.27f, 0.66f));
-	rectangleTable[5].setColor(ColorDBL(0.66f, 0.2f, 0.2f));
-	rectangleTable[6].setColor(ColorDBL(0.2f, 0.63f, 0.66f));
-	// rectangleTable[6].setMaterial(Material::MIRROR);
-	rectangleTable[7].setColor(ColorDBL(0.43f, 0.2f, 0.66f));
+	rectangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
+	rectangleTable[2].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
+	rectangleTable[3].setColor(ColorDBL(0.2f, 0.66f, 0.32f));
+	rectangleTable[4].setColor(ColorDBL(0.66f, 0.62f, 0.2f));
+	// rectangleTable[4].setMaterial(Material::MIRROR);
+	rectangleTable[5].setColor(ColorDBL(0.2f, 0.27f, 0.66f));
+	rectangleTable[6].setColor(ColorDBL(0.66f, 0.2f, 0.2f));
+	rectangleTable[7].setColor(ColorDBL(0.2f, 0.63f, 0.66f));
+	// rectangleTable[7].setMaterial(Material::MIRROR);
+	rectangleTable[8].setColor(ColorDBL(0.43f, 0.2f, 0.66f));
 
 	triangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
 	triangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
@@ -288,7 +290,7 @@ ColorDBL Scene::directLight(const Ray& ray) {
 	const float BRDF = 1.0f / M_PI;
 
 	ColorDBL lightColor = ColorDBL(lightChannel, lightChannel, lightChannel); // Combine colour channels (RGB) to a ColorDBL
-	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(e1, e2))  * 32.0f * BRDF * 1.0f / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
+	lightColor = lightColor * ray.getColor() * (glm::length(glm::cross(e1, e2))  * 150.0f * BRDF * 1.0f / NUMBER_OF_SHADOW_RAYS); // Scale light colour in terms of Area, Watt
 	
 	return lightColor;
 }
