@@ -85,8 +85,8 @@ Scene::Scene() {
 	}
 
 	// Set colours for Polygons
-	rectangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
-	rectangleTable[2].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
+	rectangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor
+	rectangleTable[2].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Roof
 	rectangleTable[3].setColor(ColorDBL(0.2f, 0.66f, 0.32f));
 	rectangleTable[4].setColor(ColorDBL(0.66f, 0.62f, 0.2f));
 	// rectangleTable[4].setMaterial(Material::MIRROR);
@@ -96,10 +96,10 @@ Scene::Scene() {
 	// rectangleTable[7].setMaterial(Material::MIRROR);
 	rectangleTable[8].setColor(ColorDBL(0.43f, 0.2f, 0.66f));
 
-	triangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
-	triangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f));
-	triangleTable[2].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
-	triangleTable[3].setColor(ColorDBL(0.1f, 0.1f, 0.1f));
+	triangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor
+	triangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor
+	triangleTable[2].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Roof
+	triangleTable[3].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Roof
 
 	// Spheres in the scene
 	// sphereTable[0] = Sphere(1.0f, glm::vec3(6.0f, 1.0f, -1.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::MIRROR);

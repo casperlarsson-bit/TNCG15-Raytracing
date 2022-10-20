@@ -111,3 +111,8 @@ Polygon* Ray::getPolygon() const {
 RayType Ray::getRayType() const {
 	return rayType;
 }
+
+// Get the rho value of the colour from the intersected polygon
+float Ray::getRho() const {
+	return (rayColor.red + rayColor.green + rayColor.blue) / 3.0f;
+}

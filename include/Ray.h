@@ -62,6 +62,9 @@ public:
 	// Get the type of ray (shadow, primary etc.)
 	RayType getRayType() const;
 
+	// Get the rho value of the colour from the intersected polygon
+	float getRho() const;
+
 	Ray* prevRay;
 	Ray* nextRay;
 	Polygon* rayPolygonIntersection;
