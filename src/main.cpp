@@ -6,7 +6,7 @@
 int main() {
     auto start = std::chrono::high_resolution_clock::now();
 
-    Camera c{800};
+    Camera c{1000};
     Scene s{};
 
     c.renderImage(s);

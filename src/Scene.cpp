@@ -344,12 +344,12 @@ void Scene::createLocalCartesianCoordinateSystem(glm::vec3 e1, glm::vec3& e2, gl
 void Scene::reflectRay(Ray& ray) {
 	glm::vec3 normal = glm::normalize(ray.getObjectNormal()); // Normal for the polygon
 	glm::vec3 ingoingRayDirection = glm::normalize(ray.getDirection()); // Normalised inclination angle Omega
-	RayType reflectedRayType = RayType::INSIDE_TRANSPARENT;
+	RayType reflectedRayType = RayType::PRIMARY;
 
 	if (ray.getRayType() == RayType::INSIDE_TRANSPARENT) {
-		// Ray is inside object, need to reverse the normal and the reflected ray will not be inside
+		// Ray is inside object, need to reverse the normal and the reflected ray will be inside
 		normal = -normal;
-		reflectedRayType = RayType::PRIMARY;
+		reflectedRayType = RayType::INSIDE_TRANSPARENT;
 	}
 
 	// Reflected direction
@@ -365,7 +365,7 @@ void Scene::reflectRay(Ray& ray) {
 	// Recursively cast reflected ray into scene
 	castRay(reflectedRay);
 
-	reflectedRay.prevRay->setColor(reflectedRay.getColor());
+	ray.setColor(reflectedRay.getColor());
 }
 
 // Calculate the refracted ray, cast it and set its colour
@@ -393,5 +393,5 @@ void Scene::refractRay(Ray& ray, float R) {
 	// Recursively cast refracted ray into scene
 	castRay(refractedRay);
 
-	refractedRay.prevRay->setColor(refractedRay.getColor());
+	ray.setColor(refractedRay.getColor());
 }
