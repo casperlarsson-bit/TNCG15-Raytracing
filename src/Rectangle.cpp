@@ -52,7 +52,7 @@ bool Rectangle::rayIntersection(Ray& ray, float& minDistance) const {
 	float a = glm::dot(x_i - v0, edge1) / glm::dot(edge1, edge1);
 	float b = glm::dot(x_i - v0, edge2) / glm::dot(edge2, edge2);
 
-	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1. @TODO Should not compare float directly
+	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1
 	if ((a >= 0 && a <= 1 && b >= 0 && b <= 1) && glm::length(x_i - ray.getStartpoint()) < minDistance) {
 		ray.setColor(color);
 		ray.setEndVertex(x_i);
