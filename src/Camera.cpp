@@ -20,7 +20,6 @@ Camera::Camera(int _res) : image(_res, std::vector<Pixel>(_res)) {
 // Render the image by casting rays and changing the pixel value
 void Camera::renderImage(Scene& scene) {
 	// Loop through all pixels
-	srand((int)time(NULL)); // Useless?
 
 	const float pixelLength = (1.0f / (float)image.size());
 	std::cout << "Render image...\n";

@@ -102,18 +102,14 @@ Scene::Scene() {
 	triangleTable[3].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Roof
 
 	// Spheres in the scene
-	// sphereTable[0] = Sphere(1.0f, glm::vec3(6.0f, 1.0f, -1.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::MIRROR);
-	//sphereTable[0] = Sphere(0.8f, glm::vec3(4.0f, -2.0f, -2.0f), ColorDBL(1.0f, 0.0f, 1.0f), Material::TRANSPARENT);
-
-	// Temporarily copy
-	sphereTable[0] = Sphere(1.0f, glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::MIRROR); // MIRROR
-	sphereTable[1] = Sphere(1.0f, glm::vec3(6.0f, -3.0f, -2.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
-	sphereTable[2] = Sphere(1.0f, glm::vec3(5.0f, -2.0f, -4.0f), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN);
-	sphereTable[3] = Sphere(1.0f, glm::vec3(10.0f, 0.2f, -1.0f), ColorDBL(0.5f, 0.5f, 0.5f), Material::TRANSPARENT); // TRANSPARENT
-	sphereTable[4] = Sphere(0.5f, glm::vec3(6.0f, 3.0f, -1.0f), ColorDBL(0.8f, 0.2f, 0.2f), Material::LAMBERTIAN);
+	sphereTable[0] = Sphere(1.0f, glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(0.0f, 0.0f, 0.0f), Material::MIRROR); // MIRROR
+	sphereTable[1] = Sphere(1.0f, glm::vec3(6.0f, -3.0f, 1.0f), ColorDBL(0.0f, 0.0f, 0.0f), Material::TRANSPARENT); // TRANSPARENT
+	sphereTable[2] = Sphere(1.0f, glm::vec3(5.0f, 0.0f, -4.0f), ColorDBL(0.78f, 0.78f, 0.78f), Material::LAMBERTIAN);
+	sphereTable[3] = Sphere(0.8f, glm::vec3(10.0f, -1.0f, -1.5f), ColorDBL(0.0f, 0.0f, 0.0f), Material::TRANSPARENT); // TRANSPARENT
+	sphereTable[4] = Sphere(0.4f, glm::vec3(6.0f, 3.5f, -1.0f), ColorDBL(0.5f, 0.2f, 0.66f), Material::LAMBERTIAN);
 
 	// Tetrahedron in the scene
-	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0f, 2.0f, -1.0f), ColorDBL(0.96f, 0.04f, 0.32f), Material::LAMBERTIAN);
+	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0f, 2.0f, -0.5f), ColorDBL(0.96f, 0.04f, 0.32f), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
