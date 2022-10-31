@@ -1,3 +1,8 @@
+/*
+    Written by Casper Larsson (casla195)
+    for Linköping University TNCG15
+*/
+
 #pragma once
 #include "glm/glm.hpp"
 #include "ColorDBL.h"

@@ -1,3 +1,8 @@
+/*
+    Written by Casper Larsson (casla195)
+    for Linköping University TNCG15
+*/
+
 #include "../include/Camera.h"
 #include <iostream>
 #include <fstream>
@@ -25,11 +30,11 @@ void Camera::renderImage(Scene& scene) {
 	std::cout << "Render image...\n";
 	for (std::size_t i = 0; i < image.size(); ++i) {
 		for (std::size_t j = 0; j < image.size(); ++j) {
-			//glm::vec3 pixelPosition = glm::vec3(0.0f, 1.0f - 2.0f * (float)j / image.size(), 1.0f - 2.0f * (float)i / image.size());
+			// Get centre point of a pixel
 			glm::vec3 pixelPosition = glm::vec3(0.0f, ((float)image.size() / 2.0f - (float)j + 0.5f) * pixelLength, ((float)image.size() / 2.0f - (float)i + 0.5f) * pixelLength); // Centre position of the pixel
 			ColorDBL sampledPixelColor = ColorDBL();
 
-			
+			// Supersampling
 			for (int n = 0; n < NUMBER_OF_SUBPIXELS; ++n) {
 				for (int m = 0; m < NUMBER_OF_SUBPIXELS; ++m) {
 					glm::vec3 subPixel = pixelPosition + glm::vec3(0, ((float)NUMBER_OF_SUBPIXELS / 2.0f - n + distributions(seeds)) * pixelLength / NUMBER_OF_SUBPIXELS, ((float)NUMBER_OF_SUBPIXELS / 2.0f - m + distributions(seeds)) * pixelLength / NUMBER_OF_SUBPIXELS);
@@ -39,13 +44,14 @@ void Camera::renderImage(Scene& scene) {
 			
 					// Cast ray and let scene handle it. Set pixel colour to the 
 					// colour of the Polygon it hits
+					// Sum all colours in this pixel
 					scene.castRay(pixelRay);
 					sampledPixelColor += pixelRay.getColor();
 
 				}
 			}
 			
-			
+			// Get the average colour from supersampling
 			ColorDBL pixelColor = sampledPixelColor * (1.0f / ((float)NUMBER_OF_SUBPIXELS * (float)NUMBER_OF_SUBPIXELS));
 			
 			image[i][j].setColor(pixelColor);

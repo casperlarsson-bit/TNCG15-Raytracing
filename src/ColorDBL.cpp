@@ -1,3 +1,8 @@
+/*
+    Written by Casper Larsson (casla195)
+    for Linköping University TNCG15
+*/
+
 #include "../include/ColorDBL.h"
 #include "../include/glm/glm.hpp"
 
@@ -23,7 +28,7 @@ ColorDBL ColorDBL::operator*(float value) const {
 }
 
 // Overloaded operator* to multiply two colours
-	// Multiply each colour channel
+// Multiply each colour channel
 ColorDBL ColorDBL::operator*(ColorDBL color) const {
 	return ColorDBL(red * color.red, green * color.green, blue * color.blue);
 }

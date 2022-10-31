@@ -1,3 +1,8 @@
+/*
+    Written by Casper Larsson (casla195)
+    for Linköping University TNCG15
+*/
+
 #include "../include/Tetrahedron.h"
 #include <iostream>
 
@@ -51,10 +56,6 @@ void Tetrahedron::rayIntersection(Ray& ray, float& minDistance) const {
 		if (glm::dot(triangle.getNormal(), ray.getDirection()) > COMPARE_ELLIPSE) continue;
 		if (triangle.rayIntersection(ray, minDistance)) break;
 	}
-
-	//triangleTable[0].rayIntersection(ray, minDistance);
-	//triangleTable[1].rayIntersection(ray, minDistance);
-	//if (triangleTable[3].rayIntersection(ray, minDistance)) std::cout << "Went wrong";
 }
 
 // Get what material the Tetrahedron is made of

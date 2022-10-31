@@ -1,3 +1,8 @@
+/*
+    Written by Casper Larsson (casla195)
+    for Linköping University TNCG15
+*/
+
 #include <iostream>
 #include "../include/Camera.h"
 #include "../include/Scene.h"

@@ -1,3 +1,8 @@
+/*
+    Written by Casper Larsson (casla195)
+    for Linköping University TNCG15
+*/
+
 #pragma once
 #include "Rectangle.h"
 #include "Triangle.h"

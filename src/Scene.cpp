@@ -1,3 +1,8 @@
+/*
+    Written by Casper Larsson (casla195)
+    for Linköping University TNCG15
+*/
+
 #include "../include/Scene.h"
 #include "../include/glm/glm.hpp"
 #include <iostream>
@@ -11,7 +16,7 @@ std::default_random_engine seed;
 std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
 
 
-const int RANDOM_REFLECTION = 99; // Percentage to continue cast rays in mirror, remove this
+const float RANDOM_REFLECTION = 0.99; // Percentage to continue cast rays in mirror, remove this
 const float MIRROR_VALUE = 0.95f; // How much darker the light should be when returned from a mirror, for realism
 const int NUMBER_OF_SHADOW_RAYS = 3;
 
@@ -76,12 +81,10 @@ Scene::Scene() {
 	// Calculate all normals
 	for (auto& rectangle : rectangleTable) {
 		rectangle.calculateNormal();
-		//rectangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 	}
 
 	for (auto& triangle : triangleTable) {
 		triangle.calculateNormal();
-		//triangle.setColor(ColorDBL(1.0f, 1.0f, 1.0f));
 	}
 
 	// Set colours for Polygons
@@ -164,8 +167,7 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 			this->castRay(newRay, numReflections - 1);
 		}
 		else {
-			int randomReflection = rand() % 100;
-			if (randomReflection < RANDOM_REFLECTION) {
+			if (distribution(seed) < RANDOM_REFLECTION) {
 				this->castRay(newRay);
 			}
 		}
@@ -245,10 +247,10 @@ void Scene::handleReflection(Ray& ray, int numReflections) {
 // Get the direct light from light source to a specific point
 ColorDBL Scene::directLight(const Ray& ray) {
 	// Define area light
-	glm::vec3 v0 = vertexTable[12]; // glm::vec3(5.0f, 0.0f, 5.0f);
-	glm::vec3 v1 = vertexTable[13]; // glm::vec3(6.0f, 0.0f, 5.0f);
-	glm::vec3 v2 = vertexTable[14]; // glm::vec3(6.0f, 0.1f, 5.0f);
-	glm::vec3 v3 = vertexTable[15]; // glm::vec3(5.0f, 0.1f, 5.0f);
+	glm::vec3 v0 = vertexTable[12];
+	glm::vec3 v1 = vertexTable[13];
+	glm::vec3 v2 = vertexTable[14];
+	glm::vec3 v3 = vertexTable[15];
 
 	glm::vec3 e1 = v2 - v1;
 	glm::vec3 e2 = v0 - v1;
@@ -273,7 +275,6 @@ ColorDBL Scene::directLight(const Ray& ray) {
 		castRay(shadowRay);
 		float shadowRayLength = glm::length(shadowRay.getEndpoint() - shadowRay.getStartpoint());
 
-		//bool V_xy = (abs(shadowRayLength - glm::length(rayLightDistanceVector)) < COMPARE_ELLIPSE);
 		float V_xy = 1.0;
 
 		if (shadowRayLength < glm::length(rayLightDistanceVector)) {
@@ -296,8 +297,7 @@ ColorDBL Scene::indirectLight(const Ray& ray) {
 
 	// Perform Russian roulette to decide if to continue, using Rho as probability of surviving
 	float random = distribution(seed);
-	// if (random > ray.getPolygon()->getRho()) return ColorDBL(); // If not to continue ray path
-	if (random < 0.25f) return ColorDBL(); // Temp from above
+	if (random < 0.25f) return ColorDBL(); // Should be with rho
 
 	glm::vec3 surfaceNormal = ray.getObjectNormal();
 
