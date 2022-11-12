@@ -59,7 +59,32 @@ bool Rectangle::rayIntersection(Ray& ray, float& minDistance) const {
 
 	// Check if inside Rectangle, 0 <= a <= 1, 0 <= b <= 1
 	if ((a >= 0 && a <= 1 && b >= 0 && b <= 1) && glm::length(x_i - ray.getStartpoint()) < minDistance) {
-		ray.setColor(color);
+		// Set the ray colour either to the colour of the rectangle or load from texture
+		if (filename == "") {
+			ray.setColor(color);
+		}
+		else {
+			glm::vec3 intersectionVector = x_i - v3; // Get the vector from the corner towards the intersected point
+			glm::vec3 bottomEdge = v0 - v3; // Bottom of the rectangle
+			glm::vec3 leftEdge = v2 - v3; // Left side of the rectangle
+			float aScalar = glm::dot(intersectionVector, glm::normalize(bottomEdge)); // Get the scaling factor of the projected vector
+			glm::vec3 a1 = aScalar * glm::normalize(bottomEdge); // Project intersectionVector into bottomEdge
+			glm::vec3 a2 = intersectionVector - a1; // The projected vector on leftEdge
+
+			// Get the texture coordinates (u,v) to read from the file
+			int u = std::min((int)((glm::length(a1) / glm::length(bottomEdge)) * textureWidth), textureWidth - 1);
+			int v = std::min((int)((1 - glm::length(a2) / glm::length(leftEdge)) * textureHeight), textureHeight - 1);
+
+			const size_t RGBA = 4;
+			size_t index = RGBA * (v * textureWidth + u);
+
+			int R = static_cast<int>(texture[index + 0]);
+			int G = static_cast<int>(texture[index + 1]);
+			int B = static_cast<int>(texture[index + 2]);
+
+			ray.setColor(ColorDBL(R, G, B));
+		}
+
 		ray.setEndVertex(x_i);
 		ray.setObjectNormal(normal);
 		ray.setObjectMaterial(getMaterial());

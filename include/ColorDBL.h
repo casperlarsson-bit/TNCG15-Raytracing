@@ -13,6 +13,9 @@ public:
 	// Constructor to create a colour of values
 	ColorDBL(float _r, float _g, float _b);
 
+	// Constructor to convert integer RGB to ColorDBL
+	ColorDBL(int _r, int _g, int _b);
+
 	// Overloaded operator*, scales the colour by value
 	// To make colour darker/brighter
 	ColorDBL operator*(float value) const;
