@@ -111,6 +111,7 @@ Scene::Scene() {
 	sphereTable[0] = Sphere(1.0f, glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(0.0f, 0.0f, 0.0f), Material::MIRROR); // MIRROR
 	sphereTable[1] = Sphere(1.0f, glm::vec3(6.0f, -3.0f, 1.0f), ColorDBL(0.0f, 0.0f, 0.0f), Material::TRANSPARENT); // TRANSPARENT
 	sphereTable[2] = Sphere(1.0f, glm::vec3(5.0f, 0.0f, -4.0f), ColorDBL(0.78f, 0.78f, 0.78f), Material::LAMBERTIAN);
+	sphereTable[2].setTexture("../textures/uv_checker.png");
 	sphereTable[3] = Sphere(0.8f, glm::vec3(10.0f, -1.0f, -1.5f), ColorDBL(0.0f, 0.0f, 0.0f), Material::TRANSPARENT); // TRANSPARENT
 	sphereTable[4] = Sphere(0.4f, glm::vec3(6.0f, 3.5f, -1.0f), ColorDBL(0.5f, 0.2f, 0.66f), Material::LAMBERTIAN);
 	sphereTable[4].setTexture("../textures/earth.jpg");
