@@ -6,6 +6,8 @@
 #pragma once
 #include <iostream>
 #include <iomanip>
+#include <vector>
+
 
 const int BAR_WIDTH = 40;
 
@@ -15,3 +17,8 @@ void progressBar(float percent);
 
 // Display the time in hours, minutes, seconds and milliseconds from seconds
 void displayTime(int timeMilliseconds);
+
+// Loads as RGBA... even if file is only RGB
+// Feel free to adjust this if you so please, by changing the 4 to a 0.
+// Code from https://cplusplus.com/forum/beginner/267364/
+bool load_image(std::vector<unsigned char>& image, const std::string& filename, int& x, int& y);

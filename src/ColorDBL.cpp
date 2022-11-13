@@ -21,6 +21,13 @@ ColorDBL::ColorDBL(float _r, float _g, float _b) {
 	blue = _b;
 }
 
+// Constructor to convert integer RGB to ColorDBL
+ColorDBL::ColorDBL(int _r, int _g, int _b) {
+	red = (float)_r / 255.0f;
+	green = (float)_g / 255.0f;
+	blue = (float)_b / 255.0f;
+}
+
 // Overloaded operator*, scales the colour by value
 // To make colour darker/brighter
 ColorDBL ColorDBL::operator*(float value) const {

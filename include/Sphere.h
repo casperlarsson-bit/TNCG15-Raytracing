@@ -35,6 +35,9 @@ public:
 	// Set the colour of the Sphere
 	void setColor(ColorDBL _color);
 
+	// Set up the file to the texture
+	void setTexture(std::string filepath);
+
 	// Get the centre of the sphere
 	glm::vec3 getCentre() const;
 
@@ -43,4 +46,9 @@ private:
 	glm::vec3 centreVertex;
 	ColorDBL color;
 	Material material;
+
+	std::vector<unsigned char> texture;
+	int textureWidth = 0;
+	int textureHeight = 0;
+	std::string filename = "";
 };
