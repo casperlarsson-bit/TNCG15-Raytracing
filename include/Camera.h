@@ -13,7 +13,7 @@
 #include "glm/glm.hpp"
 #include "functions.h"
 
-const int SIZE = 800; // Default image resolution (square)
+const int SIZE = 600; // Default image resolution (square)
 const int NUMBER_OF_SUBPIXELS = 6; // numbers of rays to cast through each pixel (squared)
 
 class Camera {

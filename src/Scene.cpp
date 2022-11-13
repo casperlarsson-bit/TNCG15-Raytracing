@@ -118,6 +118,9 @@ Scene::Scene() {
 
 	// Tetrahedron in the scene
 	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0f, 2.0f, -0.5f), ColorDBL(0.96f, 0.04f, 0.32f), Material::LAMBERTIAN);
+
+	// Cubes in the scene
+	cubeTable[0] = Cube(glm::vec3(5.0f, -3.5f, -3.0f), 0.6f, ColorDBL(0.78f, 0.78f, 0.38f), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
@@ -140,9 +143,14 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		if (sphere.rayIntersection(ray, minDistance)) break;
 	}
 
-	// Go trhrough all tetrahedrons
+	// Go through all tetrahedrons
 	for (auto& tetra : tetrahedronTable) {
 		tetra.rayIntersection(ray, minDistance);
+	}
+
+	// Go through all cubes
+	for (auto& cube : cubeTable) {
+		cube.rayIntersection(ray, minDistance);
 	}
 
 	// Handle the different kind of reflections, Lambertian, Mirror, Transparent
