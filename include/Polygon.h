@@ -8,6 +8,7 @@
 #include "ColorDBL.h"
 #include "Ray.h"
 #include "Material.h"
+#include "functions.h"
 
 const float COMPARE_ELLIPSE = 0.00001f;
 
@@ -43,11 +44,19 @@ public:
 	// Sets the material of the Polygon
 	void setMaterial(Material _material);
 
+	// Set up the file to the texture
+	void setTexture(std::string filepath);
+
 	// Get the Lambertian rho
 	float getRho() const;
 
 	ColorDBL color;
 	glm::vec3 normal;
+
+	std::vector<unsigned char> texture;
+	int textureWidth = 0;
+	int textureHeight = 0;
+	std::string filename = "";
 private:
 	Material material;
 	float rho;

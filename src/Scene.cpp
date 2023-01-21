@@ -16,7 +16,7 @@ std::default_random_engine seed;
 std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
 
 
-const float RANDOM_REFLECTION = 0.99; // Percentage to continue cast rays in mirror, remove this
+const float RANDOM_REFLECTION = 0.99f; // Percentage to continue cast rays in mirror, remove this
 const float MIRROR_VALUE = 0.95f; // How much darker the light should be when returned from a mirror, for realism
 const int NUMBER_OF_SHADOW_RAYS = 3;
 
@@ -56,14 +56,14 @@ Scene::Scene() {
 
 	// Floor triangles vertices
 	triangleTable[0].setVertices(vertexTable[1], vertexTable[2], vertexTable[3]);
-	triangleTable[1].setVertices(vertexTable[0], vertexTable[4], vertexTable[5]);
+	triangleTable[1].setVertices(vertexTable[4], vertexTable[5], vertexTable[0]);
 
 
 	// Roof rectangle vertices
 	rectangleTable[2].setVertices(vertexTable[6], vertexTable[10], vertexTable[9], vertexTable[7]);
 
 	// Roof triangles vertices
-	triangleTable[2].setVertices(vertexTable[7], vertexTable[9], vertexTable[8]);
+	triangleTable[2].setVertices(vertexTable[9], vertexTable[8], vertexTable[7]);
 	triangleTable[3].setVertices(vertexTable[6], vertexTable[11], vertexTable[10]);
 
 
@@ -88,7 +88,8 @@ Scene::Scene() {
 	}
 
 	// Set colours for Polygons
-	rectangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor
+	//rectangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor
+	rectangleTable[1].setTexture("../textures/checkerboard.png"); // Floor
 	rectangleTable[2].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Roof
 	rectangleTable[3].setColor(ColorDBL(0.2f, 0.66f, 0.32f));
 	rectangleTable[4].setColor(ColorDBL(0.66f, 0.62f, 0.2f));
@@ -99,8 +100,10 @@ Scene::Scene() {
 	// rectangleTable[7].setMaterial(Material::MIRROR);
 	rectangleTable[8].setColor(ColorDBL(0.43f, 0.2f, 0.66f));
 
-	triangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor
-	triangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor
+	//triangleTable[0].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor visible in camera
+	triangleTable[0].setTexture("../textures/checkerboard.png");
+	//triangleTable[1].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Floor
+	triangleTable[1].setTexture("../textures/checkerboard.png");
 	triangleTable[2].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Roof
 	triangleTable[3].setColor(ColorDBL(0.8f, 0.8f, 0.8f)); // Roof
 
@@ -108,11 +111,16 @@ Scene::Scene() {
 	sphereTable[0] = Sphere(1.0f, glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(0.0f, 0.0f, 0.0f), Material::MIRROR); // MIRROR
 	sphereTable[1] = Sphere(1.0f, glm::vec3(6.0f, -3.0f, 1.0f), ColorDBL(0.0f, 0.0f, 0.0f), Material::TRANSPARENT); // TRANSPARENT
 	sphereTable[2] = Sphere(1.0f, glm::vec3(5.0f, 0.0f, -4.0f), ColorDBL(0.78f, 0.78f, 0.78f), Material::LAMBERTIAN);
+	sphereTable[2].setTexture("../textures/uv_checker.png");
 	sphereTable[3] = Sphere(0.8f, glm::vec3(10.0f, -1.0f, -1.5f), ColorDBL(0.0f, 0.0f, 0.0f), Material::TRANSPARENT); // TRANSPARENT
 	sphereTable[4] = Sphere(0.4f, glm::vec3(6.0f, 3.5f, -1.0f), ColorDBL(0.5f, 0.2f, 0.66f), Material::LAMBERTIAN);
+	sphereTable[4].setTexture("../textures/earth.jpg");
 
 	// Tetrahedron in the scene
 	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0f, 2.0f, -0.5f), ColorDBL(0.96f, 0.04f, 0.32f), Material::LAMBERTIAN);
+
+	// Cubes in the scene
+	cubeTable[0] = Cube(glm::vec3(5.0f, -3.5f, -3.0f), 0.6f, ColorDBL(0.78f, 0.78f, 0.38f), Material::LAMBERTIAN);
 }
 
 // Cast and trace a ray
@@ -135,9 +143,14 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		if (sphere.rayIntersection(ray, minDistance)) break;
 	}
 
-	// Go trhrough all tetrahedrons
+	// Go through all tetrahedrons
 	for (auto& tetra : tetrahedronTable) {
 		tetra.rayIntersection(ray, minDistance);
+	}
+
+	// Go through all cubes
+	for (auto& cube : cubeTable) {
+		cube.rayIntersection(ray, minDistance);
 	}
 
 	// Handle the different kind of reflections, Lambertian, Mirror, Transparent

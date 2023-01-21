@@ -57,6 +57,20 @@ void Polygon::setMaterial(Material _material) {
 	}
 }
 
+// Set up the file to the texture
+void Polygon::setTexture(std::string filepath) {
+	filename = filepath;
+
+	// Load texture into vector and get width and height
+	bool success = load_image(texture, filename, textureWidth, textureHeight);
+	if (!success)
+	{
+		// If file could not be opened, terminate program
+		std::cout << "Error loading texture \"" << filepath << "\"\nMake sure you spelled the filepath correctly and that the file exists in that folder.\n";
+		exit(EXIT_SUCCESS);
+	}
+}
+
 // Get the Lambertian 
 float Polygon::getRho() const {
 	return rho;

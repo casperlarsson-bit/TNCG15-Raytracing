@@ -5,6 +5,9 @@
 
 #include "../include/Sphere.h"
 #include <iostream>
+#include <math.h>
+
+#define M_PI 3.14159265358979323846f  // Pi
 
 // Default constructor
 Sphere::Sphere() {
@@ -64,7 +67,31 @@ bool Sphere::rayIntersection(Ray& ray, float& minDistance) const {
 	}
 
 	if (glm::length(x_i - ray.getStartpoint()) < minDistance) {
-		ray.setColor(color);
+		// Set the ray colour either to the colour of the rectangle or load from texture
+		if (filename == "") {
+			ray.setColor(color);
+		}
+		else {
+			glm::vec3 pointToCentre = glm::normalize(centreVertex - x_i);
+
+			// Calculate (u,v) texture coordinates
+			// https://en.wikipedia.org/wiki/UV_mapping#UV_unwrapping
+			float u = 0.5 + atan2(pointToCentre.y, pointToCentre.x) / (2 * M_PI);
+			float v = 0.5 + glm::asin(pointToCentre.z) / M_PI;
+
+			int x = std::min((int)(u * textureWidth), textureWidth - 1);
+			int y = std::min((int)(v * textureHeight), textureHeight - 1);
+
+			const size_t RGBA = 4;
+			size_t index = RGBA * (y * textureWidth + x);
+
+			int R = static_cast<int>(texture[index + 0]);
+			int G = static_cast<int>(texture[index + 1]);
+			int B = static_cast<int>(texture[index + 2]);
+
+			ray.setColor(ColorDBL(R, G, B));
+		}
+
 		ray.setEndVertex(x_i + glm::normalize(x_i - centreVertex) * 0.001f);
 		ray.setObjectNormal(glm::normalize(x_i - centreVertex));
 		ray.setObjectMaterial(getMaterial());
@@ -93,6 +120,20 @@ ColorDBL Sphere::getColor() const {
 // Set the colour of the Sphere
 void Sphere::setColor(ColorDBL _color) {
 	color = _color;
+}
+
+// Set up the file to the texture
+void Sphere::setTexture(std::string filepath) {
+	filename = filepath;
+
+	// Load texture into vector and get width and height
+	bool success = load_image(texture, filename, textureWidth, textureHeight);
+	if (!success)
+	{
+		// If file could not be opened, terminate program
+		std::cout << "Error loading texture \"" << filepath << "\"\nMake sure you spelled the filepath correctly and that the file exists in that folder.\n";
+		exit(EXIT_SUCCESS);
+	}
 }
 
 // Get the centre of the sphere

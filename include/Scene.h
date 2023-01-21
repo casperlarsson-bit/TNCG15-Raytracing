@@ -8,6 +8,7 @@
 #include "Triangle.h"
 #include "Sphere.h"
 #include "Tetrahedron.h"
+#include "Cube.h"
 
 class Scene {
 public:
@@ -40,4 +41,5 @@ private:
 	Triangle triangleTable[4]; // Triangle Table for the floor and roof
 	Sphere sphereTable[5]; // Sphere Table with all object spheres in the scene
 	Tetrahedron tetrahedronTable[1]; // Tetrahedron Table
+	Cube cubeTable[1]; // Cube table
 };
