@@ -12,7 +12,7 @@
 std::default_random_engine seeds;
 std::uniform_real_distribution<float> distributions(-0.5f, 0.5f);
 
-// Default constructor sets resolution to 600x600
+// Default constructor sets resolution to 800x800
 Camera::Camera() : image(SIZE, std::vector<Pixel>(SIZE)) {
 	maxD = 0.0f;
 }

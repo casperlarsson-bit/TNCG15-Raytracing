@@ -121,6 +121,10 @@ Scene::Scene() {
 
 	// Cubes in the scene
 	cubeTable[0] = Cube(glm::vec3(5.0f, -3.5f, -3.0f), 0.6f, ColorDBL(0.78f, 0.78f, 0.38f), Material::LAMBERTIAN);
+
+	// Meshes in the scene
+	Mesh newMesh{"../objs/myCube.obj", glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN};
+	meshTable.push_back(newMesh);
 }
 
 // Cast and trace a ray
@@ -138,6 +142,7 @@ void Scene::castRay(Ray& ray, int numReflections) {
 		if (triangle.rayIntersection(ray, minDistance)) break;
 	}
 
+#if 0
 	// Go through all spheres
 	for (auto& sphere : sphereTable) {
 		if (sphere.rayIntersection(ray, minDistance)) break;
@@ -151,6 +156,12 @@ void Scene::castRay(Ray& ray, int numReflections) {
 	// Go through all cubes
 	for (auto& cube : cubeTable) {
 		cube.rayIntersection(ray, minDistance);
+	}
+#endif
+
+	// Go through all meshes
+	for (auto& mesh : meshTable) {
+		mesh.rayIntersection(ray, minDistance);
 	}
 
 	// Handle the different kind of reflections, Lambertian, Mirror, Transparent

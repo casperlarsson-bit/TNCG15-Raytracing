@@ -9,6 +9,7 @@
 #include "Sphere.h"
 #include "Tetrahedron.h"
 #include "Cube.h"
+#include "Mesh.h"
 
 class Scene {
 public:
@@ -42,4 +43,5 @@ private:
 	Sphere sphereTable[5]; // Sphere Table with all object spheres in the scene
 	Tetrahedron tetrahedronTable[1]; // Tetrahedron Table
 	Cube cubeTable[1]; // Cube table
+	std::vector<Mesh> meshTable; // Mesh table
 };
