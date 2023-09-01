@@ -21,9 +21,11 @@ public:
 	ColorDBL color;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
+	std::vector<Triangle> triangles;
+	std::vector<std::vector<int>> vertexIndices;
 private:
 	// Load the obj file from string path
-	void loadOBJ(const std::string& filename);
+	void loadOBJ(const std::string& filename, const glm::vec3& position);
 
 	Material material;
 	float rho;

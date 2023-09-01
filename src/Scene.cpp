@@ -120,10 +120,10 @@ Scene::Scene() {
 	tetrahedronTable[0] = Tetrahedron(glm::vec3(8.0f, 2.0f, -0.5f), ColorDBL(0.96f, 0.04f, 0.32f), Material::LAMBERTIAN);
 
 	// Cubes in the scene
-	cubeTable[0] = Cube(glm::vec3(5.0f, -3.5f, -3.0f), 0.6f, ColorDBL(0.78f, 0.78f, 0.38f), Material::LAMBERTIAN);
+	cubeTable[0] = Cube(glm::vec3(6.5f, -3.0f, -3.0f), 1.0f, ColorDBL(0.78f, 0.78f, 0.38f), Material::LAMBERTIAN);
 
 	// Meshes in the scene
-	Mesh newMesh{"../objs/myCube.obj", glm::vec3(4.5f, 3.0f, -3.0f), ColorDBL(1.0f, 1.0f, 1.0f), Material::LAMBERTIAN};
+	Mesh newMesh{"../obj/torus.obj", glm::vec3(6.5f, 1.0f, -3.0f), ColorDBL(0.78f, 0.78f, 0.38f), Material::LAMBERTIAN};
 	meshTable.push_back(newMesh);
 }
 

@@ -67,13 +67,14 @@ Cube::Cube(glm::vec3 _midVertex, float size, ColorDBL _color, Material _material
         rectangle.setMaterial(_material);
         rectangle.calculateNormal();
     }
-
+    /*
     rectangleTable[0].setTexture("../textures/grass.png");
     rectangleTable[1].setTexture("../textures/minecraft.png");
     rectangleTable[2].setTexture("../textures/minecraft.png");
     rectangleTable[3].setTexture("../textures/minecraft.png");
     rectangleTable[4].setTexture("../textures/minecraft.png");
     rectangleTable[5].setTexture("../textures/minecraft.png");
+    */
 }
 
 // Get what material the Cube is made of
