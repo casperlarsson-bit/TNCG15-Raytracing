@@ -1,4 +1,4 @@
-## TNCG15 Project - Raytracing from scratch in C++
+# TNCG15 Project - Raytracing from scratch in C++
 
 A Monte Carlo Ray Tracer implemented from scratch in C++ in the course TNCG15 - Advanced Global Illumination and Rendering.
 
